@@ -1,0 +1,64 @@
+{
+  "name": "@edx/frontend-template-application",
+  "version": "0.1.0",
+  "description": "Frontend application template",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/openedx/frontend-template-application.git"
+  },
+  "browserslist": [
+    "extends @edx/browserslist-config"
+  ],
+  "scripts": {
+    "build": "fedx-scripts webpack",
+    "i18n_extract": "fedx-scripts formatjs extract",
+    "lint": "fedx-scripts eslint --ext .js --ext .jsx .",
+    "lint:fix": "fedx-scripts eslint --fix --ext .js --ext .jsx .",
+    "snapshot": "fedx-scripts jest --updateSnapshot",
+    "start": "fedx-scripts webpack-dev-server --progress",
+    "test": "fedx-scripts jest --coverage --passWithNoTests"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint"
+    }
+  },
+  "author": "edX",
+  "license": "AGPL-3.0",
+  "homepage": "https://github.com/openedx/frontend-template-application#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "bugs": {
+    "url": "https://github.com/openedx/frontend-template-application/issues"
+  },
+  "dependencies": {
+    "@edx/brand": "npm:@openedx/brand-openedx@^1.2.2",
+    "@edx/frontend-component-footer": "12.5.0",
+    "@edx/frontend-component-header": "4.8.0",
+    "@edx/frontend-platform": "5.6.1",
+    "@edx/paragon": "^20.44.0",
+    "@fortawesome/fontawesome-svg-core": "1.2.36",
+    "@fortawesome/free-brands-svg-icons": "5.15.4",
+    "@fortawesome/free-regular-svg-icons": "5.15.4",
+    "@fortawesome/free-solid-svg-icons": "5.15.4",
+    "@fortawesome/react-fontawesome": "0.2.0",
+    "core-js": "3.33.1",
+    "prop-types": "15.8.1",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "react-redux": "7.2.9",
+    "react-router": "6.17.0",
+    "react-router-dom": "6.17.0",
+    "redux": "4.2.1",
+    "regenerator-runtime": "0.14.0"
+  },
+  "devDependencies": {
+    "@edx/browserslist-config": "^1.1.1",
+    "@edx/frontend-build": "13.0.4",
+    "@edx/reactifex": "^2.1.1",
+    "glob": "7.2.3",
+    "husky": "7.0.4",
+    "jest": "29.7.0"
+  }
+}
