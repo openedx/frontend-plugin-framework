@@ -11,7 +11,7 @@ import {
 } from './data/hooks';
 import { PLUGIN_RESIZE } from './data/constants';
 
-// see example-plugin-app/src/PluginOne.jsx for example of customizing errorFallback
+// TODO: see example-plugin-app/src/PluginOne.jsx for example of customizing errorFallback
 function errorFallbackDefault() {
   return (
     <div>
