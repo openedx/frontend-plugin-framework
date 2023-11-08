@@ -4,7 +4,7 @@ frontend-plugin-framework
 |license-badge| |status-badge| |ci-badge| |codecov-badge|
 
 .. |license-badge| image:: https://img.shields.io/github/license/openedx/frontend-plugin-framework.svg
-    :target: https://github.com/openedx/frontend-plugin-framework/blob/main/LICENSE
+    :target: https://github.com/openedx/frontend-plugin-framework/blob/master/LICENSE
     :alt: License
 
 .. |status-badge| image:: https://img.shields.io/badge/Status-Maintained-brightgreen
