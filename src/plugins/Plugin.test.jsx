@@ -7,6 +7,11 @@ import { fireEvent } from '@testing-library/dom';
 import '@testing-library/jest-dom';
 
 import { initializeMockApp } from '@edx/frontend-platform/testing';
+import {
+  FormattedMessage,
+  IntlProvider,
+} from '@edx/frontend-platform/i18n';
+
 import PluginContainer from './PluginContainer';
 import Plugin from './Plugin';
 import {
@@ -99,6 +104,14 @@ describe('PluginContainer', () => {
 describe('Plugin', () => {
   let logError = jest.fn();
 
+  const error = (
+    <FormattedMessage
+      id="raised.error.message.text"
+      defaultMessage="there is an error in the React component"
+      description="raised error message when an error occurs in React component"
+    />
+  );
+
   beforeEach(async () => {
     // This is a gross hack to suppress error logs in the invalid parentSelector test
     jest.spyOn(console, 'error');
@@ -113,18 +126,38 @@ describe('Plugin', () => {
     jest.clearAllMocks();
   });
 
+  const PluginPageWrapper = ({
+    params, errorFallback, ChildComponent,
+  }) => (
+    <IntlProvider locale="en">
+      <Plugin params={params} errorFallbackProp={errorFallback}>
+        <ChildComponent />
+      </Plugin>
+    </IntlProvider>
+  );
+
   const ExplodingComponent = () => {
-    throw new Error('booyah');
+    throw new Error(error);
   };
 
   const HealthyComponent = () => (
-    <div>Hello World!</div>
+    <div>
+      <FormattedMessage
+        id="hello.world.message.text"
+        defaultMessage="Hello World!"
+        description="greeting the world with a hello"
+      />
+    </div>
   );
 
-  const errorFallback = () => (
+  const errorFallbackComponent = () => (
     <div>
       <p>
-        Oh geez, this is not good at all.
+        <FormattedMessage
+          id="unexpected.error.message.text"
+          defaultMessage="Oh geez, this is not good at all."
+          description="error message when an unexpected error occurs"
+        />
       </p>
       <br />
     </div>
@@ -132,9 +165,10 @@ describe('Plugin', () => {
 
   it('should render children if no error', () => {
     const component = (
-      <Plugin errorFallbackProp={errorFallback}>
-        <HealthyComponent />
-      </Plugin>
+      <PluginPageWrapper
+        errorFallback={errorFallbackComponent}
+        ChildComponent={HealthyComponent}
+      />
     );
     const { container } = render(component);
     expect(container).toHaveTextContent('Hello World!');
@@ -142,16 +176,18 @@ describe('Plugin', () => {
 
   it('should throw an error if the child component fails', () => {
     const component = (
-      <Plugin className="bg-light" errorFallbackProp={errorFallback}>
-        <ExplodingComponent />
-      </Plugin>
+      <PluginPageWrapper
+        className="bg-light"
+        errorFallback={errorFallbackComponent}
+        ChildComponent={ExplodingComponent}
+      />
     );
 
     render(component);
 
     expect(logError).toHaveBeenCalledTimes(1);
     expect(logError).toHaveBeenCalledWith(
-      new Error('booyah'),
+      new Error(error),
       expect.objectContaining({
         stack: expect.stringContaining('ExplodingComponent'),
       }),
@@ -160,9 +196,10 @@ describe('Plugin', () => {
 
   it('should render the passed in fallback component when the error boundary receives a React error', () => {
     const component = (
-      <Plugin errorFallbackProp={errorFallback}>
-        <ExplodingComponent />
-      </Plugin>
+      <PluginPageWrapper
+        errorFallback={errorFallbackComponent}
+        ChildComponent={ExplodingComponent}
+      />
     );
 
     const { container } = render(component);
@@ -171,9 +208,9 @@ describe('Plugin', () => {
 
   it('should render the default fallback component when one is not passed into the Plugin', () => {
     const component = (
-      <Plugin>
-        <ExplodingComponent />
-      </Plugin>
+      <PluginPageWrapper
+        ChildComponent={ExplodingComponent}
+      />
     );
 
     const { container } = render(component);

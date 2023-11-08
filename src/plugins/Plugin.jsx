@@ -7,23 +7,29 @@ import PropTypes from 'prop-types';
 import { ErrorBoundary } from 'react-error-boundary';
 import { logError } from '@edx/frontend-platform/logging';
 import {
+  injectIntl,
+  intlShape,
+} from '@edx/frontend-platform/i18n';
+
+import {
   dispatchMountedEvent, dispatchReadyEvent, dispatchUnmountedEvent, useHostEvent,
 } from './data/hooks';
 import { PLUGIN_RESIZE } from './data/constants';
+import messages from './Plugins.messages';
 
 // TODO: see example-plugin-app/src/PluginOne.jsx for example of customizing errorFallback
-function errorFallbackDefault() {
+function errorFallbackDefault(intl) {
   return (
     <div>
       <h2>
-        Oops! An error occurred. Please refresh the screen to try again.
+        {intl.formatMessage(messages.unexpectedError)}
       </h2>
     </div>
   );
 }
 
 const Plugin = ({
-  children, className, style, ready, errorFallbackProp,
+  children, className, intl, style, ready, errorFallbackProp,
 }) => {
   const [dimensions, setDimensions] = useState({
     width: null,
@@ -67,7 +73,7 @@ const Plugin = ({
   return (
     <div className={className} style={finalStyle}>
       <ErrorBoundary
-        FallbackComponent={errorFallback}
+        FallbackComponent={() => errorFallback(intl)}
         onError={logErrorToService}
       >
         {children}
@@ -76,12 +82,13 @@ const Plugin = ({
   );
 };
 
-export default Plugin;
+export default injectIntl(Plugin);
 
 Plugin.propTypes = {
   children: PropTypes.node.isRequired,
   className: PropTypes.string,
   errorFallbackProp: PropTypes.func,
+  intl: intlShape.isRequired,
   ready: PropTypes.bool,
   style: PropTypes.object, // eslint-disable-line
 };

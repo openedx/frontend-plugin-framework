@@ -4,8 +4,12 @@ import React, { forwardRef } from 'react';
 import classNames from 'classnames';
 import { Spinner } from '@edx/paragon';
 import PropTypes from 'prop-types';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import {
+  injectIntl,
+  intlShape,
+} from '@edx/frontend-platform/i18n';
 
+import messages from './Plugins.messages';
 import { usePluginSlot } from './data/hooks';
 import PluginContainer from './PluginContainer';
 
@@ -22,7 +26,7 @@ const PluginSlot = forwardRef(({
   // TODO: Add internationalization to the "Loading" text on the spinner.
   let finalFallback = (
     <div className={classNames(pluginProps.className, 'd-flex justify-content-center align-items-center')}>
-      <Spinner animation="border" screenReaderText="Loading" />
+      <Spinner animation="border" screenReaderText={intl.formatMessage(messages.loading)} />
     </div>
   );
   if (fallback !== undefined) {
