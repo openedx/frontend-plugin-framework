@@ -117,11 +117,9 @@ describe('Plugin', () => {
     throw new Error('booyah');
   };
 
-  function HealthyComponent() {
-    return (
-      <div>Hello World!</div>
-    );
-  }
+  const HealthyComponent = () => (
+    <div>Hello World!</div>
+  );
 
   const errorFallback = () => (
     <div>

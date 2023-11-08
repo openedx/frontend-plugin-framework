@@ -10,7 +10,7 @@ import {
 } from './data/constants';
 import { pluginConfigShape } from './data/shapes';
 
-export default function PluginContainer({ config, ...props }) {
+const PluginContainer = ({ config, ...props }) => {
   if (config === null) {
     return null;
   }
@@ -30,7 +30,9 @@ export default function PluginContainer({ config, ...props }) {
   return (
     renderer
   );
-}
+};
+
+export default PluginContainer;
 
 PluginContainer.propTypes = {
   config: pluginConfigShape,

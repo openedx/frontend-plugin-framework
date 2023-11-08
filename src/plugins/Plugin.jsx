@@ -22,9 +22,9 @@ function errorFallbackDefault() {
   );
 }
 
-export default function Plugin({
+const Plugin = ({
   children, className, style, ready, errorFallbackProp,
-}) {
+}) => {
   const [dimensions, setDimensions] = useState({
     width: null,
     height: null,
@@ -74,7 +74,9 @@ export default function Plugin({
       </ErrorBoundary>
     </div>
   );
-}
+};
+
+export default Plugin;
 
 Plugin.propTypes = {
   children: PropTypes.node.isRequired,
