@@ -26,12 +26,18 @@ for a component that lives in another MFE (the 'Child MFE') to be plugged into a
 
 Getting Started
 ===============
+1. Add Library Dependency
+-------------------------
+
+Add `@edx/frontend-plugin-framework` to the `package.json` of both Host and Child MFEs.
 
 Micro-frontend configuration document (JS)
 ------------------------------------------
 
 Micro-frontends that would like to use the Plugin Framework need to be configured via a JavaScript configuration
-document and a `pluginSlots` config.  
+document and a `plugins` config. Technically, only the Host MFE would require an `env.config.js` file with a `plugins` config.
+Keep in mind that since any Child MFE can theoretically also contain its own PluginSlot, it will eventually need its own
+JavaScript configuration.
 
   .. code-block::
 
@@ -54,7 +60,7 @@ Host Micro-frontend (JSX)
 -------------------------
 
 Hosts must define PluginSlot components in areas of the UI where they intend to accept extensions.
-The Host MFE, and thus the owners of the Host MFE, are responsible for deciding where it’s acceptable to mount a plugin.
+The Host MFE, and thus the owners of the Host MFE, are responsible for deciding where it is acceptable to mount a plugin.
 They also decide the dimensions, responsiveness/scrolling policy, and whether the slot supports passing any additional
 data to the plugin as part of its contract.
 
@@ -64,7 +70,7 @@ data to the plugin as part of its contract.
       <Route path="/page1">
         <SomeHostContent />
         <PluginSlot
-        id="sidebar"
+        id="sidebar" // as noted in the section above, this `id` is used to pass in Child plugin configuration
         pluginProps={{
           className: 'flex-grow-1',
           title: 'example plugins',
