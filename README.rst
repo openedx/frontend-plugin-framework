@@ -98,7 +98,7 @@ the dimensions available in the host’s PluginSlot.
 It’s notoriously difficult to know in the host application when an iFrame has failed to load.
 Because of security sandboxing, the host isn’t allowed to know the HTTP status of the request or to inspect what was
 loaded, so we have to rely on waiting for a postMessage event from within the iFrame to know it has successfully loaded.
-
+For the fallback content, the Plugin-owning team would pass a fallback component into the Plugin tag that is wrapped around their component, as noted below. Otherwise, a default fallback component would be used.
   .. code-block::
 
     <MyMFE>
