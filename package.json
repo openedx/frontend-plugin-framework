@@ -1,10 +1,10 @@
 {
-  "name": "@edx/frontend-template-application",
+  "name": "@edx/frontend-plugin-framework",
   "version": "0.1.0",
-  "description": "Frontend application template",
+  "description": "Frontend Plugin Framework ",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/openedx/frontend-template-application.git"
+    "url": "git+https://github.com/openedx/frontend-plugin-framework.git"
   },
   "browserslist": [
     "extends @edx/browserslist-config"
@@ -25,12 +25,12 @@
   },
   "author": "edX",
   "license": "AGPL-3.0",
-  "homepage": "https://github.com/openedx/frontend-template-application#readme",
+  "homepage": "https://github.com/openedx/frontend-plugin-framework#readme",
   "publishConfig": {
     "access": "public"
   },
   "bugs": {
-    "url": "https://github.com/openedx/frontend-template-application/issues"
+    "url": "https://github.com/openedx/frontend-plugin-framework/issues"
   },
   "dependencies": {
     "@edx/brand": "npm:@openedx/brand-openedx@^1.2.2",
@@ -43,10 +43,12 @@
     "@fortawesome/free-regular-svg-icons": "5.15.4",
     "@fortawesome/free-solid-svg-icons": "5.15.4",
     "@fortawesome/react-fontawesome": "0.2.0",
+    "classnames": "^2.3.2",
     "core-js": "3.33.1",
     "prop-types": "15.8.1",
     "react": "17.0.2",
     "react-dom": "17.0.2",
+    "react-error-boundary": "^4.0.11",
     "react-redux": "7.2.9",
     "react-router": "6.17.0",
     "react-router-dom": "6.17.0",
@@ -56,7 +58,11 @@
   "devDependencies": {
     "@edx/browserslist-config": "^1.1.1",
     "@edx/frontend-build": "13.0.4",
+    "@edx/frontend-platform": "5.6.1",
     "@edx/reactifex": "^2.1.1",
+    "@testing-library/dom": "^8.20.1",
+    "@testing-library/jest-dom": "^6.1.4",
+    "@testing-library/react": "^12.1.5",
     "glob": "7.2.3",
     "husky": "7.0.4",
     "jest": "29.7.0"

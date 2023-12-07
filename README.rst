@@ -1,122 +1,132 @@
-frontend-template-application
-#############################
+frontend-plugin-framework
+##########################
 
 |license-badge| |status-badge| |ci-badge| |codecov-badge|
 
+.. |license-badge| image:: https://img.shields.io/github/license/openedx/frontend-plugin-framework.svg
+    :target: https://github.com/openedx/frontend-plugin-framework/blob/master/LICENSE
+    :alt: License
+
+.. |status-badge| image:: https://img.shields.io/badge/Status-Maintained-brightgreen
+
+.. |ci-badge| image:: https://github.com/openedx/frontend-plugin-framework/actions/workflows/ci.yml/badge.svg
+    :target: https://github.com/openedx/frontend-plugin-framework/actions/workflows/ci.yml
+    :alt: Continuous Integration
+
+.. |codecov-badge| image:: https://codecov.io/github/openedx/frontend-plugin-framework/coverage.svg?branch=master
+    :target: https://codecov.io/github/openedx/frontend-plugin-framework?branch=master
+    :alt: Codecov
 
 Purpose
-*******
+=======
 
-This repository is a template for Open edX micro-frontend applications. It is
-flagged as a Template Repository, meaning it can be used as a basis for new
-GitHub repositories by clicking the green "Use this template" button above.
-The rest of this document describes how to work with your new micro-frontend
-**after you've created a new repository from the template.**
+This is the Frontend Plugin Framework library. This framework is designed to allow for any type of plugin to be used when
+plugging a child component into a Host MFE. The current plugin that is made available is iFrame-based, which allows
+for a component that lives in another MFE (the 'Child MFE') to be plugged into a Plugin Slot that lives in the 'Host MFE'.
 
 Getting Started
-***************
+===============
+1. Add Library Dependency
+-------------------------
 
-After copying the template repository, you'll want to do a find-and-replace to
-replace all instances of ``frontend-template-application`` with the name of
-your new repository.  Also edit index.html to replace "Application Template"
-with a friendly name for this application that users will see in their browser
-tab.
+Add `@edx/frontend-plugin-framework` to the `package.json` of both Host and Child MFEs.
 
-Prerequisites
-=============
+Micro-frontend configuration document (JS)
+------------------------------------------
 
-The `devstack`_ is currently recommended as a development environment for your
-new MFE.  If you start it with ``make dev.up.lms`` that should give you
-everything you need as a companion to this frontend.
+Micro-frontends that would like to use the Plugin Framework need to be configured via a JavaScript configuration
+document and a `plugins` config. Technically, only the Host MFE would require an `env.config.js` file with a `plugins` config.
+Keep in mind that since any Child MFE can theoretically also contain its own PluginSlot, it will eventually need its own
+JavaScript configuration.
 
-Note that it is also possible to use `Tutor`_ to develop an MFE.  You can refer
-to the `relevant tutor-mfe documentation`_ to get started using it.
+  .. code-block::
 
-.. _Devstack: https://github.com/openedx/devstack
+    const config = {
+      // other existing configuration
+      plugins: {
+        sidebar: {
+          keepDefault: false, // bool to keep default host content
+          plugins: [
+            {
+              url: 'https://plugin.app/plugin1',
+              type: IFRAME_PLUGIN,
+            }
+          ]
+        }
+      }
+    }
 
-.. _Tutor: https://github.com/overhangio/tutor
+Host Micro-frontend (JSX)
+-------------------------
 
-.. _relevant tutor-mfe documentation: https://github.com/overhangio/tutor-mfe#mfe-development
+Hosts must define PluginSlot components in areas of the UI where they intend to accept extensions.
+The Host MFE, and thus the owners of the Host MFE, are responsible for deciding where it is acceptable to mount a plugin.
+They also decide the dimensions, responsiveness/scrolling policy, and whether the slot supports passing any additional
+data to the plugin as part of its contract.
 
-Cloning and Startup
+  .. code-block::
+
+    <HostApp>
+      <Route path="/page1">
+        <SomeHostContent />
+        <PluginSlot
+        id="sidebar" // as noted in the section above, this `id` is used to pass in Child plugin configuration
+        pluginProps={{
+          className: 'flex-grow-1',
+          title: 'example plugins',
+          }}
+          style={{
+          height: 700,
+          }}
+        >
+          <DefaultSlotContent /> // removed if keepDefault is false
+        </PluginSlot>
+      </Route>
+      <Route path="/page2">
+        <OtherRouteContent />
+      </Route>
+    </HostApp>
+
+
+Plugin Micro-frontend (JSX) and Fallback Behavior
+-------------------------------------------------
+
+The plugin MFE is no different than any other MFE except that it defines a Plugin component as a child of a route.
+This component is responsible for communicating (via postMessage) with the host page and resizing its content to match
+the dimensions available in the host’s PluginSlot. 
+
+It’s notoriously difficult to know in the host application when an iFrame has failed to load.
+Because of security sandboxing, the host isn’t allowed to know the HTTP status of the request or to inspect what was
+loaded, so we have to rely on waiting for a postMessage event from within the iFrame to know it has successfully loaded.
+For the fallback content, the Plugin-owning team would pass a fallback component into the Plugin tag that is wrapped around their component, as noted below. Otherwise, a default fallback component would be used.
+  .. code-block::
+
+    <MyMFE>
+      <Route path="/mainContent">
+          <MyMainContent />
+      </Route>
+      <Route path="/plugin1">
+        <Plugin fallbackComponent={<OtherFallback />}>
+          <MyCustomContent />
+        </Plugin>
+      </Route>
+    </MyMFE>
+
+Known Issues
+============
+
+Development Roadmap
 ===================
 
-In the following steps, replace "[PLACEHOLDER]" with the name of the repo you
-created when copying this template above.
+The main priority in developing this library is to extract components from a Host MFE to allow for teams to develop 
+experimental features without impeding on any other team's work or the core functionality of the Host MFE. 
 
-1. Clone your new repo:
+- The first target is to use this framework in Learner Dashboard MFE to extract the Recommendations panel out of the repo.
 
-  ``git clone https://github.com/openedx/frontend-app-[PLACEHOLDER].git``
-
-2. Use node v18.x.
-
-   The current version of the micro-frontend build scripts support node 18.
-   Using other major versions of node *may* work, but this is unsupported.  For
-   convenience, this repository includes an .nvmrc file to help in setting the
-   correct node version via `nvm <https://github.com/nvm-sh/nvm>`_.
-
-3. Install npm dependencies:
-
-  ``cd frontend-app-[PLACEHOLDER] && npm install``
-
-4. Update the application port to use for local development:
-
-   Default port is 8080. If this does not work for you, update the line
-   `PORT=8080` to your port in all .env.* files
-
-5. Start the dev server:
-
-  ``npm start``
-
-The dev server is running at `http://localhost:8080 <http://localhost:8080>`_
-or whatever port you setup.
-
-Making Your New Project's README File
-=====================================
-
-Move ``README-template-frontend-app.rst`` to your project's ``README.rst``
-file. Please fill out all the sections - this helps out all developers
-understand your MFE, how to install it, and how to use it.
-
-Developing
-**********
-
-This section concerns development of ``frontend-template-application`` itself,
-not the templated copy.
-
-It should be noted that one of the goals of this repository is for it to
-function correctly as an MFE (as in ``npm install && npm start``) even if no
-modifications are made.  This ensures that developers get a *practical* working
-example, not just a theoretical one.
-
-This also means, of course, that any committed code should be tested and
-subject to both CI and branch protection rules.
-
-Project Structure
-=================
-
-The source for this project is organized into nested submodules according to
-the `Feature-based Application Organization ADR`_.
-
-.. _Feature-based Application Organization ADR: https://github.com/openedx/frontend-template-application/blob/master/docs/decisions/0002-feature-based-application-organization.rst
-
-Build Process Notes
-===================
-
-**Production Build**
-
-The production build is created with ``npm run build``.
-
-Internationalization
-====================
-
-Please see refer to the `frontend-platform i18n howto`_ for documentation on
-internationalization.
-
-.. _frontend-platform i18n howto: https://github.com/openedx/frontend-platform/blob/master/docs/how_tos/i18n.rst
+- Incorporate other plugin proposals from the Frontend Pluggability Summit in order to provide the most appropriate plugin option for a given component.
 
 Getting Help
-************
+============
 
 If you're having trouble, we have discussion forums at
 https://discuss.openedx.org where you can connect with others in the community.
@@ -129,7 +139,7 @@ channel`_.
 For anything non-trivial, the best path is to open an issue in this repository
 with as many details about the issue you are facing as you can provide.
 
-https://github.com/openedx/frontend-template-application/issues
+https://github.com/openedx/frontend-plugin-framework/issues
 
 For more information about these options, see the `Getting Help`_ page.
 
@@ -139,7 +149,7 @@ For more information about these options, see the `Getting Help`_ page.
 .. _Getting Help: https://openedx.org/getting-help
 
 License
-*******
+=======
 
 The code in this repository is licensed under the AGPLv3 unless otherwise
 noted.
@@ -147,7 +157,7 @@ noted.
 Please see `LICENSE <LICENSE>`_ for details.
 
 Contributing
-************
+============
 
 Contributions are very welcome.  Please read `How To Contribute`_ for details.
 
@@ -161,36 +171,22 @@ You can start a conversation by creating a new issue on this repo summarizing
 your idea.
 
 The Open edX Code of Conduct
-****************************
+============================
 
 All community members are expected to follow the `Open edX Code of Conduct`_.
 
 .. _Open edX Code of Conduct: https://openedx.org/code-of-conduct/
 
 People
-******
+======
 
 The assigned maintainers for this component and other project details may be
 found in `Backstage`_. Backstage pulls this data from the ``catalog-info.yaml``
 file in this repo.
 
-.. _Backstage: https://open-edx-backstage.herokuapp.com/catalog/default/component/frontend-template-application
+.. _Backstage: https://open-edx-backstage.herokuapp.com/catalog/default/component/frontend-plugin-framework
 
 Reporting Security Issues
-*************************
+=========================
 
-Please do not report security issues in public, and email security@openedx.org instead.
-
-.. |license-badge| image:: https://img.shields.io/github/license/openedx/frontend-template-application.svg
-    :target: https://github.com/openedx/frontend-template-application/blob/main/LICENSE
-    :alt: License
-
-.. |status-badge| image:: https://img.shields.io/badge/Status-Maintained-brightgreen
-
-.. |ci-badge| image:: https://github.com/openedx/frontend-template-application/actions/workflows/ci.yml/badge.svg
-    :target: https://github.com/openedx/frontend-template-application/actions/workflows/ci.yml
-    :alt: Continuous Integration
-
-.. |codecov-badge| image:: https://codecov.io/github/openedx/frontend-template-application/coverage.svg?branch=main
-    :target: https://codecov.io/github/openedx/frontend-template-application?branch=main
-    :alt: Codecov
+Please do not report security issues in public.  Email security@openedx.org instead.
