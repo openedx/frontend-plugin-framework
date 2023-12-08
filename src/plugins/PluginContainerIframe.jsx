@@ -43,6 +43,7 @@ const PluginContainerIframe = ({
 
   useEffect(() => {
     if (mounted) {
+      // [NOTE] PLUGIN_RESIZE event is dispatched passing the current width and height of the iframe
       dispatchPluginEvent(iframeElement, {
         type: PLUGIN_RESIZE,
         payload: {
@@ -53,6 +54,7 @@ const PluginContainerIframe = ({
     }
   }, [iframeElement, mounted, width, height, url]);
 
+  // TODO: try to explain how these usePluginEvents are triggered by the dispatching of events
   usePluginEvent(iframeElement, PLUGIN_MOUNTED, () => {
     setMounted(true);
   });

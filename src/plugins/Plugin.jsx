@@ -65,6 +65,11 @@ const Plugin = ({
   }, []);
 
   useEffect(() => {
+    // TODO: find out where "ready" comes from
+    // [NOTE] ready defaults to "true", it is unclear if anything ever makes it false
+    // Is this here to ensure that the global parent loads before attempting to load iFrames?
+    // If so, is this what sets the URL dynamically? avoiding long load times?
+    // ????
     if (ready) {
       dispatchReadyEvent();
     }
