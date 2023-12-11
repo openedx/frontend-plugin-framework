@@ -13,3 +13,10 @@ export {
 export {
   IFRAME_PLUGIN,
 } from './data/constants';
+export {
+  UiChangeOperation,
+  defaultRender,
+  DefaultUiSlot,
+  UiPluginsContext,
+  UiSlot,
+} from './UiPlugin';
