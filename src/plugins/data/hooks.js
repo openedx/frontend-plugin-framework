@@ -26,7 +26,7 @@ export function usePluginSlot(id) {
  * @param {Function} callback Function to call when the event is triggered
  */
 export function useMessageEvent(srcWindow, type, callback) {
-  // useLayoutEffect is called before the browswer repaints the screen
+  // useLayoutEffect is called before the browser repaints the screen
   useLayoutEffect(() => {
     // Create a listener callback function 
     const listener = (event) => {
@@ -129,24 +129,28 @@ export function dispatchUnmountedEvent() {
  * Used to determine the size of an element as it is being resized in the browser. 
  * ResizeObserver (https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver) is used to maintain a reference to the element's content/border box.
  * 
- * @returns Memoized value that contains a reference to the wrapper element of the component that this hook is called inside
+ * @returns Memoized value that contains a reference to the Plugin element (eg. iframe)
  */
 export function useElementSize() {
+  // Holds a reference to the ResizeObserver
   const observerRef = useRef();
 
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [offset, setOffset] = useState({ x: 0, y: 0 });
 
+  // Reference to the Plugin element (eg. <iframe>)
   const [element, setElement] = useState(null);
 
-  // TODO: how does this get a reference to element????
+  // Sets a reference to the Plugin element when passed to the Plugin element as a "ref" attribute (eg. <iframe>)
   const measuredRef = useCallback(_element => {
     setElement(_element);
   }, []);
 
   useEffect(() => {
+    // Create a new ResizeObserver and assign it to "observerRef"
     observerRef.current = new ResizeObserver(() => {
       if (element) {
+        // Set dimensions and any offset
         setDimensions({
           width: element.clientWidth,
           height: element.clientHeight,
@@ -158,6 +162,7 @@ export function useElementSize() {
       }
     });
     if (element) {
+      // Tell the ResizeObserver to start watching the element — this is what detects any resizing
       observerRef.current.observe(element);
     }
   }, [element]);
