@@ -8,6 +8,12 @@ import {
 import { getConfig } from '@edx/frontend-platform';
 import { PLUGIN_MOUNTED, PLUGIN_READY, PLUGIN_UNMOUNTED } from './constants';
 
+/**
+ * Called by PluginSlot to extract a list of plugins based on the JS configuration
+ * 
+ * @param {String} id Name of PluginSlot
+ * @returns {Object} JS configuration for the PluginSlot
+ */
 export function usePluginSlot(id) {
   if (getConfig().plugins[id] !== undefined) {
     return getConfig().plugins[id];
@@ -75,7 +81,7 @@ export function usePluginEvent(element, type, callback) {
 /** Dispatching events */
 
 /**
- * Serves as a base dispatching function, called by dispatchHostEvent and dispatchPluginEvent. 
+ * Serves as a base dispatch function, called by dispatchHostEvent and dispatchPluginEvent.
  * Uses the `postMessage` method to enable cross-origin communication between Window objects
  * 
  * @param {Object} targetWindow Window that the message event is being dispatched to
@@ -100,7 +106,6 @@ export function dispatchMessageEvent(targetWindow, message, targetOrigin) {
 export function dispatchPluginEvent(element, message, targetOrigin) {
   dispatchMessageEvent(element.contentWindow, message, targetOrigin);
 }
-
 
 /**
  * Used by Plugin to dispatch an event to the Host
