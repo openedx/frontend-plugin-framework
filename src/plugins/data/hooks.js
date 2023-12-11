@@ -97,7 +97,7 @@ export function dispatchMessageEvent(targetWindow, message, targetOrigin) {
 }
 
 /**
- * Used to dispatch events to a Plugin
+ * Used to dispatch events for a Plugin
  * 
  * @param {Object} element Wrapper for the Plugin
  * @param {Object} message Data object for the message
@@ -108,7 +108,7 @@ export function dispatchPluginEvent(element, message, targetOrigin) {
 }
 
 /**
- * Used by Plugin to dispatch an event to the Host
+ * Used by Plugin to dispatch an event for the Host
  * 
  * @param {Object} message Data object for the message
  */
