@@ -1,3 +1,7 @@
+/**
+ * Hooks file that exports various functions to handle the communication between a Plugin and its Host
+ */
+
 import {
   useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState,
 } from 'react';
@@ -11,48 +15,73 @@ export function usePluginSlot(id) {
   return { keepDefault: true, plugins: [] };
 }
 
-// [NOTE] Listening for events
+/* Listening for events */
 
-// [NOTE] Hook used to listen for events in below functions
+/**
+ * Dynamically add an event listener to the provided the source window. 
+ * The source window can be the global parent (ie. the "window" object in the browser) or it can be the content window of an individual element (ie. iFrame plugin container)
+ * 
+ * @param {Object} srcWindow Window object that the event originates from
+ * @param {String} type Event type (eg. PLUGIN_RESIZE)
+ * @param {Function} callback Function to call when the event is triggered
+ */
 export function useMessageEvent(srcWindow, type, callback) {
-  // [NOTE] useLayoutEffect is called before the browswer repaints the screen (React docs: https://react.dev/reference/react/useLayoutEffect)
+  // useLayoutEffect is called before the browswer repaints the screen
   useLayoutEffect(() => {
-    // [NOTE] Create a listener callback function 
+    // Create a listener callback function 
     const listener = (event) => {
       // Filter messages to those from our source window.
-      // [NOTE] the "source window" is determined by the below useHostEvent and usePluginEvent functions
+      // NOTE: the "srcWindow" is determined by the below useHostEvent and usePluginEvent functions
       if (event.source === srcWindow) {
-        // [NOTE] Fire callback if the type from the listened event is a match to the type from the message event
+        // Fire callback if the type from the listened event matches the type from the message event
         if (event.data.type === type) {
           callback({ type, payload: event.data.payload });
         }
       }
     };
-    // [NOTE] Add the listener if the srcWindow is not null
+    // Add the listener to the global object if the srcWindow is not null
     if (srcWindow !== null) {
       global.addEventListener('message', listener);
     }
-    // [NOTE] Cleanup function
+    // useEffect cleanup
     return () => {
       global.removeEventListener('message', listener);
     };
   }, [srcWindow, type, callback]);
 }
 
-// [NOTE] Used by Plugin component to use a PLUGIN_RESIZE event
+/**
+ * Called by the Plugin component to use events that were listened to (ie. PLUGIN_RESIZE)
+ * 
+ * @param {String} type Event type (eg. PLUGIN_RESIZE)
+ * @param {Function} callback Function to call when the event is triggered
+ */
 export function useHostEvent(type, callback) {
   useMessageEvent(global.parent, type, callback);
 }
 
-// [NOTE] Used by PluginContainerIframe
-export function usePluginEvent(iframeElement, type, callback) {
-  const contentWindow = iframeElement ? iframeElement.contentWindow : null;
+/**
+ * Called by the PluginContainer{TYPE} components to listen for events from the wrapped Plugin
+ * 
+ * @param {Object} element Wrapper element for the Plugin
+ * @param {String} type Event type (eg. PLUGIN_RESIZE)
+ * @param {Function} callback Function to call when the event is triggered
+ */
+export function usePluginEvent(element, type, callback) {
+  const contentWindow = element ? element.contentWindow : null;
   useMessageEvent(contentWindow, type, callback);
 }
 
-// [NOTE] Dispatching events
+/** Dispatching events */
 
-// [NOTE] Called by dispatchHostEvent and dispatchPluginEvent
+/**
+ * Serves as a base dispatching function, called by dispatchHostEvent and dispatchPluginEvent. 
+ * Uses the `postMessage` method to enable cross-origin communication between Window objects
+ * 
+ * @param {Object} targetWindow Window that the message event is being dispatched to
+ * @param {Object} message Data object for the message
+ * @param {String} targetOrigin URL for the window that the message event is being dispatched from
+ */
 export function dispatchMessageEvent(targetWindow, message, targetOrigin) {
   // Checking targetOrigin falsiness here since '', null or undefined would all be reasons not to
   // try to post a message to the origin.
@@ -61,31 +90,47 @@ export function dispatchMessageEvent(targetWindow, message, targetOrigin) {
   }
 }
 
-// [NOTE] Called inside PluginContainerIframe to dispatch a PLUGIN_RESIZE event
-export function dispatchPluginEvent(iframeElement, message, targetOrigin) {
-  dispatchMessageEvent(iframeElement.contentWindow, message, targetOrigin);
+/**
+ * Used to dispatch events to a Plugin
+ * 
+ * @param {Object} element Wrapper for the Plugin
+ * @param {Object} message Data object for the message
+ * @param {String} targetOrigin URL for the window that the message event is being dispatched from
+ */
+export function dispatchPluginEvent(element, message, targetOrigin) {
+  dispatchMessageEvent(element.contentWindow, message, targetOrigin);
 }
 
-// [NOTE] Called by below dispatch functions
+
+/**
+ * Used by Plugin to dispatch an event to the Host
+ * 
+ * @param {Object} message Data object for the message
+ */
 export function dispatchHostEvent(message) {
   dispatchMessageEvent(global.parent, message, global.document.referrer);
 }
 
-// [NOTE] Called inside Plugin when 'ready' prop is true
+// Called inside Plugin when 'ready' prop is true
 export function dispatchReadyEvent() {
   dispatchHostEvent({ type: PLUGIN_READY });
 }
 
-// [NOTE] Called inside Plugin after rendering in a useEffect with [] dependencies — https://react.dev/learn/synchronizing-with-effects
+// Below mounted events are called inside Plugin in a useEffect with [] dependencies — https://react.dev/learn/synchronizing-with-effects
 export function dispatchMountedEvent() {
   dispatchHostEvent({ type: PLUGIN_MOUNTED });
 }
 
-// [NOTE] called inside return of the same useEffect as above to cleanup
 export function dispatchUnmountedEvent() {
   dispatchHostEvent({ type: PLUGIN_UNMOUNTED });
 }
 
+/**
+ * Used to determine the size of an element as it is being resized in the browser. 
+ * ResizeObserver (https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver) is used to maintain a reference to the element's content/border box.
+ * 
+ * @returns Memoized value that contains a reference to the wrapper element of the component that this hook is called inside
+ */
 export function useElementSize() {
   const observerRef = useRef();
 
@@ -94,7 +139,7 @@ export function useElementSize() {
 
   const [element, setElement] = useState(null);
 
-  // ????
+  // TODO: how does this get a reference to element????
   const measuredRef = useCallback(_element => {
     setElement(_element);
   }, []);
