@@ -60,8 +60,8 @@ export function useMessageEvent(srcWindow, type, callback) {
 /**
  * Called by the Plugin component to use events that were listened to (ie. PLUGIN_RESIZE)
  *
- * @param {String} type Event name (eg. PLUGIN_RESIZE)
- * @param {Function} callback Function to call when the event is triggered
+ * @param {String} type - Event name (eg. PLUGIN_RESIZE)
+ * @param {Function} callback - Called when the event is triggered
  */
 export function useHostEvent(type, callback) {
   useMessageEvent(global.parent, type, callback);
