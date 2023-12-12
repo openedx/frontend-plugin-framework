@@ -11,8 +11,8 @@ import { PLUGIN_MOUNTED, PLUGIN_READY, PLUGIN_UNMOUNTED } from './constants';
 /**
  * Called by PluginSlot to extract a list of plugins based on the JS configuration
  *
- * @param {String} id Name of PluginSlot
- * @returns {Object} JS configuration for the PluginSlot
+ * @param {String} id - Name of PluginSlot
+ * @returns {Object} - JS configuration for the PluginSlot
  */
 export function usePluginSlot(id) {
   if (getConfig().plugins[id] !== undefined) {
@@ -28,9 +28,9 @@ export function usePluginSlot(id) {
  * The source window can be the global parent (ie. the "window" object in the browser)
  * or it can be the content window of an individual element (ie. iFrame plugin container)
  *
- * @param {Object} srcWindow Window object that the event originates from
- * @param {String} type Event type (eg. PLUGIN_RESIZE)
- * @param {Function} callback Function to call when the event is triggered
+ * @param {Object} srcWindow - Window object that the event originates from
+ * @param {String} type - Event name (eg. PLUGIN_RESIZE)
+ * @param {Function} callback - Called when the event is triggered
  */
 export function useMessageEvent(srcWindow, type, callback) {
   // useLayoutEffect is called before the browser repaints the screen
@@ -60,7 +60,7 @@ export function useMessageEvent(srcWindow, type, callback) {
 /**
  * Called by the Plugin component to use events that were listened to (ie. PLUGIN_RESIZE)
  *
- * @param {String} type Event type (eg. PLUGIN_RESIZE)
+ * @param {String} type Event name (eg. PLUGIN_RESIZE)
  * @param {Function} callback Function to call when the event is triggered
  */
 export function useHostEvent(type, callback) {
@@ -70,9 +70,9 @@ export function useHostEvent(type, callback) {
 /**
  * Used to listen for events from a wrapped Plugin element (eg. PluginContainerIframe)
  *
- * @param {Object} element Wrapper element for the Plugin
- * @param {String} type Event type (eg. PLUGIN_RESIZE)
- * @param {Function} callback Function to call when the event is triggered
+ * @param {Object} element - Plugin element (eg. <iframe>)
+ * @param {String} type - Event type (eg. PLUGIN_RESIZE)
+ * @param {Function} callback - Function to call when the event is triggered
  */
 export function usePluginEvent(element, type, callback) {
   const contentWindow = element ? element.contentWindow : null;
@@ -85,9 +85,9 @@ export function usePluginEvent(element, type, callback) {
  * Base dispatch function called by dispatchHostEvent and dispatchPluginEvent.
  * Uses the `postMessage` method to enable cross-origin communication between Window objects
  *
- * @param {Object} targetWindow Window that the message event is being dispatched to
- * @param {Object} message Data object for the message
- * @param {String} targetOrigin URL for the window that the message event is being dispatched from
+ * @param {Object} targetWindow - Window that the message event is being dispatched to
+ * @param {Object} message - Data object for the message
+ * @param {String} targetOrigin - URL for the window that the message event is being dispatched from
  */
 export function dispatchMessageEvent(targetWindow, message, targetOrigin) {
   /** Checking targetOrigin falsiness here since '', null or undefined would all be
@@ -101,9 +101,9 @@ export function dispatchMessageEvent(targetWindow, message, targetOrigin) {
 /**
  * Used to dispatch events for a Plugin
  *
- * @param {Object} element Wrapper for the Plugin
- * @param {Object} message Data object for the message
- * @param {String} targetOrigin URL for the window that the message event is being dispatched from
+ * @param {Object} element - Plugin element (eg. <iframe>)
+ * @param {Object} message - Data object for the message
+ * @param {String} targetOrigin - URL for the window that the message event is being dispatched from
  */
 export function dispatchPluginEvent(element, message, targetOrigin) {
   dispatchMessageEvent(element.contentWindow, message, targetOrigin);
@@ -112,7 +112,7 @@ export function dispatchPluginEvent(element, message, targetOrigin) {
 /**
  * Used to dispatch events for the Host
  *
- * @param {Object} message Data object for the message
+ * @param {Object} message - Data object for the message
  */
 export function dispatchHostEvent(message) {
   dispatchMessageEvent(global.parent, message, global.document.referrer);
