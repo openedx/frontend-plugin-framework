@@ -10,7 +10,7 @@ import { PLUGIN_MOUNTED, PLUGIN_READY, PLUGIN_UNMOUNTED } from './constants';
 
 /**
  * Called by PluginSlot to extract a list of plugins based on the JS configuration
- * 
+ *
  * @param {String} id Name of PluginSlot
  * @returns {Object} JS configuration for the PluginSlot
  */
@@ -24,9 +24,10 @@ export function usePluginSlot(id) {
 /* Listening for events */
 
 /**
- * Dynamically add an event listener to the provided the source window. 
- * The source window can be the global parent (ie. the "window" object in the browser) or it can be the content window of an individual element (ie. iFrame plugin container)
- * 
+ * Dynamically add an event listener to the provided the source window.
+ * The source window can be the global parent (ie. the "window" object in the browser)
+ * or it can be the content window of an individual element (ie. iFrame plugin container)
+ *
  * @param {Object} srcWindow Window object that the event originates from
  * @param {String} type Event type (eg. PLUGIN_RESIZE)
  * @param {Function} callback Function to call when the event is triggered
@@ -34,7 +35,7 @@ export function usePluginSlot(id) {
 export function useMessageEvent(srcWindow, type, callback) {
   // useLayoutEffect is called before the browser repaints the screen
   useLayoutEffect(() => {
-    // Create a listener callback function 
+    // Create a listener callback function
     const listener = (event) => {
       // Filter messages to those from our source window.
       // NOTE: the "srcWindow" is determined by the below useHostEvent and usePluginEvent functions
@@ -58,7 +59,7 @@ export function useMessageEvent(srcWindow, type, callback) {
 
 /**
  * Called by the Plugin component to use events that were listened to (ie. PLUGIN_RESIZE)
- * 
+ *
  * @param {String} type Event type (eg. PLUGIN_RESIZE)
  * @param {Function} callback Function to call when the event is triggered
  */
@@ -68,7 +69,7 @@ export function useHostEvent(type, callback) {
 
 /**
  * Used to listen for events from a wrapped Plugin element (eg. PluginContainerIframe)
- * 
+ *
  * @param {Object} element Wrapper element for the Plugin
  * @param {String} type Event type (eg. PLUGIN_RESIZE)
  * @param {Function} callback Function to call when the event is triggered
@@ -83,13 +84,15 @@ export function usePluginEvent(element, type, callback) {
 /**
  * Base dispatch function called by dispatchHostEvent and dispatchPluginEvent.
  * Uses the `postMessage` method to enable cross-origin communication between Window objects
- * 
+ *
  * @param {Object} targetWindow Window that the message event is being dispatched to
  * @param {Object} message Data object for the message
  * @param {String} targetOrigin URL for the window that the message event is being dispatched from
  */
 export function dispatchMessageEvent(targetWindow, message, targetOrigin) {
-  /** Checking targetOrigin falsiness here since '', null or undefined would all be reasons not to try to post a message to the origin. */ 
+  /** Checking targetOrigin falsiness here since '', null or undefined would all be
+   * reasons not to try to post a message to the origin.
+   */
   if (targetOrigin) {
     targetWindow.postMessage(message, targetOrigin);
   }
@@ -97,7 +100,7 @@ export function dispatchMessageEvent(targetWindow, message, targetOrigin) {
 
 /**
  * Used to dispatch events for a Plugin
- * 
+ *
  * @param {Object} element Wrapper for the Plugin
  * @param {Object} message Data object for the message
  * @param {String} targetOrigin URL for the window that the message event is being dispatched from
@@ -108,7 +111,7 @@ export function dispatchPluginEvent(element, message, targetOrigin) {
 
 /**
  * Used to dispatch events for the Host
- * 
+ *
  * @param {Object} message Data object for the message
  */
 export function dispatchHostEvent(message) {
@@ -130,9 +133,9 @@ export function dispatchUnmountedEvent() {
 }
 
 /**
- * Used to determine the size of an element as it is being resized in the browser. 
+ * Used to determine the size of an element as it is being resized in the browser.
  * ResizeObserver (https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver) is used to maintain a reference to the element's content/border box.
- * 
+ *
  * @returns Memoized value that contains a reference to the Plugin element (eg. iframe)
  */
 export function useElementSize() {
