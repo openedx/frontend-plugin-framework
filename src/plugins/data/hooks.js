@@ -24,7 +24,7 @@ export function usePluginSlot(id) {
 /* Listening for events */
 
 /**
- * Dynamically add an event listener to the provided the source window.
+ * Dynamically add an event listener to the provided source window.
  * The source window can be the global parent (ie. the "window" object in the browser)
  * or it can be the content window of an individual element (ie. iFrame plugin container)
  *
@@ -123,7 +123,7 @@ export function dispatchReadyEvent() {
   dispatchHostEvent({ type: PLUGIN_READY });
 }
 
-// Below mounted events are called inside Plugin in a useEffect with [] dependencies — https://react.dev/learn/synchronizing-with-effects
+// Below mounted events are called in a useEffect inside Plugin with [] dependencies — https://react.dev/learn/synchronizing-with-effects
 export function dispatchMountedEvent() {
   dispatchHostEvent({ type: PLUGIN_MOUNTED });
 }
@@ -169,7 +169,7 @@ export function useElementSize() {
       }
     });
     if (element) {
-      // Tell the ResizeObserver to start watching the element — this is enables the hook to detect resizing
+      // Tell the ResizeObserver to start watching the element — this enables the hook to detect resizing
       observerRef.current.observe(element);
     }
   }, [element]);
