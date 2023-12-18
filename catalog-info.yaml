@@ -4,7 +4,7 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: "frontend-template-application"
+  name: "frontend-plugin-framework"
   description: "A template for Open edX micro-frontend applications."
   links:
     - url: "https://github.com/openedx/frontend-template-application/blob/master/README.rst"
