@@ -24,13 +24,8 @@ const ErrorFallbackDefault = ({ intl }) => (
     </h2>
   </div>
 );
-// NOTES:
-// I changed the errorFallBackProp to ErrorFallbackComponent
-// It is now capitalized to signify that it is a react component
-// The name is changed for the same reason
-// The reason why I wanted to make this clear is because the <ErrorBoundary /> component
-// from frontend-platform wouldn't render anything unless it was provided
-// as a React Component (ie. <ErrorFallback />) see this below in the final render of <Plugin />
+
+// TODO: find out where "ready" comes from
 const Plugin = ({
   children, className, intl, style, ready, ErrorFallbackComponent,
 }) => {
@@ -46,7 +41,6 @@ const Plugin = ({
 
   // Need to confirm: When an error is caught here, the logging will be sent to the child MFE's logging service
 
-  // NOTES: capitalized here for same reason — it's not necessary but helps devs remember
   const ErrorFallback = ErrorFallbackComponent || ErrorFallbackDefault;
 
   useHostEvent(PLUGIN_RESIZE, ({ payload }) => {
@@ -65,6 +59,7 @@ const Plugin = ({
   }, []);
 
   useEffect(() => {
+    // TODO: find out where "ready" comes from and when it would be true
     if (ready) {
       dispatchReadyEvent();
     }
@@ -73,11 +68,8 @@ const Plugin = ({
   return (
     <div className={className} style={finalStyle}>
       <ErrorBoundary
-      // NOTES:
-      // If the prop provided here is not in React Component format (<ComponentName ...props />)
-      // then it won't be rendered to the page
-      // TODO: update frontend-platform code to refactor this
-      // or include info in docs somewhere
+      // Must be React Component format (<ComponentName ...props />) or it won't render
+      // TODO: update frontend-platform code to refactor <ErrorBoundary /> or include info in docs somewhere
         fallbackComponent={<ErrorFallback intl={intl} />}
       >
         {children}

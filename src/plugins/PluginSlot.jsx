@@ -21,17 +21,6 @@ const PluginSlot = forwardRef(({
   */
   const { plugins, keepDefault } = usePluginSlot(id);
 
-  // NOTES:
-  // This is now "loadingFallback" to better show what it is used for
-  // This fallback will be rendered the page while the PLUGIN_READY value is false
-  // PLUGIN_READY event is fired when the Plugin component mounts
-  // If no components wrapped in Plugin are provided in the iframed component, this event will never fire
-  // And thus the spinner will remain on the screen with no indication to the viewer
-  // This is important to note when creating Plugins — perhaps a PluginWrapper component should be encouraged?
-  // Similar to what is used in the test files
-  // This is also what happens with errors handled by ErrorBoundary —
-  // If the code that errors is not wrapped in a Plugin component,
-  // then the error will bubble up to the ErrorBoundary in AppProvider (every MFE is wrapped in <AppProvider />)
   const { loadingFallback } = pluginProps;
 
   const defaultLoadingFallback = (
