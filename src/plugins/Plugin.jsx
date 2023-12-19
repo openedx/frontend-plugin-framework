@@ -4,8 +4,7 @@ import React, {
   useEffect, useMemo, useState,
 } from 'react';
 import PropTypes from 'prop-types';
-import { ErrorBoundary } from 'react-error-boundary';
-import { logError } from '@edx/frontend-platform/logging';
+import { ErrorBoundary } from '@edx/frontend-platform/react';
 import {
   injectIntl,
   intlShape,
@@ -17,19 +16,18 @@ import {
 import { PLUGIN_RESIZE } from './data/constants';
 import messages from './Plugins.messages';
 
-// TODO: see example-plugin-app/src/PluginOne.jsx for example of customizing errorFallback
-function errorFallbackDefault(intl) {
-  return (
-    <div>
-      <h2>
-        {intl.formatMessage(messages.unexpectedError)}
-      </h2>
-    </div>
-  );
-}
+// TODO: create example-plugin-app/src/PluginOne.jsx for example of customizing errorFallback
+const ErrorFallbackDefault = ({ intl }) => (
+  <div>
+    <h2>
+      {intl.formatMessage(messages.unexpectedError)}
+    </h2>
+  </div>
+);
 
+// TODO: find out where "ready" comes from
 const Plugin = ({
-  children, className, intl, style, ready, errorFallbackProp,
+  children, className, intl, style, ready, ErrorFallbackComponent,
 }) => {
   const [dimensions, setDimensions] = useState({
     width: null,
@@ -41,13 +39,9 @@ const Plugin = ({
     ...style,
   }), [dimensions, style]);
 
-  const errorFallback = errorFallbackProp || errorFallbackDefault;
-
-  // Error logging function
   // Need to confirm: When an error is caught here, the logging will be sent to the child MFE's logging service
-  const logErrorToService = (error, info) => {
-    logError(error, { stack: info.componentStack });
-  };
+
+  const ErrorFallback = ErrorFallbackComponent || ErrorFallbackDefault;
 
   useHostEvent(PLUGIN_RESIZE, ({ payload }) => {
     setDimensions({
@@ -65,6 +59,7 @@ const Plugin = ({
   }, []);
 
   useEffect(() => {
+    // TODO: find out where "ready" comes from and when it would be true
     if (ready) {
       dispatchReadyEvent();
     }
@@ -73,8 +68,9 @@ const Plugin = ({
   return (
     <div className={className} style={finalStyle}>
       <ErrorBoundary
-        FallbackComponent={() => errorFallback(intl)}
-        onError={logErrorToService}
+      // Must be React Component format (<ComponentName ...props />) or it won't render
+      // TODO: update frontend-platform code to refactor <ErrorBoundary /> or include info in docs somewhere
+        fallbackComponent={<ErrorFallback intl={intl} />}
       >
         {children}
       </ErrorBoundary>
@@ -87,7 +83,7 @@ export default injectIntl(Plugin);
 Plugin.propTypes = {
   children: PropTypes.node.isRequired,
   className: PropTypes.string,
-  errorFallbackProp: PropTypes.func,
+  ErrorFallbackComponent: PropTypes.func,
   intl: intlShape.isRequired,
   ready: PropTypes.bool,
   style: PropTypes.object, // eslint-disable-line
@@ -95,7 +91,11 @@ Plugin.propTypes = {
 
 Plugin.defaultProps = {
   className: null,
-  errorFallbackProp: null,
+  ErrorFallbackComponent: null,
   style: {},
   ready: true,
+};
+
+ErrorFallbackDefault.propTypes = {
+  intl: intlShape.isRequired,
 };

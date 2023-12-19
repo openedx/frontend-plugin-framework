@@ -64,7 +64,7 @@ describe('PluginContainer', () => {
     expect(iframeElement.attributes.getNamedItem('scrolling').value).toEqual('auto');
     expect(iframeElement.attributes.getNamedItem('title').value).toEqual(title);
     // The component isn't ready, since the class has 'd-none'
-    expect(iframeElement.attributes.getNamedItem('class').value).toEqual('border border-0 d-none');
+    expect(iframeElement.attributes.getNamedItem('class').value).toEqual('border border-0 w-100 d-none');
 
     jest.spyOn(iframeElement.contentWindow, 'postMessage');
 
@@ -97,7 +97,7 @@ describe('PluginContainer', () => {
     readyEvent.source = iframeElement.contentWindow;
     fireEvent(window, readyEvent);
 
-    expect(iframeElement.attributes.getNamedItem('class').value).toEqual('border border-0');
+    expect(iframeElement.attributes.getNamedItem('class').value).toEqual('border border-0 w-100');
   });
 });
 
@@ -127,10 +127,10 @@ describe('Plugin', () => {
   });
 
   const PluginPageWrapper = ({
-    params, errorFallback, ChildComponent,
+    params, ErrorFallbackComponent, ChildComponent,
   }) => (
     <IntlProvider locale="en">
-      <Plugin params={params} errorFallbackProp={errorFallback}>
+      <Plugin params={params} ErrorFallbackComponent={ErrorFallbackComponent}>
         <ChildComponent />
       </Plugin>
     </IntlProvider>
@@ -150,7 +150,7 @@ describe('Plugin', () => {
     </div>
   );
 
-  const errorFallbackComponent = () => (
+  const ErrorFallbackComponent = () => (
     <div>
       <p>
         <FormattedMessage
@@ -166,7 +166,7 @@ describe('Plugin', () => {
   it('should render children if no error', () => {
     const component = (
       <PluginPageWrapper
-        errorFallback={errorFallbackComponent}
+        ErrorFallbackComponent={ErrorFallbackComponent}
         ChildComponent={HealthyComponent}
       />
     );
@@ -178,7 +178,7 @@ describe('Plugin', () => {
     const component = (
       <PluginPageWrapper
         className="bg-light"
-        errorFallback={errorFallbackComponent}
+        ErrorFallbackComponent={ErrorFallbackComponent}
         ChildComponent={ExplodingComponent}
       />
     );
@@ -197,7 +197,7 @@ describe('Plugin', () => {
   it('should render the passed in fallback component when the error boundary receives a React error', () => {
     const component = (
       <PluginPageWrapper
-        errorFallback={errorFallbackComponent}
+        ErrorFallbackComponent={ErrorFallbackComponent}
         ChildComponent={ExplodingComponent}
       />
     );

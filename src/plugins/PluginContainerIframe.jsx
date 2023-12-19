@@ -71,7 +71,7 @@ const PluginContainerIframe = ({
         scrolling={scrolling}
         referrerPolicy="origin" // The sent referrer will be limited to the origin of the referring page: its scheme, host, and port.
         className={classNames(
-          'border border-0',
+          'border border-0 w-100',
           { 'd-none': !ready },
           className,
         )}

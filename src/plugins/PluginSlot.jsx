@@ -21,17 +21,14 @@ const PluginSlot = forwardRef(({
   */
   const { plugins, keepDefault } = usePluginSlot(id);
 
-  const { fallback } = pluginProps;
+  const { loadingFallback } = pluginProps;
 
-  // TODO: Add internationalization to the "Loading" text on the spinner.
-  let finalFallback = (
+  const defaultLoadingFallback = (
     <div className={classNames(pluginProps.className, 'd-flex justify-content-center align-items-center')}>
       <Spinner animation="border" screenReaderText={intl.formatMessage(messages.loading)} />
     </div>
   );
-  if (fallback !== undefined) {
-    finalFallback = fallback;
-  }
+  const finalLoadingFallback = loadingFallback !== undefined ? loadingFallback : defaultLoadingFallback;
 
   let finalChildren = [];
   if (plugins.length > 0) {
@@ -43,7 +40,7 @@ const PluginSlot = forwardRef(({
         <PluginContainer
           key={pluginConfig.url}
           config={pluginConfig}
-          fallback={finalFallback}
+          fallback={finalLoadingFallback}
           {...pluginProps}
         />,
       );
