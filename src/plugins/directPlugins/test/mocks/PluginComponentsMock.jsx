@@ -1,7 +1,9 @@
 /* eslint-disable react/prop-types */
 // eslint-disable-next-line import/no-extraneous-dependencies
 import React from 'react';
-import { House, Star, InsertDriveFile, Login } from '@edx/paragon/icons';
+import {
+  House, Star, InsertDriveFile, Login,
+} from '@edx/paragon/icons';
 import { DirectPluginOperations } from '../..';
 
 /** This is for us to be able to mock in tests */
@@ -14,7 +16,7 @@ const HideExceptForAdmin = ({ widget }) => {
 };
 
 const navLinksPlugin = {
-  id: 'links-demo', // id isn't used anywhere, but can be extended to 
+  id: 'links-demo', // id isn't used anywhere, but can be extended to
   defaultComponentProps: [
     {
       id: 'home',

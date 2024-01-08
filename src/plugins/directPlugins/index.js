@@ -1,7 +1,10 @@
 export {
   DirectPluginSlot,
-  DirectPluginsContext,
 } from './DirectPluginSlot';
 export {
+  DirectPluginsContext,
   DirectPluginOperations,
 } from './DirectPlugin';
+export {
+  useGetPlugins,
+} from './hooks';
