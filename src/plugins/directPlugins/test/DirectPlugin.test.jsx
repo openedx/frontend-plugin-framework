@@ -10,8 +10,10 @@
 //   FormattedMessage,
 //   IntlProvider,
 // } from '@edx/frontend-platform/i18n';
+// import { Login } from '@edx/paragon/icons';
 
 // import { isAdminHelper, navLinksPlugin } from './mocks/PluginComponentsMock';
+// import { DirectPluginOperations, usePreparePlugins } from '../DirectPlugin';
 
 /*
 test for
@@ -23,20 +25,6 @@ when using wrap (use plugin components mock for this), plugin renders based on c
 when using wrap, plugin has wrapped component (refer to classname)
 */
 
-describe('When given a pluginConfig', () => {
-  describe('when there is no defaultContent', () => {
-    it('should return an empty array when there are no changes', () => {
-    });
-    it('should return an array of only new plugins inserted', () => {
+// describe('When given a pluginConfig', () => {
 
-    });
-  });
-  describe('when there is defaultContent', () => {
-    it('should return the same default plugins if no changes', () => {
-
-    });
-    it('should return an array with each plugin including property "hidden" if operation is Hidden', () => {
-
-    });
-  });
-});
+// });
