@@ -1,4 +1,4 @@
-// import React from 'react';
+import React from 'react';
 import '@testing-library/jest-dom';
 
 import * as hooks from '../hooks';
@@ -6,11 +6,27 @@ import { DirectPluginOperations } from '../DirectPlugin';
 
 jest.unmock('../hooks');
 
-let mockEnabledPlugins = [
+const mockModifyComponent = (widget) => {
+  const newContent = {
+    url: '/search',
+    label: 'Search',
+  };
+  const modifiedWidget = widget;
+  modifiedWidget.content = newContent;
+  return modifiedWidget;
+};
+
+/** This is a React widget that wraps its children and makes them visible only to administrators */
+function mockWrapComponent({ widget }) {
+  const isAdmin = true;
+  return isAdmin ? widget : null;
+}
+
+const mockEnabledPlugins = [
   {
     op: DirectPluginOperations.Wrap,
     widgetId: 'drafts',
-    wrapper: jest.fn(),
+    wrapper: mockWrapComponent,
   },
   {
     op: DirectPluginOperations.Hide,
@@ -19,7 +35,7 @@ let mockEnabledPlugins = [
   {
     op: DirectPluginOperations.Modify,
     widgetId: 'lookUp',
-    fn: jest.fn((widget) => widget),
+    fn: mockModifyComponent,
   },
   {
     op: DirectPluginOperations.Insert,
@@ -32,16 +48,6 @@ let mockEnabledPlugins = [
     },
   },
 ];
-
-const mockModifyComponent = (widget) => {
-  const newContent = {
-    url: '/search',
-    label: 'Search',
-  };
-  const modifiedWidget = widget;
-  modifiedWidget.content = newContent;
-  return modifiedWidget;
-};
 
 const mockDefaultContent = [
   {
@@ -66,11 +72,11 @@ describe('organizePlugins', () => {
     jest.clearAllMocks();
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
   describe('when there is no defaultContent', () => {
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
     it('should return an empty array when there are no enabledPlugins', () => {
       const plugins = hooks.organizePlugins([], []);
       expect(plugins.length).toBe(0);
@@ -85,9 +91,12 @@ describe('organizePlugins', () => {
   });
 
   describe('when there is defaultContent', () => {
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
     it('should return an array of defaultContent if no enabledPlugins', () => {
-      mockEnabledPlugins = [];
-      const plugins = hooks.organizePlugins(mockDefaultContent, mockEnabledPlugins);
+      const plugins = hooks.organizePlugins(mockDefaultContent, []);
       expect(plugins.length).toEqual(3);
       expect(plugins).toEqual(mockDefaultContent);
     });
@@ -100,13 +109,52 @@ describe('organizePlugins', () => {
     });
 
     it('should modify plugins with DirectOperation.Modify', () => {
-      const pluginToModify = mockEnabledPlugins.find(w => w.widgetId === 'lookUp');
-      pluginToModify.fn = mockModifyComponent;
       const plugins = hooks.organizePlugins(mockDefaultContent, mockEnabledPlugins);
       const widget = plugins.find((w) => w.id === 'lookUp');
 
       expect(plugins.length).toEqual(4);
       expect(widget.content.url).toEqual('/search');
+    });
+
+    it('should wrap plugins with DirectOperation.Wrap', () => {
+      const plugins = hooks.organizePlugins(mockDefaultContent, mockEnabledPlugins);
+      const widget = plugins.find((w) => w.id === 'drafts');
+      expect(plugins.length).toEqual(4);
+      expect(widget.wrappers.length).toEqual(1);
+    });
+
+    it('should accept several wrappers for a single plugin with DirectOperation.Wrap', () => {
+      const newMockWrapComponent = ({ widget }) => {
+        const isStudent = false;
+        return isStudent ? null : widget;
+      };
+      const newPluginChange = {
+        op: DirectPluginOperations.Wrap,
+        widgetId: 'drafts',
+        wrapper: newMockWrapComponent,
+      };
+      mockEnabledPlugins.push(newPluginChange);
+      const plugins = hooks.organizePlugins(mockDefaultContent, mockEnabledPlugins);
+      const widget = plugins.find((w) => w.id === 'drafts');
+      expect(plugins.length).toEqual(4);
+      expect(widget.wrappers.length).toEqual(2);
+      expect(widget.wrappers[0]).toEqual(mockWrapComponent);
+      expect(widget.wrappers[1]).toEqual(newMockWrapComponent);
+    });
+
+    it('should raise an error for an operation that does not exist', async () => {
+      const badPluginChange = {
+        op: DirectPluginOperations.Destroy,
+        widgetId: 'drafts',
+      };
+      mockEnabledPlugins.push(badPluginChange);
+
+      expect.assertions(1);
+      try {
+        await hooks.organizePlugins(mockDefaultContent, mockEnabledPlugins);
+      } catch (error) {
+        expect(error.message).toBe('unknown direct plugin change operation');
+      }
     });
   });
 });
