@@ -1,9 +1,9 @@
 import '@testing-library/jest-dom';
 
-import * as hooks from '../hooks';
-import { DirectPluginOperations } from '../DirectPlugin';
+import * as utils from './utils';
+import { DirectPluginOperations } from './DirectPlugin';
 
-jest.unmock('../hooks');
+jest.unmock('./utils');
 
 const mockModifyComponent = (widget) => {
   const newContent = {
@@ -66,23 +66,19 @@ const mockDefaultContent = [
 ];
 
 describe('organizePlugins', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   describe('when there is no defaultContent', () => {
     afterEach(() => {
       jest.clearAllMocks();
     });
 
     it('should return an empty array when there are no enabledPlugins', () => {
-      const plugins = hooks.organizePlugins([], []);
+      const plugins = utils.organizePlugins([], []);
       expect(plugins.length).toBe(0);
       expect(plugins).toEqual([]);
     });
 
     it('should return an array of changes for non-default plugins', () => {
-      const plugins = hooks.organizePlugins([], mockEnabledPlugins);
+      const plugins = utils.organizePlugins([], mockEnabledPlugins);
       expect(plugins.length).toEqual(1);
       expect(plugins[0].id).toEqual('login');
     });
@@ -94,20 +90,20 @@ describe('organizePlugins', () => {
     });
 
     it('should return an array of defaultContent if no enabledPlugins', () => {
-      const plugins = hooks.organizePlugins(mockDefaultContent, []);
+      const plugins = utils.organizePlugins(mockDefaultContent, []);
       expect(plugins.length).toEqual(3);
       expect(plugins).toEqual(mockDefaultContent);
     });
 
     it('should remove plugins with DirectOperation.Hide', () => {
-      const plugins = hooks.organizePlugins(mockDefaultContent, mockEnabledPlugins);
+      const plugins = utils.organizePlugins(mockDefaultContent, mockEnabledPlugins);
       const widget = plugins.find((w) => w.id === 'home');
       expect(plugins.length).toEqual(4);
       expect(widget.hidden).toBe(true);
     });
 
     it('should modify plugins with DirectOperation.Modify', () => {
-      const plugins = hooks.organizePlugins(mockDefaultContent, mockEnabledPlugins);
+      const plugins = utils.organizePlugins(mockDefaultContent, mockEnabledPlugins);
       const widget = plugins.find((w) => w.id === 'lookUp');
 
       expect(plugins.length).toEqual(4);
@@ -115,7 +111,7 @@ describe('organizePlugins', () => {
     });
 
     it('should wrap plugins with DirectOperation.Wrap', () => {
-      const plugins = hooks.organizePlugins(mockDefaultContent, mockEnabledPlugins);
+      const plugins = utils.organizePlugins(mockDefaultContent, mockEnabledPlugins);
       const widget = plugins.find((w) => w.id === 'drafts');
       expect(plugins.length).toEqual(4);
       expect(widget.wrappers.length).toEqual(1);
@@ -132,7 +128,7 @@ describe('organizePlugins', () => {
         wrapper: newMockWrapComponent,
       };
       mockEnabledPlugins.push(newPluginChange);
-      const plugins = hooks.organizePlugins(mockDefaultContent, mockEnabledPlugins);
+      const plugins = utils.organizePlugins(mockDefaultContent, mockEnabledPlugins);
       const widget = plugins.find((w) => w.id === 'drafts');
       expect(plugins.length).toEqual(4);
       expect(widget.wrappers.length).toEqual(2);
@@ -152,7 +148,7 @@ describe('organizePlugins', () => {
         },
       };
       mockEnabledPlugins.push(newPluginChange);
-      const plugins = hooks.organizePlugins(mockDefaultContent, mockEnabledPlugins);
+      const plugins = utils.organizePlugins(mockDefaultContent, mockEnabledPlugins);
       expect(plugins.length).toEqual(5);
       expect(plugins[0].id).toBe('profile');
       expect(plugins[1].id).toBe('home');
@@ -170,56 +166,10 @@ describe('organizePlugins', () => {
 
       expect.assertions(1);
       try {
-        await hooks.organizePlugins(mockDefaultContent, mockEnabledPlugins);
+        await utils.organizePlugins(mockDefaultContent, mockEnabledPlugins);
       } catch (error) {
         expect(error.message).toBe('unknown direct plugin change operation');
       }
     });
   });
-});
-
-describe('useGetPlugins', () => {
-  // navLinksPlugin.defaultComponentProps = jest.fn(() => []);
-  // navLinksPlugin.getDirectSlotChanges = jest.fn(() => (
-  //   {
-  //     'side-nav-bar': [],
-  //   }
-  // ));
-  // beforeEach(jest.clearAllMocks);
-
-  // it('should return an array if only new plugins inserted', () => {
-  //   navLinksPlugin.getDirectSlotChanges = jest.fn(() => (
-  //     {
-  //       'side-nav-bar': [
-  //         {
-  //           op: DirectPluginOperations.Insert,
-  //           widget: {
-  //             id: 'login',
-  //             priority: 50,
-  //             content: {
-  //               url: '/login', icon: Login, label: 'Login',
-  //             },
-  //           },
-  //         },
-  //       ],
-  //     }
-  //   ));
-
-  //   const expectedChanges = {
-  //     'side-nav-bar': [
-  //       {
-  //         widget: {
-  //           id: 'login',
-  //           priority: 50,
-  //           content: {
-  //             url: '/login', icon: Login, label: 'Login',
-  //           },
-  //         },
-  //       },
-  //     ],
-  //   };
-
-  //   expect(navLinksPlugin.useGetPlugins.length()).toBe(1);
-  //   expect(navLinksPlugin.useGetPlugins).toBe(expectedChanges);
-  // });
 });

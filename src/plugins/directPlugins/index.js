@@ -2,9 +2,9 @@ export {
   DirectPluginSlot,
 } from './DirectPluginSlot';
 export {
-  DirectPluginsContext,
+  DirectPluginContext,
   DirectPluginOperations,
 } from './DirectPlugin';
 export {
-  useGetPlugins,
-} from './hooks';
+  organizePlugins,
+} from './utils';

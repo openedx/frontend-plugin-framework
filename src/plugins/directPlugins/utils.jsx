@@ -1,7 +1,3 @@
-import React from 'react';
-// allows mocking state modules from
-// eslint-disable-next-line import/no-self-import
-
 import { DirectPluginOperations } from './DirectPlugin';
 
 export const organizePlugins = (defaultContents, pluginChanges) => {
@@ -35,11 +31,4 @@ export const organizePlugins = (defaultContents, pluginChanges) => {
   return newContents;
 };
 
-export const useGetPlugins = (defaultContents, enabledPlugins) => {
-  const contents = React.useMemo(() => {
-    organizePlugins(defaultContents, enabledPlugins);
-  }, [defaultContents, enabledPlugins]);
-  return contents;
-};
-
-export default { useGetPlugins, organizePlugins };
+export default { organizePlugins };

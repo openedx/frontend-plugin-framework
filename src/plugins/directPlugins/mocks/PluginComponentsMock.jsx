@@ -4,7 +4,7 @@ import React from 'react';
 import {
   House, Star, InsertDriveFile, Login,
 } from '@edx/paragon/icons';
-import { DirectPluginOperations } from '../..';
+import { DirectPluginOperations } from '..';
 
 /** This is for us to be able to mock in tests */
 const isAdminHelper = () => true;

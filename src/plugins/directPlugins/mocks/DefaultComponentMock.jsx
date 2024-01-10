@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Icon } from '@edx/paragon';
-import { DirectPluginSlot, DirectPluginsContext } from '../..';
+import { DirectPluginSlot, DirectPluginContext } from '..';
 import { navLinksPlugin } from './PluginComponentsMock';
 
 // TODO: remove DirectPluginsContext and enabledPlugins from here once we have an example app
@@ -12,7 +12,7 @@ const enabledPlugins = [
 ];
 
 const MyApp = () => (
-  <DirectPluginsContext value={enabledPlugins}>
+  <DirectPluginContext value={enabledPlugins}>
     <div>
       <DirectPluginSlot
         slotId="side-bar-nav"
@@ -27,7 +27,7 @@ const MyApp = () => (
         )}
       />
     </div>
-  </DirectPluginsContext>
+  </DirectPluginContext>
 );
 
 export default MyApp;
