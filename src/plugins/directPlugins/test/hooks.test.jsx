@@ -1,4 +1,3 @@
-import React from 'react';
 import '@testing-library/jest-dom';
 
 import * as hooks from '../hooks';
@@ -16,7 +15,6 @@ const mockModifyComponent = (widget) => {
   return modifiedWidget;
 };
 
-/** This is a React widget that wraps its children and makes them visible only to administrators */
 function mockWrapComponent({ widget }) {
   const isAdmin = true;
   return isAdmin ? widget : null;
@@ -140,6 +138,27 @@ describe('organizePlugins', () => {
       expect(widget.wrappers.length).toEqual(2);
       expect(widget.wrappers[0]).toEqual(mockWrapComponent);
       expect(widget.wrappers[1]).toEqual(newMockWrapComponent);
+    });
+
+    it('should return plugins arranged by priority', () => {
+      const newPluginChange = {
+        op: DirectPluginOperations.Insert,
+        widget: {
+          id: 'profile',
+          priority: 1,
+          content: {
+            url: '/profile', label: 'Profile',
+          },
+        },
+      };
+      mockEnabledPlugins.push(newPluginChange);
+      const plugins = hooks.organizePlugins(mockDefaultContent, mockEnabledPlugins);
+      expect(plugins.length).toEqual(5);
+      expect(plugins[0].id).toBe('profile');
+      expect(plugins[1].id).toBe('home');
+      expect(plugins[2].id).toBe('lookUp');
+      expect(plugins[3].id).toBe('drafts');
+      expect(plugins[4].id).toBe('login');
     });
 
     it('should raise an error for an operation that does not exist', async () => {
