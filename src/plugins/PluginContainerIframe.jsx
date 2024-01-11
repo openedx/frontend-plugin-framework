@@ -85,6 +85,7 @@ const PluginContainerIframe = ({
 export default PluginContainerIframe;
 
 PluginContainerIframe.propTypes = {
+  /** Configuration for the Plugin in this container — i.e pluginSlot[id].example_plugin */
   config: pluginConfigShape,
   fallback: PropTypes.node,
   scrolling: PropTypes.oneOf(['auto', 'yes', 'no']),

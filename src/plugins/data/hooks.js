@@ -15,8 +15,8 @@ import { PLUGIN_MOUNTED, PLUGIN_READY, PLUGIN_UNMOUNTED } from './constants';
  * @returns {Object} - JS configuration for the PluginSlot
  */
 export function usePluginSlot(id) {
-  if (getConfig().plugins[id] !== undefined) {
-    return getConfig().plugins[id];
+  if (getConfig().pluginSlots[id] !== undefined) {
+    return getConfig().pluginSlots[id];
   }
   return { keepDefault: true, plugins: [] };
 }
