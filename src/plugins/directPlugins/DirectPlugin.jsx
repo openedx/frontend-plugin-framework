@@ -1,7 +1,8 @@
 import React from 'react';
 
 /**
- * Context which makes the list of enabled plugins available to the <DirectSlot> components below it in the React tree
+ * Context which makes the list of all plugin changes (allPluginChanges) available to the <DirectSlot> components
+ * below it in the React tree
  */
 export const DirectPluginContext = React.createContext([]);
 
@@ -23,11 +24,37 @@ export const DirectPluginOperations = {
 };
 
 /**
- * A placeholder for what the pluginChanges configuration should include depending on the operation:
- * pluginChanges = [
- * { op: DirectPluginOperation.Insert; widget: <DirectSlotWidget object> }
- * { op: DirectPluginOperation.Hide; widgetId: string }
- * { op: DirectPluginOperation.Modify; widgetId: string, fn: (widget: <DirectSlotWidget>) => <DirectSlotWidget> }
- * { op: DirectPluginOperation.Wrap; widgetId: string, wrapper: React.FC<{widget: React.ReactElement }> };
- * ]
+  A placeholder for what allSlotChanges configuration should look like when passed into DirectPluginContext
+  {
+    id: "allDirectPluginChanges",
+    getDirectSlotChanges() {
+      return {
+        "main-nav": [
+          // Hide the "Drafts" link, except for administrators:
+          {
+            op: UiChangeOperation.Wrap,
+            widgetId: "drafts",
+            wrapper: HideExceptForAdmin,
+          },
+          // Add a new login link:
+          {
+            op: UiChangeOperation.Insert,
+            widget: { id: "login", priority: 50, content: {
+                url: "/login", icon: "person-fill", label: <FormattedMessage defaultMessage="Login" />
+            }},
+          },
+        ],
+      };
+    },
+  };
+ */
+
+/**
+  A placeholder for what the slotChanges configuration should include depending on the operation:
+  slotChanges = [
+    { op: DirectPluginOperation.Insert; widget: <DirectSlotWidget object> },
+    { op: DirectPluginOperation.Hide; widgetId: string },
+    { op: DirectPluginOperation.Modify; widgetId: string, fn: (widget: <DirectSlotWidget>) => <DirectSlotWidget> },
+    { op: DirectPluginOperation.Wrap; widgetId: string, wrapper: React.FC<{widget: React.ReactElement }> },
+  ]
  */

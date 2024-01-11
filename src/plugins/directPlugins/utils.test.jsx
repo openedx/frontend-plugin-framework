@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 
-import * as utils from './utils';
+import organizePlugins from './utils';
 import { DirectPluginOperations } from './DirectPlugin';
 
 jest.unmock('./utils');
@@ -20,7 +20,7 @@ function mockWrapComponent({ widget }) {
   return isAdmin ? widget : null;
 }
 
-const mockEnabledPlugins = [
+const mockSlotChanges = [
   {
     op: DirectPluginOperations.Wrap,
     widgetId: 'drafts',
@@ -71,14 +71,14 @@ describe('organizePlugins', () => {
       jest.clearAllMocks();
     });
 
-    it('should return an empty array when there are no enabledPlugins', () => {
-      const plugins = utils.organizePlugins([], []);
+    it('should return an empty array when there are no changes or additions to slot', () => {
+      const plugins = organizePlugins([], []);
       expect(plugins.length).toBe(0);
       expect(plugins).toEqual([]);
     });
 
     it('should return an array of changes for non-default plugins', () => {
-      const plugins = utils.organizePlugins([], mockEnabledPlugins);
+      const plugins = organizePlugins([], mockSlotChanges);
       expect(plugins.length).toEqual(1);
       expect(plugins[0].id).toEqual('login');
     });
@@ -89,21 +89,21 @@ describe('organizePlugins', () => {
       jest.clearAllMocks();
     });
 
-    it('should return an array of defaultContent if no enabledPlugins', () => {
-      const plugins = utils.organizePlugins(mockDefaultContent, []);
+    it('should return an array of defaultContent if no changes for plugins in slot', () => {
+      const plugins = organizePlugins(mockDefaultContent, []);
       expect(plugins.length).toEqual(3);
       expect(plugins).toEqual(mockDefaultContent);
     });
 
     it('should remove plugins with DirectOperation.Hide', () => {
-      const plugins = utils.organizePlugins(mockDefaultContent, mockEnabledPlugins);
+      const plugins = organizePlugins(mockDefaultContent, mockSlotChanges);
       const widget = plugins.find((w) => w.id === 'home');
       expect(plugins.length).toEqual(4);
       expect(widget.hidden).toBe(true);
     });
 
     it('should modify plugins with DirectOperation.Modify', () => {
-      const plugins = utils.organizePlugins(mockDefaultContent, mockEnabledPlugins);
+      const plugins = organizePlugins(mockDefaultContent, mockSlotChanges);
       const widget = plugins.find((w) => w.id === 'lookUp');
 
       expect(plugins.length).toEqual(4);
@@ -111,7 +111,7 @@ describe('organizePlugins', () => {
     });
 
     it('should wrap plugins with DirectOperation.Wrap', () => {
-      const plugins = utils.organizePlugins(mockDefaultContent, mockEnabledPlugins);
+      const plugins = organizePlugins(mockDefaultContent, mockSlotChanges);
       const widget = plugins.find((w) => w.id === 'drafts');
       expect(plugins.length).toEqual(4);
       expect(widget.wrappers.length).toEqual(1);
@@ -127,8 +127,8 @@ describe('organizePlugins', () => {
         widgetId: 'drafts',
         wrapper: newMockWrapComponent,
       };
-      mockEnabledPlugins.push(newPluginChange);
-      const plugins = utils.organizePlugins(mockDefaultContent, mockEnabledPlugins);
+      mockSlotChanges.push(newPluginChange);
+      const plugins = organizePlugins(mockDefaultContent, mockSlotChanges);
       const widget = plugins.find((w) => w.id === 'drafts');
       expect(plugins.length).toEqual(4);
       expect(widget.wrappers.length).toEqual(2);
@@ -147,8 +147,8 @@ describe('organizePlugins', () => {
           },
         },
       };
-      mockEnabledPlugins.push(newPluginChange);
-      const plugins = utils.organizePlugins(mockDefaultContent, mockEnabledPlugins);
+      mockSlotChanges.push(newPluginChange);
+      const plugins = organizePlugins(mockDefaultContent, mockSlotChanges);
       expect(plugins.length).toEqual(5);
       expect(plugins[0].id).toBe('profile');
       expect(plugins[1].id).toBe('home');
@@ -162,11 +162,11 @@ describe('organizePlugins', () => {
         op: DirectPluginOperations.Destroy,
         widgetId: 'drafts',
       };
-      mockEnabledPlugins.push(badPluginChange);
+      mockSlotChanges.push(badPluginChange);
 
       expect.assertions(1);
       try {
-        await utils.organizePlugins(mockDefaultContent, mockEnabledPlugins);
+        await organizePlugins(mockDefaultContent, mockSlotChanges);
       } catch (error) {
         expect(error.message).toBe('unknown direct plugin change operation');
       }

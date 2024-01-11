@@ -1,9 +1,16 @@
 import { DirectPluginOperations } from './DirectPlugin';
 
-export const organizePlugins = (defaultContents, pluginChanges) => {
+/**
+ * Called by DirectPluginSlot to prepare the plugin changes for the given slot
+ *
+ * @param {Array} defaultContents - The default widgets where the plugin slot exists.
+ * @param {Array} slotChanges - All of the changes assigned to the specific plugin slot
+ * @returns {Array} - A sorted list of widgets with any additional properties needed to render them in the plugin slot
+ */
+const organizePlugins = (defaultContents, slotChanges) => {
   const newContents = [...defaultContents];
 
-  pluginChanges.forEach(change => {
+  slotChanges.forEach(change => {
     if (change.op === DirectPluginOperations.Insert) {
       newContents.push(change.widget);
     } else if (change.op === DirectPluginOperations.Hide) {
@@ -31,4 +38,4 @@ export const organizePlugins = (defaultContents, pluginChanges) => {
   return newContents;
 };
 
-export default { organizePlugins };
+export default organizePlugins;
