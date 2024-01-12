@@ -16,20 +16,14 @@ const PluginContainer = ({ config, ...props }) => {
   }
 
   // this will allow for future plugin types to be inserted in the PluginErrorBoundary
-  let renderer = null;
   switch (config.type) {
     case IFRAME_PLUGIN:
-      renderer = (
+      return (
         <PluginContainerIframe config={config} {...props} />
       );
-      break;
-    // istanbul ignore next: default isn't meaningful, just satisfying linter
     default:
+      return null;
   }
-
-  return (
-    renderer
-  );
 };
 
 export default PluginContainer;

@@ -15,17 +15,17 @@ frontend-platform's getConfig loads configuration in the following sequence:
 
 /** TODO: Examples still need to be set up as part of APER-3042 https://2u-internal.atlassian.net/browse/APER-3042 */
 
-module.exports = {
-  pluginSlots: {
-    example_plugin_slot: {
-      keepDefault: false,
-      plugins: [
-        {
-          id: 'example_plugin',
-          type: 'IFRAME_PLUGIN',
-          url: 'http://localhost:{PORT}/{ROUTE}',
-        },
-      ],
-    },
-  },
-};
+// module.exports = {
+//   pluginSlots: {
+//     example_plugin_slot: {
+//       keepDefault: false,
+//       plugins: [
+//         {
+//           id: 'example_plugin',
+//           type: 'IFRAME_PLUGIN',
+//           url: 'http://localhost:{PORT}/{ROUTE}',
+//         },
+//       ],
+//     },
+//   },
+// };

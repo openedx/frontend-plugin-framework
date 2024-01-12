@@ -26,7 +26,7 @@ const ErrorFallbackDefault = ({ intl }) => (
 );
 
 const Plugin = ({
-  children, className, style, ready, ErrorFallbackComponent,
+  children, className, style, ready, ErrorFallbackComponent, intl,
 }) => {
   const [dimensions, setDimensions] = useState({
     width: null,
@@ -68,7 +68,7 @@ const Plugin = ({
   return (
     <div className={className} style={finalStyle}>
       <ErrorBoundary
-        fallbackComponent={<ErrorFallback />}
+        fallbackComponent={<ErrorFallback intl={intl} />}
       >
         {children}
       </ErrorBoundary>
@@ -89,6 +89,8 @@ Plugin.propTypes = {
   ready: PropTypes.bool,
   /** Styles to apply to the Plugin wrapper component */
   style: PropTypes.shape({}),
+  /** i18n  */
+  intl: intlShape.isRequired,
 };
 
 Plugin.defaultProps = {

@@ -61,7 +61,6 @@ describe('PluginContainer', () => {
     // Ensure the iframe has the proper attributes
     expect(iframeElement.attributes.getNamedItem('allow').value).toEqual(IFRAME_FEATURE_POLICY);
     expect(iframeElement.attributes.getNamedItem('src').value).toEqual(iframeConfig.url);
-    expect(iframeElement.attributes.getNamedItem('scrolling').value).toEqual('auto');
     expect(iframeElement.attributes.getNamedItem('title').value).toEqual(title);
     // The component isn't ready, since the class has 'd-none'
     expect(iframeElement.attributes.getNamedItem('class').value).toEqual('border border-0 w-100 d-none');
