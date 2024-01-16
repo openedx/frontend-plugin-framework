@@ -24,7 +24,7 @@ export const DirectPluginOperations = {
 };
 
 /**
-  A placeholder for what allSlotChanges configuration should look like when passed into DirectPluginContext
+  This is what the allSlotChanges configuration should look like when passed into DirectPluginContext
   {
     id: "allDirectPluginChanges",
     getDirectSlotChanges() {
@@ -32,13 +32,13 @@ export const DirectPluginOperations = {
         "main-nav": [
           // Hide the "Drafts" link, except for administrators:
           {
-            op: UiChangeOperation.Wrap,
+            op: DirectPluginChangeOperation.Wrap,
             widgetId: "drafts",
             wrapper: HideExceptForAdmin,
           },
           // Add a new login link:
           {
-            op: UiChangeOperation.Insert,
+            op: DirectPluginChangeOperation.Insert,
             widget: { id: "login", priority: 50, content: {
                 url: "/login", icon: "person-fill", label: <FormattedMessage defaultMessage="Login" />
             }},
@@ -50,7 +50,7 @@ export const DirectPluginOperations = {
  */
 
 /**
-  A placeholder for what the slotChanges configuration should include depending on the operation:
+  This is what a slotChanges configuration should include depending on the operation:
   slotChanges = [
     { op: DirectPluginOperation.Insert; widget: <DirectSlotWidget object> },
     { op: DirectPluginOperation.Hide; widgetId: string },
