@@ -35,9 +35,10 @@ Micro-frontend configuration document (JS)
 ------------------------------------------
 
 Micro-frontends that would like to use the Plugin Framework need to be configured via a JavaScript configuration
-document and a ``pluginSlots`` config. Technically, only the Host MFE would require an ``env.config.js`` file with a ``pluginSlots`` config.
-Keep in mind that since any Child MFE can theoretically also contain its own ``PluginSlot``, it will eventually need its own
-JavaScript configuration.
+document and a ``pluginSlots`` config. Technically, only the Host MFE requires an ``env.config.js`` file with a ``pluginSlots`` config.
+However, note that any Child MFE can theoretically contain one or more ``PluginSlot`` component, thereby making it both a Child MFE and a Host MFE.
+In this instance, it would have its own JavaScript file to configure the ``PluginSlot`` component(s).
+For more information on how JS based configuration works, see the `config.js`_ file in frontend-platform.
 
   .. code-block::
 
@@ -55,6 +56,8 @@ JavaScript configuration.
         }
       }
     }
+
+.. _config.js: https://github.com/openedx/frontend-platform/blob/556424ee073e0629d7331046bbd7714d0d241f43/src/config.js
 
 Host Micro-frontend (JSX)
 -------------------------
