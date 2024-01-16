@@ -36,8 +36,10 @@ Micro-frontend configuration document (JS)
 
 Micro-frontends that would like to use the Plugin Framework need to be configured via a JavaScript configuration
 document and a ``pluginSlots`` config. Technically, only the Host MFE requires an ``env.config.js`` file with a ``pluginSlots`` config.
-However, note that any Child MFE can theoretically contain one or more ``PluginSlot`` component, thereby making it both a Child MFE and a Host MFE.
-In this instance, it would have its own JavaScript file to configure the ``PluginSlot`` component(s).
+
+However, note that any Child MFE can theoretically contain one or more ``PluginSlot`` components, thereby making it both a Child MFE and a Host MFE.
+In this instance, it would have its own JavaScript file to configure the ``PluginSlot``.
+
 For more information on how JS based configuration works, see the `config.js`_ file in frontend-platform.
 
   .. code-block::
