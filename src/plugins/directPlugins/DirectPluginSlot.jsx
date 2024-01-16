@@ -39,4 +39,4 @@ DirectPluginSlot.defaultProps = {
   defaultContents: [],
 };
 
-export default { DirectPluginSlot };
+export default DirectPluginSlot;
