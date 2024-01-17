@@ -7,23 +7,23 @@ import organizePlugins from './utils';
 const DirectPluginSlot = ({ defaultContents, slotId, renderWidget }) => {
   const allPluginChanges = React.useContext(DirectPluginContext);
 
-  const contents = React.useMemo(() => {
+  const preparedWidgets = React.useMemo(() => {
     const slotChanges = allPluginChanges.getDirectSlotChanges()[slotId] ?? [];
     return organizePlugins(defaultContents, slotChanges);
   }, [allPluginChanges, defaultContents, slotId]);
 
   return (
     <>
-      {contents.map((c) => {
-        if (c.hidden) {
+      {preparedWidgets.map((preppedWidget) => {
+        if (preppedWidget.hidden) {
           return null;
         }
-        if (c.wrappers) {
+        if (preppedWidget.wrappers) {
           // TODO: define how the reduce logic is able to wrap widgets and make it testable
           // eslint-disable-next-line max-len
-          return c.wrappers.reduce((widget, wrapper) => React.createElement(wrapper, { widget, key: c.id }), renderWidget(c));
+          return preppedWidget.wrappers.reduce((widget, wrapper) => React.createElement(wrapper, { widget, key: preppedWidget.id }), renderWidget(preppedWidget));
         }
-        return renderWidget(c);
+        return renderWidget(preppedWidget);
       })}
     </>
   );

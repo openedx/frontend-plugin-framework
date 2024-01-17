@@ -3,9 +3,7 @@ import '@testing-library/jest-dom';
 import organizePlugins from './utils';
 import { DirectPluginOperations } from './DirectPlugin';
 
-jest.unmock('./utils');
-
-const mockModifyComponent = (widget) => {
+const mockModifyWidget = (widget) => {
   const newContent = {
     url: '/search',
     label: 'Search',
@@ -15,7 +13,7 @@ const mockModifyComponent = (widget) => {
   return modifiedWidget;
 };
 
-function mockWrapComponent({ widget }) {
+function mockWrapWidget({ widget }) {
   const isAdmin = true;
   return isAdmin ? widget : null;
 }
@@ -24,7 +22,7 @@ const mockSlotChanges = [
   {
     op: DirectPluginOperations.Wrap,
     widgetId: 'drafts',
-    wrapper: mockWrapComponent,
+    wrapper: mockWrapWidget,
   },
   {
     op: DirectPluginOperations.Hide,
@@ -33,7 +31,7 @@ const mockSlotChanges = [
   {
     op: DirectPluginOperations.Modify,
     widgetId: 'lookUp',
-    fn: mockModifyComponent,
+    fn: mockModifyWidget,
   },
   {
     op: DirectPluginOperations.Insert,
@@ -132,7 +130,7 @@ describe('organizePlugins', () => {
       const widget = plugins.find((w) => w.id === 'drafts');
       expect(plugins.length).toEqual(4);
       expect(widget.wrappers.length).toEqual(2);
-      expect(widget.wrappers[0]).toEqual(mockWrapComponent);
+      expect(widget.wrappers[0]).toEqual(mockWrapWidget);
       expect(widget.wrappers[1]).toEqual(newMockWrapComponent);
     });
 
