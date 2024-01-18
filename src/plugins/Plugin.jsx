@@ -16,7 +16,7 @@ import {
 import { PLUGIN_RESIZE } from './data/constants';
 import messages from './Plugins.messages';
 
-// TODO: create example-plugin-app/src/PluginOne.jsx for example of customizing errorFallback
+// TODO: create example-plugin-app/src/PluginOne.jsx for example of customizing errorFallback as part of APER-3042 https://2u-internal.atlassian.net/browse/APER-3042
 const ErrorFallbackDefault = ({ intl }) => (
   <div>
     <h2>
@@ -25,9 +25,8 @@ const ErrorFallbackDefault = ({ intl }) => (
   </div>
 );
 
-// TODO: find out where "ready" comes from
 const Plugin = ({
-  children, className, intl, style, ready, ErrorFallbackComponent,
+  children, className, style, ready, ErrorFallbackComponent, intl,
 }) => {
   const [dimensions, setDimensions] = useState({
     width: null,
@@ -59,7 +58,8 @@ const Plugin = ({
   }, []);
 
   useEffect(() => {
-    // TODO: find out where "ready" comes from and when it would be true
+    /** Ready defaults to true, but can be used to defer rendering the Plugin until certain processes have
+     * occurred or conditions have been met */
     if (ready) {
       dispatchReadyEvent();
     }
@@ -68,8 +68,6 @@ const Plugin = ({
   return (
     <div className={className} style={finalStyle}>
       <ErrorBoundary
-      // Must be React Component format (<ComponentName ...props />) or it won't render
-      // TODO: update frontend-platform code to refactor <ErrorBoundary /> or include info in docs somewhere
         fallbackComponent={<ErrorFallback intl={intl} />}
       >
         {children}
@@ -81,12 +79,18 @@ const Plugin = ({
 export default injectIntl(Plugin);
 
 Plugin.propTypes = {
+  /** The content for the Plugin */
   children: PropTypes.node.isRequired,
+  /** Classes to apply to the Plugin wrapper component */
   className: PropTypes.string,
+  /** Custom error fallback component */
   ErrorFallbackComponent: PropTypes.func,
-  intl: intlShape.isRequired,
+  /** If ready is true, it will render the Plugin */
   ready: PropTypes.bool,
-  style: PropTypes.object, // eslint-disable-line
+  /** Styles to apply to the Plugin wrapper component */
+  style: PropTypes.shape({}),
+  /** i18n  */
+  intl: intlShape.isRequired,
 };
 
 Plugin.defaultProps = {

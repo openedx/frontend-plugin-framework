@@ -35,6 +35,7 @@ const PluginContainer = ({ config, ...props }) => {
 export default PluginContainer;
 
 PluginContainer.propTypes = {
+  /** Configuration for the Plugin in this container — i.e pluginSlot[id].example_plugin */
   config: pluginConfigShape,
 };
 

@@ -35,7 +35,7 @@ const PluginContainerIframe = ({
   config, fallback, className, ...props
 }) => {
   const { url } = config;
-  const { title, scrolling } = props;
+  const { title } = props;
   const [mounted, setMounted] = useState(false);
   const [ready, setReady] = useState(false);
 
@@ -68,7 +68,6 @@ const PluginContainerIframe = ({
         title={title}
         src={url}
         allow={IFRAME_FEATURE_POLICY}
-        scrolling={scrolling}
         referrerPolicy="origin" // The sent referrer will be limited to the origin of the referring page: its scheme, host, and port.
         className={classNames(
           'border border-0 w-100',
@@ -85,17 +84,19 @@ const PluginContainerIframe = ({
 export default PluginContainerIframe;
 
 PluginContainerIframe.propTypes = {
+  /** Configuration for the Plugin in this container — i.e pluginSlot[id].example_plugin */
   config: pluginConfigShape,
+  /** Custom fallback component used when component is not ready (i.e. "loading") */
   fallback: PropTypes.node,
-  scrolling: PropTypes.oneOf(['auto', 'yes', 'no']),
+  /** Accessible label for the iframe */
   title: PropTypes.string,
+  /** Classes to apply to the iframe */
   className: PropTypes.string,
 };
 
 PluginContainerIframe.defaultProps = {
   config: null,
   fallback: null,
-  scrolling: 'auto',
   title: null,
   className: null,
 };

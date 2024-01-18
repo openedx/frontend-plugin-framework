@@ -16,6 +16,7 @@ import PluginContainer from './PluginContainer';
 const PluginSlot = forwardRef(({
   as, id, intl, pluginProps, children, ...props
 }, ref) => {
+  /** TODO: Examples still need to be set up as part of APER-3042 https://2u-internal.atlassian.net/browse/APER-3042 */
   /* the plugins below are obtained by the id passed into PluginSlot by the Host MFE. See example/src/PluginsPage.jsx
   for an example of how PluginSlot is populated, and example/src/index.jsx for a dummy JS config that holds all plugins
   */
@@ -62,10 +63,15 @@ const PluginSlot = forwardRef(({
 export default injectIntl(PluginSlot);
 
 PluginSlot.propTypes = {
+  /** Element type for the PluginSlot wrapper component */
   as: PropTypes.elementType,
+  /** Default content for the PluginSlot */
   children: PropTypes.node,
+  /** ID of the PluginSlot configuration */
   id: PropTypes.string.isRequired,
+  /** i18n  */
   intl: intlShape.isRequired,
+  /** Props that are passed down to each Plugin in the Slot */
   pluginProps: PropTypes.object, // eslint-disable-line
 };
 

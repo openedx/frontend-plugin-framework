@@ -29,21 +29,24 @@ Getting Started
 1. Add Library Dependency
 -------------------------
 
-Add `@edx/frontend-plugin-framework` to the `package.json` of both Host and Child MFEs.
+Add ``@edx/frontend-plugin-framework`` to the ``package.json`` of both Host and Child MFEs.
 
 Micro-frontend configuration document (JS)
 ------------------------------------------
 
 Micro-frontends that would like to use the Plugin Framework need to be configured via a JavaScript configuration
-document and a `plugins` config. Technically, only the Host MFE would require an `env.config.js` file with a `plugins` config.
-Keep in mind that since any Child MFE can theoretically also contain its own PluginSlot, it will eventually need its own
-JavaScript configuration.
+document and a ``pluginSlots`` config. Technically, only the Host MFE requires an ``env.config.js`` file with a ``pluginSlots`` config.
+
+However, note that any Child MFE can theoretically contain one or more ``PluginSlot`` components, thereby making it both a Child MFE and a Host MFE.
+In this instance, it would have its own JavaScript file to configure the ``PluginSlot``.
+
+For more information on how JS based configuration works, see the `config.js`_ file in frontend-platform.
 
   .. code-block::
 
     const config = {
       // other existing configuration
-      plugins: {
+      pluginSlots: {
         sidebar: {
           keepDefault: false, // bool to keep default host content
           plugins: [
@@ -56,10 +59,12 @@ JavaScript configuration.
       }
     }
 
+.. _config.js: https://github.com/openedx/frontend-platform/blob/556424ee073e0629d7331046bbd7714d0d241f43/src/config.js
+
 Host Micro-frontend (JSX)
 -------------------------
 
-Hosts must define PluginSlot components in areas of the UI where they intend to accept extensions.
+Hosts must define ``PluginSlot`` components in areas of the UI where they intend to accept extensions.
 The Host MFE, and thus the owners of the Host MFE, are responsible for deciding where it is acceptable to mount a plugin.
 They also decide the dimensions, responsiveness/scrolling policy, and whether the slot supports passing any additional
 data to the plugin as part of its contract.
@@ -92,12 +97,12 @@ Plugin Micro-frontend (JSX) and Fallback Behavior
 -------------------------------------------------
 
 The plugin MFE is no different than any other MFE except that it defines a Plugin component as a child of a route.
-This component is responsible for communicating (via postMessage) with the host page and resizing its content to match
+This component is responsible for communicating (via ``postMessage``) with the host page and resizing its content to match
 the dimensions available in the host’s PluginSlot. 
 
 It’s notoriously difficult to know in the host application when an iFrame has failed to load.
 Because of security sandboxing, the host isn’t allowed to know the HTTP status of the request or to inspect what was
-loaded, so we have to rely on waiting for a postMessage event from within the iFrame to know it has successfully loaded.
+loaded, so we have to rely on waiting for a ``postMessage`` event from within the iFrame to know it has successfully loaded.
 For the fallback content, the Plugin-owning team would pass a fallback component into the Plugin tag that is wrapped around their component, as noted below. Otherwise, a default fallback component would be used.
   .. code-block::
 
