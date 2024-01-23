@@ -48,9 +48,9 @@ For more information on how JS based configuration works, see the `config.js`_ f
       // other existing configuration
       pluginSlots: {
         sidebar: {
-          keepDefault: false, // bool to keep default host content
           plugins: [
             {
+              id: 'plugin1',
               url: 'https://plugin.app/plugin1',
               type: IFRAME_PLUGIN,
             }
@@ -75,17 +75,15 @@ data to the plugin as part of its contract.
       <Route path="/page1">
         <SomeHostContent />
         <PluginSlot
-        id="sidebar" // as noted in the section above, this `id` is used to pass in Child plugin configuration
-        pluginProps={{
-          className: 'flex-grow-1',
-          title: 'example plugins',
+          id="sidebar" // as noted in the section above, this `id` is used to pass in Child plugin configuration
+          pluginProps={{
+            className: 'flex-grow-1',
+            title: 'example plugins',
           }}
           style={{
-          height: 700,
+            height: 700,
           }}
-        >
-          <DefaultSlotContent /> // removed if keepDefault is false
-        </PluginSlot>
+        />
       </Route>
       <Route path="/page2">
         <OtherRouteContent />

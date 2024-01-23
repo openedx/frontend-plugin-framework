@@ -12,16 +12,21 @@ import {
 import messages from './Plugins.messages';
 import { usePluginSlot } from './data/hooks';
 import PluginContainer from './PluginContainer';
+import { organizePlugins, wrapComponent } from './data/utils';
 
 const PluginSlot = forwardRef(({
-  as, id, intl, pluginProps, children, ...props
+  as, id, intl, pluginProps, ...props
 }, ref) => {
   /** TODO: Examples still need to be set up as part of APER-3042 https://2u-internal.atlassian.net/browse/APER-3042 */
   /* the plugins below are obtained by the id passed into PluginSlot by the Host MFE. See example/src/PluginsPage.jsx
   for an example of how PluginSlot is populated, and example/src/index.jsx for a dummy JS config that holds all plugins
   */
-  const { plugins, keepDefault } = usePluginSlot(id);
+  const { plugins, defaultContents } = usePluginSlot(id);
 
+  const finalPlugins = React.useMemo(() => organizePlugins(defaultContents, plugins), [defaultContents, plugins]);
+
+  // TODO: APER-3178 — Find a better way to do pluginProps so that each plugin can have it's own unique props
+  // https://2u-internal.atlassian.net/browse/APER-3178
   const { loadingFallback } = pluginProps;
 
   const defaultLoadingFallback = (
@@ -29,25 +34,35 @@ const PluginSlot = forwardRef(({
       <Spinner animation="border" screenReaderText={intl.formatMessage(messages.loading)} />
     </div>
   );
-  const finalLoadingFallback = loadingFallback !== undefined ? loadingFallback : defaultLoadingFallback;
 
-  let finalChildren = [];
-  if (plugins.length > 0) {
-    if (keepDefault) {
-      finalChildren.push(children);
-    }
-    plugins.forEach((pluginConfig) => {
-      finalChildren.push(
-        <PluginContainer
-          key={pluginConfig.url}
-          config={pluginConfig}
-          fallback={finalLoadingFallback}
-          {...pluginProps}
-        />,
-      );
+  const finalLoadingFallback = loadingFallback !== undefined
+    ? loadingFallback
+    : defaultLoadingFallback;
+
+  const finalChildren = [];
+  if (finalPlugins.length > 0) {
+    finalPlugins.forEach((pluginConfig) => {
+      // If hidden, don't push to finalChildren
+      if (!pluginConfig.hidden) {
+        const newContainer = (
+          <PluginContainer
+            key={pluginConfig.id}
+            config={pluginConfig}
+            loadingFallback={finalLoadingFallback}
+            {...pluginProps}
+          />
+        );
+        // If wrappers are provided, wrap the Plugin
+        if (pluginConfig.wrappers) {
+          finalChildren.push(wrapComponent(
+            () => newContainer,
+            pluginConfig.wrappers,
+          ));
+        } else {
+          finalChildren.push(newContainer);
+        }
+      }
     });
-  } else {
-    finalChildren = children;
   }
 
   return React.createElement(
@@ -65,8 +80,6 @@ export default injectIntl(PluginSlot);
 PluginSlot.propTypes = {
   /** Element type for the PluginSlot wrapper component */
   as: PropTypes.elementType,
-  /** Default content for the PluginSlot */
-  children: PropTypes.node,
   /** ID of the PluginSlot configuration */
   id: PropTypes.string.isRequired,
   /** i18n  */
@@ -77,6 +90,5 @@ PluginSlot.propTypes = {
 
 PluginSlot.defaultProps = {
   as: 'div',
-  children: null,
   pluginProps: {},
 };

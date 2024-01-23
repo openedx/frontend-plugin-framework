@@ -1,7 +1,10 @@
-import '@testing-library/jest-dom';
+/* eslint react/prop-types: off */
 
-import organizePlugins from './utils';
-import { DirectPluginOperations } from './DirectPlugin';
+import '@testing-library/jest-dom';
+import { render } from '@testing-library/react';
+
+import { organizePlugins, wrapComponent } from './utils';
+import { PLUGIN_OPERATIONS } from './constants';
 
 const mockModifyWidget = (widget) => {
   const newContent = {
@@ -13,28 +16,41 @@ const mockModifyWidget = (widget) => {
   return modifiedWidget;
 };
 
-function mockWrapWidget({ widget }) {
+const mockIsAdminWrapper = ({ widget }) => {
   const isAdmin = true;
   return isAdmin ? widget : null;
-}
+};
+
+const mockElementWrapper = ({ component, idx }) => (
+  <div data-testid={`wrapper${idx + 1}`} key={idx}>
+    This is a wrapper.
+    {component}
+  </div>
+);
+
+const mockRenderWidget = () => (
+  <div data-testid="widget">
+    This is a widget.
+  </div>
+);
 
 const mockSlotChanges = [
   {
-    op: DirectPluginOperations.Wrap,
+    op: PLUGIN_OPERATIONS.Wrap,
     widgetId: 'drafts',
-    wrapper: mockWrapWidget,
+    wrapper: mockIsAdminWrapper,
   },
   {
-    op: DirectPluginOperations.Hide,
+    op: PLUGIN_OPERATIONS.Hide,
     widgetId: 'home',
   },
   {
-    op: DirectPluginOperations.Modify,
+    op: PLUGIN_OPERATIONS.Modify,
     widgetId: 'lookUp',
     fn: mockModifyWidget,
   },
   {
-    op: DirectPluginOperations.Insert,
+    op: PLUGIN_OPERATIONS.Insert,
     widget: {
       id: 'login',
       priority: 50,
@@ -93,14 +109,14 @@ describe('organizePlugins', () => {
       expect(plugins).toEqual(mockDefaultContent);
     });
 
-    it('should remove plugins with DirectOperation.Hide', () => {
+    it('should remove plugins with PluginOperation.Hide', () => {
       const plugins = organizePlugins(mockDefaultContent, mockSlotChanges);
       const widget = plugins.find((w) => w.id === 'home');
       expect(plugins.length).toEqual(4);
       expect(widget.hidden).toBe(true);
     });
 
-    it('should modify plugins with DirectOperation.Modify', () => {
+    it('should modify plugins with PluginOperation.Modify', () => {
       const plugins = organizePlugins(mockDefaultContent, mockSlotChanges);
       const widget = plugins.find((w) => w.id === 'lookUp');
 
@@ -108,20 +124,20 @@ describe('organizePlugins', () => {
       expect(widget.content.url).toEqual('/search');
     });
 
-    it('should wrap plugins with DirectOperation.Wrap', () => {
+    it('should wrap plugins with PluginOperation.Wrap', () => {
       const plugins = organizePlugins(mockDefaultContent, mockSlotChanges);
       const widget = plugins.find((w) => w.id === 'drafts');
       expect(plugins.length).toEqual(4);
       expect(widget.wrappers.length).toEqual(1);
     });
 
-    it('should accept several wrappers for a single plugin with DirectOperation.Wrap', () => {
+    it('should accept several wrappers for a single plugin with PluginOperation.Wrap', () => {
       const newMockWrapComponent = ({ widget }) => {
         const isStudent = false;
         return isStudent ? null : widget;
       };
       const newPluginChange = {
-        op: DirectPluginOperations.Wrap,
+        op: PLUGIN_OPERATIONS.Wrap,
         widgetId: 'drafts',
         wrapper: newMockWrapComponent,
       };
@@ -130,13 +146,13 @@ describe('organizePlugins', () => {
       const widget = plugins.find((w) => w.id === 'drafts');
       expect(plugins.length).toEqual(4);
       expect(widget.wrappers.length).toEqual(2);
-      expect(widget.wrappers[0]).toEqual(mockWrapWidget);
+      expect(widget.wrappers[0]).toEqual(mockIsAdminWrapper);
       expect(widget.wrappers[1]).toEqual(newMockWrapComponent);
     });
 
     it('should return plugins arranged by priority', () => {
       const newPluginChange = {
-        op: DirectPluginOperations.Insert,
+        op: PLUGIN_OPERATIONS.Insert,
         widget: {
           id: 'profile',
           priority: 1,
@@ -157,7 +173,7 @@ describe('organizePlugins', () => {
 
     it('should raise an error for an operation that does not exist', async () => {
       const badPluginChange = {
-        op: DirectPluginOperations.Destroy,
+        op: PLUGIN_OPERATIONS.Destroy,
         widgetId: 'drafts',
       };
       mockSlotChanges.push(badPluginChange);
@@ -168,6 +184,40 @@ describe('organizePlugins', () => {
       } catch (error) {
         expect(error.message).toBe('unknown direct plugin change operation');
       }
+    });
+  });
+});
+
+describe('wrapComponent', () => {
+  describe('when provided with a single wrapper in an array', () => {
+    it('should wrap the provided component', () => {
+      const wrappedComponent = wrapComponent(mockRenderWidget, [mockElementWrapper]);
+
+      const { getByTestId } = render(wrappedComponent);
+
+      const wrapper = getByTestId('wrapper1');
+      const widget = getByTestId('widget');
+
+      expect(wrapper).toContainElement(widget);
+    });
+  });
+  describe('when provided with multiple wrappers in an array', () => {
+    it('should wrap starting with the first wrapper in the array', () => {
+      const wrappedComponent = wrapComponent(
+        mockRenderWidget,
+        [mockElementWrapper, mockElementWrapper, mockElementWrapper],
+      );
+
+      const { getByTestId } = render(wrappedComponent);
+
+      const innermostWrapper = getByTestId('wrapper1');
+      const middleWrapper = getByTestId('wrapper2');
+      const outermostWrapper = getByTestId('wrapper3');
+      const widget = getByTestId('widget');
+
+      expect(innermostWrapper).toContainElement(widget);
+      expect(middleWrapper).toContainElement(innermostWrapper);
+      expect(outermostWrapper).toContainElement(middleWrapper);
     });
   });
 });

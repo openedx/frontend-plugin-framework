@@ -15,13 +15,24 @@ import {
 import PluginContainer from './PluginContainer';
 import Plugin from './Plugin';
 import {
-  IFRAME_PLUGIN, PLUGIN_MOUNTED, PLUGIN_READY, PLUGIN_RESIZE,
+  DIRECT_PLUGIN, IFRAME_PLUGIN, PLUGIN_MOUNTED, PLUGIN_READY, PLUGIN_RESIZE,
 } from './data/constants';
 import { IFRAME_FEATURE_POLICY } from './PluginContainerIframe';
 
 const iframeConfig = {
+  id: 'iframe_plugin',
   url: 'http://localhost/plugin1',
   type: IFRAME_PLUGIN,
+  title: 'test iframe plugin',
+  priority: 1,
+};
+
+const directConfig = {
+  id: 'direct_plugin',
+  type: DIRECT_PLUGIN,
+  RenderWidget: ({ id, content }) => (<div data-testid={id}>{content.text}</div>),
+  priority: 2,
+  content: { text: 'This is a direct plugin.' },
 };
 
 // Mock ResizeObserver which is unavailable in the context of a test.
@@ -43,9 +54,8 @@ describe('PluginContainer', () => {
   });
 
   it('should render a Plugin iFrame Container when given an iFrame config', async () => {
-    const title = 'test plugin';
     const component = (
-      <PluginContainer config={iframeConfig} title={title} fallback={<div>Loading</div>} />
+      <PluginContainer config={iframeConfig} loadingFallback={<div>Loading</div>} />
     );
 
     const { container } = render(component);
@@ -61,7 +71,7 @@ describe('PluginContainer', () => {
     // Ensure the iframe has the proper attributes
     expect(iframeElement.attributes.getNamedItem('allow').value).toEqual(IFRAME_FEATURE_POLICY);
     expect(iframeElement.attributes.getNamedItem('src').value).toEqual(iframeConfig.url);
-    expect(iframeElement.attributes.getNamedItem('title').value).toEqual(title);
+    expect(iframeElement.attributes.getNamedItem('title').value).toEqual(iframeConfig.title);
     // The component isn't ready, since the class has 'd-none'
     expect(iframeElement.attributes.getNamedItem('class').value).toEqual('border border-0 w-100 d-none');
 
@@ -97,6 +107,16 @@ describe('PluginContainer', () => {
     fireEvent(window, readyEvent);
 
     expect(iframeElement.attributes.getNamedItem('class').value).toEqual('border border-0 w-100');
+  });
+
+  it('should render a Plugin Direct Container when given a Direct config', async () => {
+    const component = (
+      <PluginContainer config={directConfig} loadingFallback={<div>Loading</div>} />
+    );
+
+    const { getByTestId } = render(component);
+
+    expect(getByTestId(directConfig.id)).toBeInTheDocument();
   });
 });
 

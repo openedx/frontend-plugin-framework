@@ -4,9 +4,11 @@ import React from 'react';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import PluginContainerIframe from './PluginContainerIframe';
+import PluginContainerDirect from './PluginContainerDirect';
 
 import {
   IFRAME_PLUGIN,
+  DIRECT_PLUGIN,
 } from './data/constants';
 import { pluginConfigShape } from './data/shapes';
 
@@ -23,8 +25,13 @@ const PluginContainer = ({ config, ...props }) => {
         <PluginContainerIframe config={config} {...props} />
       );
       break;
-    // istanbul ignore next: default isn't meaningful, just satisfying linter
+    case DIRECT_PLUGIN:
+      renderer = (
+        <PluginContainerDirect config={config} {...props} />
+      );
+      break;
     default:
+      // istanbul ignore next: default isn't meaningful, just satisfying linter
   }
 
   return (

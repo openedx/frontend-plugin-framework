@@ -15,7 +15,7 @@ import {
   useElementSize,
   usePluginEvent,
 } from './data/hooks';
-import { pluginConfigShape } from './data/shapes';
+import { iframePluginConfigShape } from './data/shapes';
 
 /**
  * Feature policy for iframe, allowing access to certain courseware-related media.
@@ -32,10 +32,9 @@ export const IFRAME_FEATURE_POLICY = (
 );
 
 const PluginContainerIframe = ({
-  config, fallback, className, ...props
+  config, loadingFallback, className, ...props
 }) => {
-  const { url } = config;
-  const { title } = props;
+  const { url, title } = config;
   const [mounted, setMounted] = useState(false);
   const [ready, setReady] = useState(false);
 
@@ -76,7 +75,7 @@ const PluginContainerIframe = ({
         )}
         {...props}
       />
-      {!ready && fallback}
+      {!ready && loadingFallback}
     </>
   );
 };
@@ -84,19 +83,16 @@ const PluginContainerIframe = ({
 export default PluginContainerIframe;
 
 PluginContainerIframe.propTypes = {
-  /** Configuration for the Plugin in this container — i.e pluginSlot[id].example_plugin */
-  config: pluginConfigShape,
+  /** Configuration for the Plugin in this container (i.e. pluginSlot[id].example_plugin) */
+  config: iframePluginConfigShape,
   /** Custom fallback component used when component is not ready (i.e. "loading") */
-  fallback: PropTypes.node,
-  /** Accessible label for the iframe */
-  title: PropTypes.string,
+  loadingFallback: PropTypes.node,
   /** Classes to apply to the iframe */
   className: PropTypes.string,
 };
 
 PluginContainerIframe.defaultProps = {
   config: null,
-  fallback: null,
-  title: null,
+  loadingFallback: null,
   className: null,
 };
