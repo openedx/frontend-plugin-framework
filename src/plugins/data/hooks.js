@@ -18,7 +18,7 @@ export function usePluginSlot(id) {
   if (getConfig().pluginSlots[id] !== undefined) {
     return getConfig().pluginSlots[id];
   }
-  return { keepDefault: true, plugins: [] };
+  return { plugins: [], defaultContents: [] };
 }
 
 /* Listening for events */

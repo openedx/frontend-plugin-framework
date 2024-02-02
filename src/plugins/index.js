@@ -12,4 +12,6 @@ export {
 } from './PluginSlot';
 export {
   IFRAME_PLUGIN,
+  DIRECT_PLUGIN,
+  PLUGIN_OPERATIONS,
 } from './data/constants';
