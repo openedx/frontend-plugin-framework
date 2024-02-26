@@ -1,4 +1,4 @@
-module.exports = {
+config = {
   /*
   Modules you want to use from local source code.  Adding a module here means that when this app
   runs its build, it'll resolve the source from peer directories of this app.
@@ -29,3 +29,5 @@ module.exports = {
     // { moduleName: '@edx/frontend-platform', dir: '../frontend-platform', dist: 'dist' },
   ],
 };
+
+export default config
