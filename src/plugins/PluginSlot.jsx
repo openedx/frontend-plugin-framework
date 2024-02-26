@@ -4,9 +4,7 @@ import React, { forwardRef } from 'react';
 import classNames from 'classnames';
 import { Spinner } from '@edx/paragon';
 import PropTypes from 'prop-types';
-import {
-  useIntl,
-} from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 
 import messages from './Plugins.messages';
 import { usePluginSlot } from './data/hooks';

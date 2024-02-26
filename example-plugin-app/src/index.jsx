@@ -14,7 +14,6 @@ import PluginOne from './PluginOne';
 import PluginTwo from './PluginTwo';
 
 import './index.scss';
-// TODO: figure out how to resolve the intl problem
 subscribe(APP_READY, () => {
   ReactDOM.render(
     <AppProvider>
