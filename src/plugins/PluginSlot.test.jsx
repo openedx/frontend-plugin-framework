@@ -3,6 +3,7 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import { render, fireEvent } from '@testing-library/react';
+import { logError } from '@edx/frontend-platform/logging';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import PluginSlot from './PluginSlot';
 import { usePluginSlot } from './data/hooks';
@@ -49,6 +50,10 @@ jest.mock('react', () => ({
   Suspense: ({ children }) => children,
 }));
 
+jest.mock('@edx/frontend-platform/logging', () => ({
+  logError: jest.fn(),
+}));
+
 // Mock ResizeObserver which is unavailable in the context of a test.
 global.ResizeObserver = jest.fn(function mockResizeObserver() {
   this.observe = jest.fn();
@@ -56,6 +61,14 @@ global.ResizeObserver = jest.fn(function mockResizeObserver() {
 });
 
 // TODO: APER-3119 — Write unit tests for plugin scenarios not already tested for https://2u-internal.atlassian.net/browse/APER-3119
+const TestPluginSlot = (
+  <IntlProvider locale="en">
+    <PluginSlot
+      id="test-slot"
+      data-testid="test-slot-id"
+    />
+  </IntlProvider>
+);
 
 describe('PluginSlot', () => {
   beforeEach(() => {
@@ -65,15 +78,6 @@ describe('PluginSlot', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-
-  const TestPluginSlot = (
-    <IntlProvider locale="en">
-      <PluginSlot
-        id="test-slot"
-        data-testid="test-slot-id"
-      />
-    </IntlProvider>
-  );
 
   it('should render multiple types of Plugin in a single slot config', () => {
     const { container, getByTestId } = render(TestPluginSlot);
@@ -143,5 +147,25 @@ describe('PluginSlot', () => {
     const { queryByTestId } = render(TestPluginSlot);
 
     expect(queryByTestId(directHomeConfig.id)).not.toBeInTheDocument();
+  });
+
+  it('should throw an error for invalid config type', () => {
+    usePluginSlot.mockReturnValueOnce({
+      plugins: [
+        {
+          op: 'insert',
+          widget: {
+            id: 'invalid_config',
+            type: 'INVALID_TYPE',
+          },
+        },
+      ],
+      defaultContents: [
+        directHomeConfig,
+      ],
+    });
+    render(TestPluginSlot);
+
+    expect(logError).toHaveBeenCalledWith('Config type INVALID_TYPE is not valid.');
   });
 });

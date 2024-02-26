@@ -9,13 +9,13 @@ import { getConfig } from '@edx/frontend-platform';
 import { PLUGIN_MOUNTED, PLUGIN_READY, PLUGIN_UNMOUNTED } from './constants';
 
 /**
- * Called by PluginSlot to extract a list of plugins based on the JS configuration
+ * Called by PluginSlot to extract a list of plugins from the JS configuration
  *
  * @param {String} id - Name of PluginSlot
  * @returns {Object} - JS configuration for the PluginSlot
  */
 export function usePluginSlot(id) {
-  if (getConfig().pluginSlots[id] !== undefined) {
+  if (getConfig().pluginSlots?.[id] !== undefined) {
     return getConfig().pluginSlots[id];
   }
   return { plugins: [], defaultContents: [] };
