@@ -1,0 +1,25 @@
+{
+  "name": "example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.jsx",
+  "scripts": {
+    "lint": "fedx-scripts eslint --ext .js --ext .jsx .",
+    "lint:fix": "fedx-scripts eslint --fix --ext .js --ext .jsx .",
+    "start": "fedx-scripts webpack-dev-server --progress"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@edx/frontend-platform": "^7.1.0",
+    "core-js": "^3.29.1",
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0",
+    "react-router-dom": "^6.6.1",
+    "regenerator-runtime": "^0.13.11"
+  },
+  "devDependencies": {
+    "@openedx/frontend-build": "^13.0.0"
+  }
+}
