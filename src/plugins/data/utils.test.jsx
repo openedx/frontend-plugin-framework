@@ -3,7 +3,10 @@
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
 
-import { organizePlugins, wrapComponent } from './utils';
+import {
+  getConfigSlots, organizePlugins, wrapComponent,
+} from './utils';
+
 import { PLUGIN_OPERATIONS } from './constants';
 
 const mockModifyWidget = (widget) => {
@@ -78,6 +81,17 @@ const mockDefaultContent = [
     content: { url: '/drafts', label: 'Drafts' },
   },
 ];
+
+jest.mock('@edx/frontend-platform', () => ({
+  getConfig: jest.fn(() => ({
+    pluginSlots: {
+      example_plugin_slot: {
+        slotChanges: mockSlotChanges,
+        defaultContent: mockDefaultContent,
+      },
+    },
+  })),
+}));
 
 describe('organizePlugins', () => {
   describe('when there is no defaultContent', () => {
@@ -219,5 +233,17 @@ describe('wrapComponent', () => {
       expect(middleWrapper).toContainElement(innermostWrapper);
       expect(outermostWrapper).toContainElement(middleWrapper);
     });
+  });
+});
+
+describe('getConfigSlots', () => {
+  it('returns the plugin slots from the Config Document', () => {
+    const expected = {
+      example_plugin_slot: {
+        slotChanges: mockSlotChanges,
+        defaultContent: mockDefaultContent,
+      },
+    };
+    expect(getConfigSlots()).toStrictEqual(expected);
   });
 });

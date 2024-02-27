@@ -5,7 +5,7 @@
 import {
   useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState,
 } from 'react';
-import { getConfig } from '@edx/frontend-platform';
+import { getConfigSlots } from './utils';
 import { PLUGIN_MOUNTED, PLUGIN_READY, PLUGIN_UNMOUNTED } from './constants';
 
 /**
@@ -15,8 +15,8 @@ import { PLUGIN_MOUNTED, PLUGIN_READY, PLUGIN_UNMOUNTED } from './constants';
  * @returns {Object} - JS configuration for the PluginSlot
  */
 export function usePluginSlot(id) {
-  if (getConfig().pluginSlots[id] !== undefined) {
-    return getConfig().pluginSlots[id];
+  if (getConfigSlots()[id] !== undefined) {
+    return getConfigSlots()[id];
   }
   return { plugins: [], defaultContents: [] };
 }

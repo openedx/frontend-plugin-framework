@@ -1,4 +1,5 @@
 import React from 'react';
+import { getConfig } from '@edx/frontend-platform';
 import { PLUGIN_OPERATIONS } from './constants';
 
 /**
@@ -53,7 +54,14 @@ export const wrapComponent = (renderComponent, wrappers) => wrappers.reduce(
   renderComponent(),
 );
 
+/**
+ * Called by usePluginSlot to retrieve the most up-to-date Config Document*
+ * @returns {Object} - The pluginSlots object in Config Document
+ */
+export const getConfigSlots = () => getConfig().pluginSlots;
+
 export default {
+  getConfigSlots,
   organizePlugins,
   wrapComponent,
 };

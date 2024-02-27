@@ -1,3 +1,5 @@
+import { IFRAME_PLUGIN, PLUGIN_OPERATIONS } from '@edx/frontend-plugin-framework';
+
 // Note that in an actual application this file would be added to .gitignore.
 const config = {
   JS_FILE_VAR: 'JS_FILE_VAR_VALUE_FOR_EXAMPLE_APP',
@@ -32,6 +34,31 @@ const config = {
   APP_ID: null,
   SUPPORT_URL: 'https://support.edx.org',
   PORT: 8080,
+  pluginSlots: {
+    slot_with_two_iframes: {
+      plugins: [
+        // {
+        //   op: PLUGIN_OPERATIONS.Insert,
+        //   widget: {
+        //     id: 'learner_record_broken_iframe_example',
+        //     type: IFRAME_PLUGIN,
+        //     priority: 30,
+        //     url: 'http://localhost:8081/plugin1',
+        //     title: 'broken_iframe_plugin_example',
+        //   },
+        // },
+      ],
+      defaultContents: [
+        {
+          id: 'learner_record_working_iframe_example',
+          type: IFRAME_PLUGIN,
+          priority: 1,
+          url: 'http://localhost:8081/plugin2',
+          title: 'iframe_plugin_example',
+        },
+      ],
+    },
+  },
 };
 
 export default config;

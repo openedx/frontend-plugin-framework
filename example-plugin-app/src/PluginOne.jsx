@@ -1,7 +1,7 @@
 /* eslint react/prop-types: off */
 
 import React from 'react';
-import { Plugin } from '@edx/frontend-plugin-framework/plugins';
+import { Plugin } from '@edx/frontend-plugin-framework';
 
 function Greeting({ subject }) {
   return (

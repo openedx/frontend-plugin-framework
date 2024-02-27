@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plugin } from '@edx/frontend-plugin-framework/plugins';
+import { Plugin } from '@edx/frontend-plugin-framework';
 
 export default function PluginTwo() {
   return (
