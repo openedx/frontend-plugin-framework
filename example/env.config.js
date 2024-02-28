@@ -1,4 +1,11 @@
-import { IFRAME_PLUGIN, PLUGIN_OPERATIONS } from '@edx/frontend-plugin-framework';
+import {
+  DIRECT_PLUGIN,
+  IFRAME_PLUGIN,
+  PLUGIN_OPERATIONS
+} from '@edx/frontend-plugin-framework';
+import DirectPluginOne from './src/directPlugins/DirectPluginOne';
+import DirectPluginTwo from './src/directPlugins/DirectPluginTwo';
+import ModularDirectPlugin from './src/directPlugins/ModularDirectPlugin';
 
 // Note that in an actual application this file would be added to .gitignore.
 const config = {
@@ -37,25 +44,80 @@ const config = {
   pluginSlots: {
     slot_with_two_iframes: {
       plugins: [
-        // {
-        //   op: PLUGIN_OPERATIONS.Insert,
-        //   widget: {
-        //     id: 'learner_record_broken_iframe_example',
-        //     type: IFRAME_PLUGIN,
-        //     priority: 30,
-        //     url: 'http://localhost:8081/plugin1',
-        //     title: 'broken_iframe_plugin_example',
-        //   },
-        // },
+        {
+          op: PLUGIN_OPERATIONS.Insert,
+          widget: {
+            id: 'broken_iframe_example',
+            type: IFRAME_PLUGIN,
+            priority: 30,
+            url: 'http://localhost:8081/plugin1',
+            title: 'broken_iframe_plugin_example',
+          },
+        },
       ],
       defaultContents: [
         {
-          id: 'learner_record_working_iframe_example',
+          id: 'working_iframe_example',
           type: IFRAME_PLUGIN,
           priority: 1,
           url: 'http://localhost:8081/plugin2',
           title: 'iframe_plugin_example',
         },
+      ],
+    },
+    slot_with_two_direct_plugins: {
+      plugins: [
+        {
+          op: PLUGIN_OPERATIONS.Insert,
+          widget: {
+            id: 'additional_direct_plugin',
+            type: DIRECT_PLUGIN,
+            priority: 20,
+            RenderWidget: DirectPluginTwo,
+          },
+        },
+      ],
+      defaultContents: [
+        {
+          id: 'default_direct_plugin',
+          type: DIRECT_PLUGIN,
+          priority: 1,
+          RenderWidget: DirectPluginOne,
+        },
+      ],
+    },
+    slot_with_mixed_plugins: {
+      plugins: [
+        {
+          op: PLUGIN_OPERATIONS.Insert,
+          widget: {
+            id: 'inserted_direct_plugin',
+            type: DIRECT_PLUGIN,
+            priority: 1,
+            RenderWidget: ModularDirectPlugin,
+            content: {
+              uniqueText: 'This is a direct plugin with priority of 1, which is why it appears first in this slot.'
+            }
+          }
+        }
+      ],
+      defaultContents: [
+        {
+          id: 'default_direct_plugin',
+          type: DIRECT_PLUGIN,
+          priority: 10,
+          RenderWidget: ModularDirectPlugin,
+          content: {
+            uniqueText: 'This is a direct plugin with priority of 10, which is why it appears second in this slot.'
+          }
+        },
+        {
+          id: 'default_iframe_plugin',
+          type: IFRAME_PLUGIN,
+          priority: 50,
+          url: 'http://localhost:8081/plugin2',
+          title: 'iframe_plugin_example',
+        }
       ],
     },
   },

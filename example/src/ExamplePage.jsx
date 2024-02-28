@@ -1,6 +1,8 @@
 import React from 'react';
 
-import ExamplePluginSlot from './ExamplePluginSlot';
+import PluginSlotWithIFrames from './pluginSlots/PluginSlotWithIFrames';
+import PluginSlotWithDirectPlugins from './pluginSlots/PluginSlotWithDirectPlugins';
+import PluginSlotWithMixedPlugins from './pluginSlots/PluginSlotWithMixedPlugins.jsx';
 
 export default function ExamplePage() {
   return (
@@ -18,7 +20,9 @@ export default function ExamplePage() {
         127.0.0.1 at which you can load the plugin.
       </p>
       <div className="d-flex flex-column">
-        <ExamplePluginSlot />
+        <PluginSlotWithIFrames />
+        <PluginSlotWithDirectPlugins />
+        <PluginSlotWithMixedPlugins />
       </div>
     </main>
   );
