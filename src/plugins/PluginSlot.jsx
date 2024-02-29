@@ -2,7 +2,7 @@ import React, { forwardRef } from 'react';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import classNames from 'classnames';
-import { Spinner } from '@edx/paragon';
+import { Spinner } from '@openedx/paragon';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
