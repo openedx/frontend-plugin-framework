@@ -2,7 +2,7 @@ import React from 'react';
 
 import PluginSlotWithInsert from './pluginSlots/PluginSlotWithInsert';
 import PluginSlotWithModifyWrapHide from './pluginSlots/PluginSlotWithModifyWrapHide';
-import PluginSlotWithMixedPlugins from './pluginSlots/PluginSlotWithModularPlugins.jsx';
+import PluginSlotWithModularPlugins from './pluginSlots/PluginSlotWithModularPlugins.jsx';
 
 export default function ExamplePage() {
   return (
@@ -24,7 +24,7 @@ export default function ExamplePage() {
         <br></br>
         <PluginSlotWithModifyWrapHide />
         <br></br>
-        <PluginSlotWithMixedPlugins />
+        <PluginSlotWithModularPlugins />
       </div>
     </main>
   );

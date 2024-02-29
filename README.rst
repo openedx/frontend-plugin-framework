@@ -26,10 +26,22 @@ for a component that lives in another MFE (the 'Child MFE') to be plugged into a
 
 Getting Started
 ===============
-1. Add Library Dependency
+Add Library Dependency
 -------------------------
 
 Add ``@edx/frontend-plugin-framework`` to the ``package.json`` of both Host and Child MFEs.
+
+Using the Example Apps
+----------------------
+
+To use the example apps, you will need to open two terminals.
+1. Run ``npm install`` inside both example app directories.
+2. Run ``npm run start`` in both directories.
+
+Alternatively, once the packages are installed in both apps, you can run the apps from the root directory.
+1. ``npm run start`` runs the host MFE (``example``)
+2. ``npm run start:plugins`` runs the child MFE (``example-plugin-app``)
+
 
 Micro-frontend configuration document (JS)
 ------------------------------------------

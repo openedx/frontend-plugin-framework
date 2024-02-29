@@ -6,7 +6,7 @@ import { Spinner } from '@edx/paragon';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
-import messages from './Plugins.messages';
+import messages from './Plugin.messages';
 import { usePluginSlot } from './data/hooks';
 import PluginContainer from './PluginContainer';
 import { organizePlugins, wrapComponent } from './data/utils';

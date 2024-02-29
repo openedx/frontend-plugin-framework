@@ -7,6 +7,24 @@ import DefaultDirectWidget from './src/directPlugins/DefaultDirectWidget';
 import PluginDirect from './src/directPlugins/PluginDirect';
 import ModularDirectPlugin from './src/directPlugins/ModularDirectPlugin';
 
+const modifyWidget = (widget) => {
+  const newContent = {
+    title: 'Modified Default Widget',
+    uniqueText: 'Note that the default text is replaced by this one that is defined in the JS configuration.',
+  };
+  const modifiedWidget = widget;
+  modifiedWidget.content = newContent;
+  return modifiedWidget;
+};
+
+const wrapWidget = ({ component, idx }) => (
+  <div className='bg-warning' data-testid={`wrapper${idx + 1}`} key={idx}>
+    <p>This is a wrapper component that is placed around the widget.</p>
+    {component}
+    <p>With this wrapper, you can add anything before or after the widget.</p>
+  </div>
+);
+
 // Note that in an actual application this file would be added to .gitignore.
 const config = {
   JS_FILE_VAR: 'JS_FILE_VAR_VALUE_FOR_EXAMPLE_APP',
@@ -81,27 +99,55 @@ const config = {
       ],
     },
     slot_with_modify_wrap_hidden_operations: {
-      plugins: [
-        {
-          op: PLUGIN_OPERATIONS.Insert,
-          widget: {
-            id: 'additional_direct_plugin',
-            type: DIRECT_PLUGIN,
-            priority: 20,
-            RenderWidget: PluginDirect,
-          },
-        },
-      ],
       defaultContents: [
         {
-          id: 'default_direct_plugin',
+          id: 'default_direct_widget',
           type: DIRECT_PLUGIN,
           priority: 1,
-          RenderWidget: DefaultDirectWidget,
+          RenderWidget: ModularDirectPlugin,
+          content: {
+            title: 'Default Direct Widget',
+            uniqueText: "This widget's content will be modified by the Modify operation below."
+          }
+        },
+        {
+          id: 'default_iframe_widget',
+          type: IFRAME_PLUGIN,
+          priority: 2,
+          url: 'http://localhost:8081/default_iframe',
+          title: 'The default iFrame widget that appears in the plugin slot',
+        },
+      ],
+      plugins: [
+        {
+          op: PLUGIN_OPERATIONS.Wrap,
+          widgetId: 'default_direct_widget',
+          wrapper: wrapWidget,
+        },
+        {
+          op: PLUGIN_OPERATIONS.Modify,
+          widgetId: 'default_direct_widget',
+          fn: modifyWidget,
+        },
+        {
+          op: PLUGIN_OPERATIONS.Hide,
+          widgetId: 'default_iframe_widget'
         },
       ],
     },
     slot_with_modular_plugins: {
+      defaultContents: [
+        {
+          id: 'default_direct_widget',
+          type: DIRECT_PLUGIN,
+          priority: 10,
+          RenderWidget: ModularDirectPlugin,
+          content: {
+            title: 'Default Direct Widget',
+            uniqueText: 'This is a direct widget with priority of 10, which is why it appears second in this slot.'
+          }
+        },
+      ],
       plugins: [
         {
           op: PLUGIN_OPERATIONS.Insert,
@@ -116,18 +162,6 @@ const config = {
             }
           }
         }
-      ],
-      defaultContents: [
-        {
-          id: 'default_direct_plugin',
-          type: DIRECT_PLUGIN,
-          priority: 10,
-          RenderWidget: ModularDirectPlugin,
-          content: {
-            title: 'Default Direct Widget',
-            uniqueText: 'This is a direct widget with priority of 10, which is why it appears second in this slot.'
-          }
-        },
       ],
     },
   },
