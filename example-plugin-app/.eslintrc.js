@@ -11,4 +11,4 @@ config.rules = {
   }],
 };
 
-module.exports = createConfig('eslint');
+module.exports = config;

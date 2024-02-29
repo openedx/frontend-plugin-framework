@@ -14,6 +14,7 @@ import DefaultIframe from './DefaultIframe';
 import PluginIframe from './PluginIframe';
 
 import './index.scss';
+
 subscribe(APP_READY, () => {
   ReactDOM.render(
     <AppProvider>
