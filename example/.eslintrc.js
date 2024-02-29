@@ -6,13 +6,9 @@ config.rules = {
   'import/no-extraneous-dependencies': ['error', {
     devDependencies: true,
   }],
-  'import/extensions': ['error', {
-    ignore: ['@edx/frontend-platform*'],
-  }],
   'import/no-unresolved': ['error', {
-    ignore: ['@edx/frontend-platform*'],
+    ignore: ['@edx/frontend-plugin-framework*'],
   }],
-  'react/react-in-jsx-scope': ['error'],
 };
 
 module.exports = config;

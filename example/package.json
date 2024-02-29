@@ -4,15 +4,17 @@
   "description": "",
   "main": "index.jsx",
   "scripts": {
-    "lint": "fedx-scripts eslint --ext .js --ext .jsx .",
-    "lint:fix": "fedx-scripts eslint --fix --ext .js --ext .jsx .",
+    "lint": "fedx-scripts eslint --ext .js --ext .jsx . --resolve-plugins-relative-to .",
+    "lint:fix": "fedx-scripts eslint --fix --ext .js --ext .jsx . --resolve-plugins-relative-to .",
     "start": "fedx-scripts webpack-dev-server --progress"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@edx/frontend-platform": "^7.1.0",
     "core-js": "^3.29.1",
+    "prop-types": "^15.8.1",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-router-dom": "^6.6.1",

@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.jsx",
   "scripts": {
-    "lint": "fedx-scripts eslint --ext .js --ext .jsx .",
-    "lint:fix": "fedx-scripts eslint --fix --ext .js --ext .jsx .",
+    "lint": "fedx-scripts eslint --ext .js --ext .jsx . --resolve-plugins-relative-to .",
+    "lint:fix": "fedx-scripts eslint --fix --ext .js --ext .jsx . --resolve-plugins-relative-to .",
     "start": "fedx-scripts webpack-dev-server --progress"
   },
   "keywords": [],

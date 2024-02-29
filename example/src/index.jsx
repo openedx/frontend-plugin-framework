@@ -11,7 +11,7 @@ import {
   PageWrap,
 } from '@edx/frontend-platform/react';
 import {
-  APP_INIT_ERROR, APP_READY, initialize
+  APP_INIT_ERROR, APP_READY, initialize,
 } from '@edx/frontend-platform';
 import { subscribe } from '@edx/frontend-platform/pubSub';
 

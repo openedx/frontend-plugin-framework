@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   DIRECT_PLUGIN,
   IFRAME_PLUGIN,

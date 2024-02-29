@@ -2,7 +2,7 @@ import React from 'react';
 
 import PluginSlotWithInsert from './pluginSlots/PluginSlotWithInsert';
 import PluginSlotWithModifyWrapHide from './pluginSlots/PluginSlotWithModifyWrapHide';
-import PluginSlotWithModularPlugins from './pluginSlots/PluginSlotWithModularPlugins.jsx';
+import PluginSlotWithModularPlugins from './pluginSlots/PluginSlotWithModularPlugins';
 
 export default function ExamplePage() {
   return (
@@ -21,9 +21,7 @@ export default function ExamplePage() {
       </p>
       <div className="d-flex flex-column">
         <PluginSlotWithInsert />
-        <br></br>
         <PluginSlotWithModifyWrapHide />
-        <br></br>
         <PluginSlotWithModularPlugins />
       </div>
     </main>
