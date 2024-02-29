@@ -12,11 +12,6 @@ config.rules = {
   'import/no-unresolved': ['error', {
     ignore: ['@edx/frontend-platform*'],
   }],
-  'jsx-a11y/anchor-is-valid': ['error', {
-    components: ['Link'],
-    specialLink: ['to'],
-    aspects: ['noHref', 'invalidHref', 'preferButton'],
-  }],
   'react/react-in-jsx-scope': ['error'],
 };
 

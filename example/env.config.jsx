@@ -1,7 +1,7 @@
 import {
   DIRECT_PLUGIN,
   IFRAME_PLUGIN,
-  PLUGIN_OPERATIONS
+  PLUGIN_OPERATIONS,
 } from '@edx/frontend-plugin-framework';
 import DefaultDirectWidget from './src/directPlugins/DefaultDirectWidget';
 import PluginDirect from './src/directPlugins/PluginDirect';
@@ -18,7 +18,7 @@ const modifyWidget = (widget) => {
 };
 
 const wrapWidget = ({ component, idx }) => (
-  <div className='bg-warning' data-testid={`wrapper${idx + 1}`} key={idx}>
+  <div className="bg-warning" data-testid={`wrapper${idx + 1}`} key={idx}>
     <p>This is a wrapper component that is placed around the widget.</p>
     {component}
     <p>With this wrapper, you can add anything before or after the widget.</p>
@@ -107,8 +107,8 @@ const config = {
           RenderWidget: ModularDirectPlugin,
           content: {
             title: 'Default Direct Widget',
-            uniqueText: "This widget's content will be modified by the Modify operation below."
-          }
+            uniqueText: "This widget's content will be modified by the Modify operation below.",
+          },
         },
         {
           id: 'default_iframe_widget',
@@ -131,7 +131,7 @@ const config = {
         },
         {
           op: PLUGIN_OPERATIONS.Hide,
-          widgetId: 'default_iframe_widget'
+          widgetId: 'default_iframe_widget',
         },
       ],
     },
@@ -144,8 +144,8 @@ const config = {
           RenderWidget: ModularDirectPlugin,
           content: {
             title: 'Default Direct Widget',
-            uniqueText: 'This is a direct widget with priority of 10, which is why it appears second in this slot.'
-          }
+            uniqueText: 'This is a direct widget with priority of 10, which is why it appears second in this slot.',
+          },
         },
       ],
       plugins: [
@@ -158,10 +158,10 @@ const config = {
             RenderWidget: ModularDirectPlugin,
             content: {
               title: 'Inserted Direct Plugin',
-              uniqueText: 'This is a direct plugin with priority of 1, which is why it appears first in this slot.'
-            }
-          }
-        }
+              uniqueText: 'This is a direct plugin with priority of 1, which is why it appears first in this slot.',
+            },
+          },
+        },
       ],
     },
   },
