@@ -1,4 +1,4 @@
-/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable react/jsx-no-bind */
 /* eslint react/prop-types: off */
 
 import React from 'react';
@@ -145,47 +145,53 @@ describe('Plugin', () => {
     jest.clearAllMocks();
   });
 
-  const PluginPageWrapper = ({
-    params, ErrorFallbackComponent, ChildComponent,
-  }) => (
-    <IntlProvider locale="en">
-      <Plugin params={params} ErrorFallbackComponent={ErrorFallbackComponent}>
-        <ChildComponent />
-      </Plugin>
-    </IntlProvider>
-  );
-
   const ExplodingComponent = () => {
     throw new Error(error);
   };
 
-  const HealthyComponent = () => (
-    <div>
-      <FormattedMessage
-        id="hello.world.message.text"
-        defaultMessage="Hello World!"
-        description="greeting the world with a hello"
-      />
-    </div>
-  );
-
-  const ErrorFallbackComponent = () => (
-    <div>
-      <p>
+  function HealthyComponent() {
+    return (
+      <div>
         <FormattedMessage
-          id="unexpected.error.message.text"
-          defaultMessage="Oh geez, this is not good at all."
-          description="error message when an unexpected error occurs"
+          id="hello.world.message.text"
+          defaultMessage="Hello World!"
+          description="greeting the world with a hello"
         />
-      </p>
-      <br />
-    </div>
-  );
+      </div>
+    );
+  }
+
+  function ErrorFallbackComponent() {
+    return (
+      <div>
+        <p>
+          <FormattedMessage
+            id="unexpected.error.message.text"
+            defaultMessage="Oh geez, this is not good at all."
+            description="error message when an unexpected error occurs"
+          />
+        </p>
+        <br />
+      </div>
+    );
+  }
+
+  function PluginPageWrapper({
+    params, FallbackComponent, ChildComponent,
+  }) {
+    return (
+      <IntlProvider locale="en">
+        <Plugin params={params} ErrorFallbackComponent={FallbackComponent}>
+          <ChildComponent />
+        </Plugin>
+      </IntlProvider>
+    );
+  }
 
   it('should render children if no error', () => {
     const component = (
       <PluginPageWrapper
-        ErrorFallbackComponent={ErrorFallbackComponent}
+        FallbackComponent={ErrorFallbackComponent}
         ChildComponent={HealthyComponent}
       />
     );
@@ -197,12 +203,13 @@ describe('Plugin', () => {
     const component = (
       <PluginPageWrapper
         className="bg-light"
-        ErrorFallbackComponent={ErrorFallbackComponent}
+        FallbackComponent={ErrorFallbackComponent}
         ChildComponent={ExplodingComponent}
       />
     );
 
-    render(component);
+    const { container } = render(component);
+    expect(container).toHaveTextContent('Oh geez');
 
     expect(logError).toHaveBeenCalledTimes(1);
     expect(logError).toHaveBeenCalledWith(
@@ -211,18 +218,6 @@ describe('Plugin', () => {
         stack: expect.stringContaining('ExplodingComponent'),
       }),
     );
-  });
-
-  it('should render the passed in fallback component when the error boundary receives a React error', () => {
-    const component = (
-      <PluginPageWrapper
-        ErrorFallbackComponent={ErrorFallbackComponent}
-        ChildComponent={ExplodingComponent}
-      />
-    );
-
-    const { container } = render(component);
-    expect(container).toHaveTextContent('Oh geez');
   });
 
   it('should render the default fallback component when one is not passed into the Plugin', () => {

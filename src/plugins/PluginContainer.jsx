@@ -12,7 +12,7 @@ import {
 } from './data/constants';
 import { pluginConfigShape } from './data/shapes';
 
-const PluginContainer = ({ config, ...props }) => {
+function PluginContainer({ config, ...props }) {
   if (config === null) {
     return null;
   }
@@ -37,7 +37,7 @@ const PluginContainer = ({ config, ...props }) => {
   return (
     renderer
   );
-};
+}
 
 export default PluginContainer;
 
