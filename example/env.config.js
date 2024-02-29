@@ -3,8 +3,8 @@ import {
   IFRAME_PLUGIN,
   PLUGIN_OPERATIONS
 } from '@edx/frontend-plugin-framework';
-import DirectPluginOne from './src/directPlugins/DirectPluginOne';
-import DirectPluginTwo from './src/directPlugins/DirectPluginTwo';
+import DefaultDirectWidget from './src/directPlugins/DefaultDirectWidget';
+import PluginDirect from './src/directPlugins/PluginDirect';
 import ModularDirectPlugin from './src/directPlugins/ModularDirectPlugin';
 
 // Note that in an actual application this file would be added to .gitignore.
@@ -42,30 +42,45 @@ const config = {
   SUPPORT_URL: 'https://support.edx.org',
   PORT: 8080,
   pluginSlots: {
-    slot_with_two_iframes: {
+    slot_with_insert_operation: {
+      defaultContents: [
+        {
+          id: 'default_iframe_widget',
+          type: IFRAME_PLUGIN,
+          priority: 1,
+          url: 'http://localhost:8081/default_iframe',
+          title: 'The default iFrame widget that appears in the plugin slot',
+        },
+        {
+          id: 'default_direct_widget',
+          type: DIRECT_PLUGIN,
+          priority: 20,
+          RenderWidget: DefaultDirectWidget,
+        },
+      ],
       plugins: [
         {
           op: PLUGIN_OPERATIONS.Insert,
           widget: {
-            id: 'broken_iframe_example',
+            id: 'inserted_iframe_plugin',
             type: IFRAME_PLUGIN,
             priority: 30,
-            url: 'http://localhost:8081/plugin1',
-            title: 'broken_iframe_plugin_example',
+            url: 'http://localhost:8081/plugin_iframe',
+            title: 'The iFrame plugin that is inserted in the slot',
+          },
+        },
+        {
+          op: PLUGIN_OPERATIONS.Insert,
+          widget: {
+            id: 'inserted_direct_plugin',
+            type: DIRECT_PLUGIN,
+            priority: 10,
+            RenderWidget: PluginDirect,
           },
         },
       ],
-      defaultContents: [
-        {
-          id: 'working_iframe_example',
-          type: IFRAME_PLUGIN,
-          priority: 1,
-          url: 'http://localhost:8081/plugin2',
-          title: 'iframe_plugin_example',
-        },
-      ],
     },
-    slot_with_two_direct_plugins: {
+    slot_with_modify_wrap_hidden_operations: {
       plugins: [
         {
           op: PLUGIN_OPERATIONS.Insert,
@@ -73,7 +88,7 @@ const config = {
             id: 'additional_direct_plugin',
             type: DIRECT_PLUGIN,
             priority: 20,
-            RenderWidget: DirectPluginTwo,
+            RenderWidget: PluginDirect,
           },
         },
       ],
@@ -82,11 +97,11 @@ const config = {
           id: 'default_direct_plugin',
           type: DIRECT_PLUGIN,
           priority: 1,
-          RenderWidget: DirectPluginOne,
+          RenderWidget: DefaultDirectWidget,
         },
       ],
     },
-    slot_with_mixed_plugins: {
+    slot_with_modular_plugins: {
       plugins: [
         {
           op: PLUGIN_OPERATIONS.Insert,
@@ -96,6 +111,7 @@ const config = {
             priority: 1,
             RenderWidget: ModularDirectPlugin,
             content: {
+              title: 'Inserted Direct Plugin',
               uniqueText: 'This is a direct plugin with priority of 1, which is why it appears first in this slot.'
             }
           }
@@ -108,16 +124,10 @@ const config = {
           priority: 10,
           RenderWidget: ModularDirectPlugin,
           content: {
-            uniqueText: 'This is a direct plugin with priority of 10, which is why it appears second in this slot.'
+            title: 'Default Direct Widget',
+            uniqueText: 'This is a direct widget with priority of 10, which is why it appears second in this slot.'
           }
         },
-        {
-          id: 'default_iframe_plugin',
-          type: IFRAME_PLUGIN,
-          priority: 50,
-          url: 'http://localhost:8081/plugin2',
-          title: 'iframe_plugin_example',
-        }
       ],
     },
   },

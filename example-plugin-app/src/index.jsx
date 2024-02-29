@@ -10,16 +10,16 @@ import {
   APP_INIT_ERROR, APP_READY, subscribe, initialize,
 } from '@edx/frontend-platform';
 
-import PluginOne from './PluginOne';
-import PluginTwo from './PluginTwo';
+import DefaultIframe from './DefaultIframe';
+import PluginIframe from './PluginIframe';
 
 import './index.scss';
 subscribe(APP_READY, () => {
   ReactDOM.render(
     <AppProvider>
       <Routes>
-        <Route path="/plugin1" element={<PageWrap><PluginOne /></PageWrap>} />
-        <Route path="/plugin2" element={<PageWrap><PluginTwo /></PageWrap>} />
+        <Route path="/default_iframe" element={<PageWrap><DefaultIframe /></PageWrap>} />
+        <Route path="/plugin_iframe" element={<PageWrap><PluginIframe /></PageWrap>} />
       </Routes>
     </AppProvider>,
     document.getElementById('root'),

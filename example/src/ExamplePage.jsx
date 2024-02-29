@@ -1,12 +1,12 @@
 import React from 'react';
 
-import PluginSlotWithIFrames from './pluginSlots/PluginSlotWithIFrames';
-import PluginSlotWithDirectPlugins from './pluginSlots/PluginSlotWithDirectPlugins';
-import PluginSlotWithMixedPlugins from './pluginSlots/PluginSlotWithMixedPlugins.jsx';
+import PluginSlotWithInsert from './pluginSlots/PluginSlotWithInsert';
+import PluginSlotWithModifyWrapHide from './pluginSlots/PluginSlotWithModifyWrapHide';
+import PluginSlotWithMixedPlugins from './pluginSlots/PluginSlotWithModularPlugins.jsx';
 
 export default function ExamplePage() {
   return (
-    <main>
+    <main className="center m-5">
       <h1>Plugins Page</h1>
 
       <p>
@@ -20,8 +20,10 @@ export default function ExamplePage() {
         127.0.0.1 at which you can load the plugin.
       </p>
       <div className="d-flex flex-column">
-        <PluginSlotWithIFrames />
-        <PluginSlotWithDirectPlugins />
+        <PluginSlotWithInsert />
+        <br></br>
+        <PluginSlotWithModifyWrapHide />
+        <br></br>
         <PluginSlotWithMixedPlugins />
       </div>
     </main>
