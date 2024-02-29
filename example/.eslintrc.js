@@ -1,4 +1,4 @@
-const { getBaseConfig } = require('@edx/frontend-build');
+const { getBaseConfig } = require('@openedx/frontend-build');
 
 const config = getBaseConfig('eslint');
 
