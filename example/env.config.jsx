@@ -28,8 +28,6 @@ const wrapWidget = ({ component, idx }) => (
 
 // Note that in an actual application this file would be added to .gitignore.
 const config = {
-  JS_FILE_VAR: 'JS_FILE_VAR_VALUE_FOR_EXAMPLE_APP',
-  EXAMPLE_VAR: 'Example Value',
   ACCESS_TOKEN_COOKIE_NAME: 'edx-jwt-cookie-header-payload',
   ACCOUNT_PROFILE_URL: 'http://localhost:1995',
   ACCOUNT_SETTINGS_URL: 'http://localhost:1997',
@@ -55,7 +53,6 @@ const config = {
   LOGO_TRADEMARK_URL: 'https://edx-cdn.org/v3/default/logo-trademark.svg',
   LOGO_WHITE_URL: 'https://edx-cdn.org/v3/default/logo-white.svg',
   FAVICON_URL: 'https://edx-cdn.org/v3/default/favicon.ico',
-  IGNORED_ERROR_REGEX: null,
   MFE_CONFIG_API_URL: null,
   APP_ID: null,
   SUPPORT_URL: 'https://support.edx.org',

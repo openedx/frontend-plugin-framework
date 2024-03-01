@@ -9,8 +9,8 @@
     "start": "fedx-scripts webpack-dev-server --progress"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "edX",
+  "license": "AAGPL-3.0",
   "dependencies": {
     "core-js": "^3.29.1",
     "prop-types": "^15.8.1",
