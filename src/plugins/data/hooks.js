@@ -9,7 +9,7 @@ import { getConfigSlots } from './utils';
 import { PLUGIN_MOUNTED, PLUGIN_READY, PLUGIN_UNMOUNTED } from './constants';
 
 /**
- * Called by PluginSlot to extract a list of plugins based on the JS configuration
+ * Called by PluginSlot to extract a list of plugins from the JS configuration
  *
  * @param {String} id - Name of PluginSlot
  * @returns {Object} - JS configuration for the PluginSlot

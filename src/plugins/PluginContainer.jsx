@@ -1,6 +1,8 @@
 'use client';
 
 import React from 'react';
+import PropTypes from 'prop-types';
+import { logError } from '@edx/frontend-platform/logging';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import PluginContainerIframe from './PluginContainerIframe';
@@ -31,7 +33,8 @@ function PluginContainer({ config, ...props }) {
       );
       break;
     default:
-      // istanbul ignore next: default isn't meaningful, just satisfying linter
+      logError(`Config type ${config.type} is not valid.`);
+      break;
   }
 
   return (
@@ -43,7 +46,7 @@ export default PluginContainer;
 
 PluginContainer.propTypes = {
   /** Configuration for the Plugin in this container — i.e pluginSlot[id].example_plugin */
-  config: pluginConfigShape,
+  config: PropTypes.shape(pluginConfigShape),
 };
 
 PluginContainer.defaultProps = {

@@ -84,7 +84,7 @@ export default PluginContainerIframe;
 
 PluginContainerIframe.propTypes = {
   /** Configuration for the Plugin in this container (i.e. pluginSlot[id].example_plugin) */
-  config: iframePluginConfigShape,
+  config: PropTypes.shape(iframePluginConfigShape),
   /** Custom fallback component used when component is not ready (i.e. "loading") */
   loadingFallback: PropTypes.node,
   /** Classes to apply to the iframe */

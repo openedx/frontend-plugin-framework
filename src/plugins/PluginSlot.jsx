@@ -17,12 +17,13 @@ const PluginSlot = forwardRef(({
   /** the plugins below are obtained by the id passed into PluginSlot by the Host MFE. See example/src/PluginsPage.jsx
   for an example of how PluginSlot is populated, and example/src/index.jsx for a dummy JS config that holds all plugins
   */
+
   const { plugins, defaultContents } = usePluginSlot(id);
   const { formatMessage } = useIntl();
 
   const finalPlugins = React.useMemo(() => organizePlugins(defaultContents, plugins), [defaultContents, plugins]);
 
-  // TODO: APER-3178 — Find a better way to do pluginProps so that each plugin can have it's own unique props
+  // TODO: APER-3178 — Unique plugin props
   // https://2u-internal.atlassian.net/browse/APER-3178
   const { loadingFallback } = pluginProps;
 
@@ -51,10 +52,12 @@ const PluginSlot = forwardRef(({
         );
         // If wrappers are provided, wrap the Plugin
         if (pluginConfig.wrappers) {
-          finalChildren.push(wrapComponent(
-            () => newContainer,
-            pluginConfig.wrappers,
-          ));
+          finalChildren.push(
+            wrapComponent(
+              () => newContainer,
+              pluginConfig.wrappers,
+            ),
+          );
         } else {
           finalChildren.push(newContainer);
         }
