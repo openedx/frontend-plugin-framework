@@ -34,12 +34,16 @@ Add ``@edx/frontend-plugin-framework`` to the ``package.json`` of both Host and 
 Using the Example Apps
 ----------------------
 
-To use the example apps, you will need to open two terminals.
-1. Run ``npm install`` inside both example app directories.
-2. Run ``npm run start`` in both directories.
+1. Run ``npm install`` in the root directory.
+
+2. In separate terminals, run ``npm install`` inside both example app directories (``/example`` and ``/example-plugin-app``).
+
+3. Run ``npm run start`` in both directories.
 
 Alternatively, once the packages are installed in both apps, you can run the apps from the root directory.
+
 1. ``npm run start`` runs the host MFE (``example``)
+
 2. ``npm run start:plugins`` runs the child MFE (``example-plugin-app``)
 
 
