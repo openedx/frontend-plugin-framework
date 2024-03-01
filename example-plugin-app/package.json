@@ -12,14 +12,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@edx/frontend-platform": "^7.1.0",
+    "@openedx/frontend-build": "^13.0.28",
     "core-js": "^3.29.1",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-router-dom": "^6.6.1",
     "regenerator-runtime": "^0.13.11"
-  },
-  "devDependencies": {
-    "@openedx/frontend-build": "^13.0.0"
   }
 }
