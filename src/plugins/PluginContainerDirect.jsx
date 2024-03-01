@@ -17,7 +17,7 @@ const PluginContainerDirect = ({ config, loadingFallback, ...props }) => {
 
 PluginContainerDirect.propTypes = {
   /** Configuration for the Plugin in this container (i.e. pluginSlot[id].example_plugin) */
-  config: directPluginConfigShape,
+  config: PropTypes.shape(directPluginConfigShape),
   /** Custom fallback component used when component is not ready (i.e. "loading") */
   loadingFallback: PropTypes.node,
 };

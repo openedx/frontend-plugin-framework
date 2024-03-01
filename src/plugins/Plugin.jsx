@@ -5,10 +5,7 @@ import React, {
 } from 'react';
 import PropTypes from 'prop-types';
 import { ErrorBoundary } from '@edx/frontend-platform/react';
-import {
-  injectIntl,
-  intlShape,
-} from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 
 import {
   dispatchMountedEvent, dispatchReadyEvent, dispatchUnmountedEvent, useHostEvent,
@@ -17,16 +14,19 @@ import { PLUGIN_RESIZE } from './data/constants';
 import messages from './Plugins.messages';
 
 // TODO: create example-plugin-app/src/PluginOne.jsx for example of customizing errorFallback as part of APER-3042 https://2u-internal.atlassian.net/browse/APER-3042
-const ErrorFallbackDefault = ({ intl }) => (
-  <div>
-    <h2>
-      {intl.formatMessage(messages.unexpectedError)}
-    </h2>
-  </div>
-);
+const ErrorFallbackDefault = () => {
+  const { formatMessage } = useIntl();
+  return (
+    <div>
+      <h2>
+        {formatMessage(messages.unexpectedError)}
+      </h2>
+    </div>
+  );
+};
 
 const Plugin = ({
-  children, className, style, ready, ErrorFallbackComponent, intl,
+  children, className, style, ready, ErrorFallbackComponent,
 }) => {
   const [dimensions, setDimensions] = useState({
     width: null,
@@ -68,7 +68,7 @@ const Plugin = ({
   return (
     <div className={className} style={finalStyle}>
       <ErrorBoundary
-        fallbackComponent={<ErrorFallback intl={intl} />}
+        fallbackComponent={<ErrorFallback />}
       >
         {children}
       </ErrorBoundary>
@@ -76,7 +76,7 @@ const Plugin = ({
   );
 };
 
-export default injectIntl(Plugin);
+export default Plugin;
 
 Plugin.propTypes = {
   /** The content for the Plugin */
@@ -89,8 +89,6 @@ Plugin.propTypes = {
   ready: PropTypes.bool,
   /** Styles to apply to the Plugin wrapper component */
   style: PropTypes.shape({}),
-  /** i18n  */
-  intl: intlShape.isRequired,
 };
 
 Plugin.defaultProps = {
@@ -98,8 +96,4 @@ Plugin.defaultProps = {
   ErrorFallbackComponent: null,
   style: {},
   ready: true,
-};
-
-ErrorFallbackDefault.propTypes = {
-  intl: intlShape.isRequired,
 };
