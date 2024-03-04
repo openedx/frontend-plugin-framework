@@ -88,7 +88,7 @@ Host MFE JS-based Configuration
 -------------------------------
 
 Micro-frontends that would like to use the Plugin Framework need to use a JavaScript-based config named ``env.config``
-with either ``.js`` or ``.jsx` as the extension. Technically, only the Host MFE requires an ``env.config.js`` file
+with either ``.js`` or ``.jsx`` as the extension. Technically, only the Host MFE requires an ``env.config.js`` file
 as that is where the plugin slot's configuration is defined.
 
 However, note that any Child MFE can theoretically contain one or more ``PluginSlot`` components themselves,
@@ -96,6 +96,7 @@ thereby making it both a Child MFE and a Host MFE. In this instance, the Child M
 file as well to define its plugin slots.
 
   .. code-block::
+
     // env.config.js
 
     import { DIRECT_PLUGIN, IFRAME_PLUGIN, PLUGIN_OPERATIONS } from '@edx/frontend-plugin-framework';
@@ -150,6 +151,7 @@ file as well to define its plugin slots.
     export default config;
 
 For more information on how JS based configuration works, see the `config.js`_ file in frontend-platform.
+
 .. _config.js: https://github.com/openedx/frontend-platform/blob/master/src/config.js
 
 Plugin Operations
@@ -158,7 +160,9 @@ There are four plugin operations that each require specific properties.
 
 Insert a Direct Plugin
 ''''''''''''''''''''''
+
   .. code-block::
+
     /*
     * {String} op - Name of plugin operation
     * {Object} widget - The component to be inserted into the slot
@@ -181,7 +185,9 @@ Insert a Direct Plugin
 
 Insert an iFrame Plugin
 '''''''''''''''''''''''
+
   .. code-block::
+
     /*
       * {String} op - Name of plugin operation
       * {Object} widget - The component to be inserted into the slot
@@ -203,10 +209,11 @@ Insert an iFrame Plugin
       },
     },
 
-
 Modify
 ''''''
+
   .. code-block::
+
     /*
       * {String} op - Name of plugin operation
       * {String} widgetId - The widget id needed for referencing when using Modify/Wrap/Hide
@@ -221,7 +228,9 @@ Modify
 
 Wrap
 ''''
+
   .. code-block::
+
     /*
       * {String} op - Name of plugin operation
       * {String} widgetId - The widget id needed for referencing when using Modify/Wrap/Hide
@@ -236,7 +245,9 @@ Wrap
 
 Hide
 ''''
+
   .. code-block::
+
     /*
       * {String} op - Name of plugin operation
       * {String} widgetId - The widget id needed for referencing when using Modify/Wrap/Hide
