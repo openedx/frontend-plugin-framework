@@ -2,13 +2,11 @@ import React, { forwardRef } from 'react';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import classNames from 'classnames';
-import { Spinner } from '@edx/paragon';
+import { Spinner } from '@openedx/paragon';
 import PropTypes from 'prop-types';
-import {
-  useIntl,
-} from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 
-import messages from './Plugins.messages';
+import messages from './Plugin.messages';
 import { usePluginSlot } from './data/hooks';
 import PluginContainer from './PluginContainer';
 import { organizePlugins, wrapComponent } from './data/utils';
@@ -16,14 +14,12 @@ import { organizePlugins, wrapComponent } from './data/utils';
 const PluginSlot = forwardRef(({
   as, id, pluginProps, ...props
 }, ref) => {
-  /** TODO: Examples still need to be set up as part of APER-3042 https://2u-internal.atlassian.net/browse/APER-3042 */
-  /* the plugins below are obtained by the id passed into PluginSlot by the Host MFE. See example/src/PluginsPage.jsx
+  /** the plugins below are obtained by the id passed into PluginSlot by the Host MFE. See example/src/PluginsPage.jsx
   for an example of how PluginSlot is populated, and example/src/index.jsx for a dummy JS config that holds all plugins
   */
 
-  const { formatMessage } = useIntl();
-
   const { plugins, defaultContents } = usePluginSlot(id);
+  const { formatMessage } = useIntl();
 
   const finalPlugins = React.useMemo(() => organizePlugins(defaultContents, plugins), [defaultContents, plugins]);
 

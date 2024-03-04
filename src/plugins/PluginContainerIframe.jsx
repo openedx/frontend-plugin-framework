@@ -31,9 +31,9 @@ export const IFRAME_FEATURE_POLICY = (
   'fullscreen; microphone *; camera *; midi *; geolocation *; encrypted-media *'
 );
 
-const PluginContainerIframe = ({
+function PluginContainerIframe({
   config, loadingFallback, className, ...props
-}) => {
+}) {
   const { url, title } = config;
   const [mounted, setMounted] = useState(false);
   const [ready, setReady] = useState(false);
@@ -78,7 +78,7 @@ const PluginContainerIframe = ({
       {!ready && loadingFallback}
     </>
   );
-};
+}
 
 export default PluginContainerIframe;
 
