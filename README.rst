@@ -1,4 +1,4 @@
-frontend-plugin-framework
+Frontend Plugin Framework
 ##########################
 
 |license-badge| |status-badge| |ci-badge| |codecov-badge|
@@ -152,6 +152,106 @@ file as well to define its plugin slots.
 For more information on how JS based configuration works, see the `config.js`_ file in frontend-platform.
 .. _config.js: https://github.com/openedx/frontend-platform/blob/master/src/config.js
 
+Plugin Operations
+`````````````````
+There are four plugin operations that each require specific properties.
+
+Insert a Direct Plugin
+''''''''''''''''''''''
+  .. code-block::
+    /*
+    * {String} op - Name of plugin operation
+    * {Object} widget - The component to be inserted into the slot
+    * {String} widget.id - The widget id needed for referencing when using Modify/Wrap/Hide
+    * {String} widget.type - The type of plugin being used
+    * {Number} widget.priority - The place to insert the widget based on the priority of other widgets (between 1 - 100)
+    * {Function} widget.RenderWidget - The React component to be used
+    * {Object} [widget.contents] - Any props to pass into the RenderWidget component
+    */
+
+    {
+      op: PLUGIN_OPERATIONS.Insert,
+      widget: {
+        id: 'social_media_link',
+        type: DIRECT_PLUGIN,
+        priority: 10,
+        RenderWidget: SocialMediaLink,
+      },
+    }
+
+Insert an iFrame Plugin
+'''''''''''''''''''''''
+  .. code-block::
+    /*
+      * {String} op - Name of plugin operation
+      * {Object} widget - The component to be inserted into the slot
+      * {String} widget.id - The widget id needed for referencing when using Modify/Wrap/Hide
+      * {String} widget.type - The type of plugin being used
+      * {Number} widget.priority - The place to insert the widget based on the priority of other widgets (between 1 - 100)
+      * {String} widget.url - The URL from a Child MFE to fetch the widget component
+      * {String} widget.title - The title of the iFrame that is read aloud with screen readers
+    */
+
+    {
+      op: PLUGIN_OPERATIONS.Insert,
+      widget: {
+        id: 'enterprise_navbar',
+        type: IFRAME_PLUGIN,
+        priority: 30,
+        url: 'http://{child_mfe_url}/plugin_iframe',
+        title: 'Login with XYZ',
+      },
+    },
+
+
+Modify
+''''''
+  .. code-block::
+    /*
+      * {String} op - Name of plugin operation
+      * {String} widgetId - The widget id needed for referencing when using Modify/Wrap/Hide
+      * {Function} fn - The function to call that can modify the widget's contents and properties
+    */
+
+    {
+      op: PLUGIN_OPERATIONS.Insert,
+      widgetId: 'default_content_in_slot',
+      fn: modifyWidget,
+    }
+
+Wrap
+''''
+  .. code-block::
+    /*
+      * {String} op - Name of plugin operation
+      * {String} widgetId - The widget id needed for referencing when using Modify/Wrap/Hide
+      * {Function} wrapper - The function to call that can wrap the widget with a React component
+    */
+
+    {
+      op: PLUGIN_OPERATIONS.Wrap,
+      widgetId: 'default_content_in_slot',
+      wrapper: wrapWidget,
+    },
+
+Hide
+''''
+  .. code-block::
+    /*
+      * {String} op - Name of plugin operation
+      * {String} widgetId - The widget id needed for referencing when using Modify/Wrap/Hide
+    */
+
+    {
+      op: PLUGIN_OPERATIONS.Hide,
+      widgetId: 'default_content_in_slot',
+    }
+
+Priority
+````````
+The priority property determines where the widgets should be placed based on a 1-100 scale. A widget with a priority of 10
+will appear above a widget with a priority of 20. The default content will have a priority of 50, allowing for any plugins
+to appear before or after the default content.
 
 Using a Child Micro-frontend (MFE) for iFrame-based Plugins and Fallback Behavior
 ---------------------------------------------------------------------------------
