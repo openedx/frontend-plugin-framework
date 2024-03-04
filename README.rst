@@ -20,17 +20,20 @@ frontend-plugin-framework
 Purpose
 =======
 
-This is the Frontend Plugin Framework library. This framework is designed to allow for any type of plugin to be used when
-plugging a child component into a Host MFE. The current plugin that is made available is iFrame-based, which allows
-for a component that lives in another MFE (the 'Child MFE') to be plugged into a Plugin Slot that lives in the 'Host MFE'.
+This is the Frontend Plugin Framework library. This framework is designed to allow for any type of plugin to be used
+when plugging a child component into a Host MFE. The current plugins made available are either the Direct Plugin or
+iFrame-based Plugin.
+
+The Direct Plugin allows for a component in the Host MFE or React dependency be made into a plugin and inserted into a
+slot.
+The iFrame-based Plugin allows for a component that lives in another MFE (the Child MFE) to be plugged into a slot in
+the Host MFE.
+
+The primary way this is made possible is through JS-based configurations, where the changes to a plugin slot are defined
+(see 'Plugin Operations').
 
 Getting Started
 ===============
-Add Library Dependency
--------------------------
-
-Add ``@edx/frontend-plugin-framework`` to the ``package.json`` of both Host and Child MFEs.
-
 Using the Example Apps
 ----------------------
 
@@ -46,43 +49,18 @@ Alternatively, once the packages are installed in both apps, you can run the app
 
 2. ``npm run start:plugins`` runs the child MFE (``example-plugin-app``)
 
+Add Library Dependency
+----------------------
 
-Micro-frontend configuration document (JS)
-------------------------------------------
+Add ``openedx/frontend-plugin-framework`` to the ``package.json`` of both Host and Child MFEs.
 
-Micro-frontends that would like to use the Plugin Framework need to be configured via a JavaScript configuration
-document and a ``pluginSlots`` config. Technically, only the Host MFE requires an ``env.config.js`` file with a ``pluginSlots`` config.
-
-However, note that any Child MFE can theoretically contain one or more ``PluginSlot`` components, thereby making it both a Child MFE and a Host MFE.
-In this instance, it would have its own JavaScript file to configure the ``PluginSlot``.
-
-For more information on how JS based configuration works, see the `config.js`_ file in frontend-platform.
-
-  .. code-block::
-
-    const config = {
-      // other existing configuration
-      pluginSlots: {
-        sidebar: {
-          plugins: [
-            {
-              id: 'plugin1',
-              url: 'https://plugin.app/plugin1',
-              type: IFRAME_PLUGIN,
-            }
-          ]
-        }
-      }
-    }
-
-.. _config.js: https://github.com/openedx/frontend-platform/blob/556424ee073e0629d7331046bbd7714d0d241f43/src/config.js
-
-Host Micro-frontend (JSX)
+Host Micro-frontend (MFE)
 -------------------------
 
-Hosts must define ``PluginSlot`` components in areas of the UI where they intend to accept extensions.
-The Host MFE, and thus the owners of the Host MFE, are responsible for deciding where it is acceptable to mount a plugin.
-They also decide the dimensions, responsiveness/scrolling policy, and whether the slot supports passing any additional
+Host MFEs define ``PluginSlot`` components in areas of the UI where they intend to accept plugin extensions.
+The Host MFE, and thus the maintainers of the Host MFE, are responsible for deciding where it is acceptable to add a
+plugin slot.
+The slot also determines the dimensions and responsiveness of each plugin, and supports passing any additional
 data to the plugin as part of its contract.
 
   .. code-block::
@@ -91,8 +69,8 @@ data to the plugin as part of its contract.
       <Route path="/page1">
         <SomeHostContent />
         <PluginSlot
-          id="sidebar" // as noted in the section above, this `id` is used to pass in Child plugin configuration
-          pluginProps={{
+          id="sidebar" // this `id` is referenced in the JS-based config
+          pluginProps={{ // these props are passed along to each plugin
             className: 'flex-grow-1',
             title: 'example plugins',
           }}
@@ -106,18 +84,89 @@ data to the plugin as part of its contract.
       </Route>
     </HostApp>
 
+Host MFE JS-based Configuration
+-------------------------------
 
-Plugin Micro-frontend (JSX) and Fallback Behavior
--------------------------------------------------
+Micro-frontends that would like to use the Plugin Framework need to use a JavaScript-based config named ``env.config``
+with either ``.js`` or ``.jsx` as the extension. Technically, only the Host MFE requires an ``env.config.js`` file
+as that is where the plugin slot's configuration is defined.
 
-The plugin MFE is no different than any other MFE except that it defines a Plugin component as a child of a route.
-This component is responsible for communicating (via ``postMessage``) with the host page and resizing its content to match
-the dimensions available in the host’s PluginSlot. 
+However, note that any Child MFE can theoretically contain one or more ``PluginSlot`` components themselves,
+thereby making it both a Child MFE and a Host MFE. In this instance, the Child MFE would need its own ``env.config.js``
+file as well to define its plugin slots.
 
-It’s notoriously difficult to know in the host application when an iFrame has failed to load.
-Because of security sandboxing, the host isn’t allowed to know the HTTP status of the request or to inspect what was
+  .. code-block::
+    // env.config.js
+
+    import { DIRECT_PLUGIN, IFRAME_PLUGIN, PLUGIN_OPERATIONS } from '@edx/frontend-plugin-framework';
+    
+    // import any additional dependencies or functions to be used for each plugin operation
+    import Sidebar from './widgets/social/Sidebar';
+    import SocialMediaLink from './widgets/social/SocialMediaLink';
+    import { wrapSidebar, modifySidebar } from './widgets/social/utils';
+    import { SomeIcon } from '@openedx/paragon/icons';
+
+    const config = {
+      // additional environment variables
+      pluginSlots: {
+        sidebar: { // plugin slot id
+          defaultContents: [
+            {
+              id: 'default_sidebar_widget',
+              type: DIRECT_PLUGIN,
+              priority: 10,
+              RenderWidget: SideBar,
+              content: {
+                propExampleA: 'edX Sidebar',
+                propExampleB: SomeIcon,
+              },
+            },
+          ],
+          plugins: [
+            {
+              op: PLUGIN_OPERATIONS.Insert,
+              widget: {
+                id: 'social_media_link',
+                type: DIRECT_PLUGIN,
+                priority: 10,
+                RenderWidget: SocialMediaLink,
+              },
+            },
+            {
+              op: PLUGIN_OPERATIONS.Wrap,
+              widgetId: 'default_content_in_slot',
+              wrapper: wrapWidget,
+            },
+            {
+              op: PLUGIN_OPERATIONS.Modify,
+              widgetId: 'default_content_in_slot',
+              fn: modifyWidget,
+            },
+          ]
+        }
+      }
+    }
+
+    export default config;
+
+For more information on how JS based configuration works, see the `config.js`_ file in frontend-platform.
+.. _config.js: https://github.com/openedx/frontend-platform/blob/master/src/config.js
+
+
+Using a Child Micro-frontend (MFE) for iFrame-based Plugins and Fallback Behavior
+---------------------------------------------------------------------------------
+
+The Child MFE is no different than any other MFE except that it can define a component that can then be pass into the Host MFE
+as an iFrame-based plugin via a route.
+This component communicates (via ``postMessage``) with the Host MFE and resizes its content to match the dimensions
+available in the Host's plugin slot.
+
+It's notoriously difficult to know in the Host MFE when an iFrame has failed to load.
+Because of security sandboxing, the host isn't allowed to know the HTTP status of the request or to inspect what was
 loaded, so we have to rely on waiting for a ``postMessage`` event from within the iFrame to know it has successfully loaded.
-For the fallback content, the Plugin-owning team would pass a fallback component into the Plugin tag that is wrapped around their component, as noted below. Otherwise, a default fallback component would be used.
+A fallback component can be provided to the Plugin that is wrapped around the component, as noted below.
+Otherwise, the `default Error fallback from Frontend Platform`_ would be used.
+
   .. code-block::
 
     <MyMFE>
@@ -130,6 +179,8 @@ For the fallback content, the Plugin-owning team would pass a fallback component
         </Plugin>
       </Route>
     </MyMFE>
+
+.. _default Error fallback from Frontend Platform: https://github.com/openedx/frontend-platform/blob/master/src/react/ErrorBoundary.jsx
 
 Known Issues
 ============

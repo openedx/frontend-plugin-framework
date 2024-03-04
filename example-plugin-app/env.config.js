@@ -30,3 +30,5 @@ const config = {
   SUPPORT_URL: 'https://support.edx.org',
   PORT: 8081,
 };
+
+export default config;
