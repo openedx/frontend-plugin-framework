@@ -300,11 +300,7 @@ Development Roadmap
 ===================
 
 The main priority in developing this library is to extract components from a Host MFE to allow for teams to develop 
-experimental features without impeding on any other team's work or the core functionality of the Host MFE. 
-
-- The first target is to use this framework in Learner Dashboard MFE to extract the Recommendations panel out of the repo.
-
-- Incorporate other plugin proposals from the Frontend Pluggability Summit in order to provide the most appropriate plugin option for a given component.
+experimental features without impeding on any other team's work or the core functionality of the Host MFE.
 
 Getting Help
 ============
