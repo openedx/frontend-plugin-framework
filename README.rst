@@ -154,23 +154,68 @@ For more information on how JS based configuration works, see the `config.js`_ f
 
 .. _config.js: https://github.com/openedx/frontend-platform/blob/master/src/config.js
 
+Default Content
+```````````````
+
+The default content of a plugin slot is defined in ``env.config.js``, with some differing properties being needed for
+a Direct Plugin over an iFrame plugin. Note: this configuration will change soon so that the default content lives in
+the Host MFE as opposed to a config document.
+
+  .. code-block::
+
+    /*
+      * {String} id - The widget id needed for referencing when using Modify/Wrap/Hide
+      * {String} type - The type of plugin being used
+      * {Number} priority - The place to insert the widget based on the priority of other widgets (between 1 - 100)
+      * {Function} RenderWidget - The React component to be used for a Direct Plugin
+      * {Object} [content] - Any props to pass into the RenderWidget component
+      * {String} url - The URL from a Child MFE to fetch the widget component
+      * {String} title - The title of the iFrame that is read aloud with screen readers
+    */
+
+    defaultContents: [
+      {
+        id: 'default_sidebar_widget',
+        type: DIRECT_PLUGIN,
+        priority: 10,
+        RenderWidget: SideBar,
+        content: {
+          propExampleA: 'Open edX Sidebar',
+          propExampleB: SomeIcon,
+        }
+      },
+      {
+        id: 'iFrame_widget',
+        type: IFRAME_PLUGIN,
+        priority: 15,
+        url: 'http://{child_mfe_url}/plugin_iframe',
+        title: 'Login with XYZ',
+      }
+    ]
+
+Priority
+````````
+
+The priority property determines where the widgets should be placed based on a 1-100 scale. A widget with a priority of 10
+will appear above a widget with a priority of 20. The default content will have a priority of 50, allowing for any plugins
+to appear before or after the default content.
+
 Plugin Operations
 `````````````````
+
 There are four plugin operations that each require specific properties.
 
 Insert a Direct Plugin
 ''''''''''''''''''''''
 
+The Insert operation will add a widget in the plugin slot. The contents required for a Direct Plugin is the same as
+is demonstrated in the Default Contents section above, with the ``content`` key being optional.
+
   .. code-block::
 
     /*
-    * {String} op - Name of plugin operation
-    * {Object} widget - The component to be inserted into the slot
-    * {String} widget.id - The widget id needed for referencing when using Modify/Wrap/Hide
-    * {String} widget.type - The type of plugin being used
-    * {Number} widget.priority - The place to insert the widget based on the priority of other widgets (between 1 - 100)
-    * {Function} widget.RenderWidget - The React component to be used
-    * {Object} [widget.contents] - Any props to pass into the RenderWidget component
+      * {String} op - Name of plugin operation
+      * {Object} widget - The component to be inserted into the slot
     */
 
     {
@@ -180,22 +225,20 @@ Insert a Direct Plugin
         type: DIRECT_PLUGIN,
         priority: 10,
         RenderWidget: SocialMediaLink,
-      },
+      }
     }
 
 Insert an iFrame Plugin
 '''''''''''''''''''''''
+
+The Insert operation will add a widget in the plugin slot. The contents required for an iFrame Plugin is the same as
+is demonstrated in the Default Contents section above.
 
   .. code-block::
 
     /*
       * {String} op - Name of plugin operation
       * {Object} widget - The component to be inserted into the slot
-      * {String} widget.id - The widget id needed for referencing when using Modify/Wrap/Hide
-      * {String} widget.type - The type of plugin being used
-      * {Number} widget.priority - The place to insert the widget based on the priority of other widgets (between 1 - 100)
-      * {String} widget.url - The URL from a Child MFE to fetch the widget component
-      * {String} widget.title - The title of the iFrame that is read aloud with screen readers
     */
 
     {
@@ -206,13 +249,26 @@ Insert an iFrame Plugin
         priority: 30,
         url: 'http://{child_mfe_url}/plugin_iframe',
         title: 'Login with XYZ',
-      },
-    },
+      }
+    }
 
 Modify
 ''''''
 
+The Modify operation allows us to modify the contents of a widget, including its id, type, content, RenderWidget function,
+or its priority. The operation requires the id of the widget that will be modified and a function to make those changes.
+
   .. code-block::
+
+    const modifyWidget = (widget) => {
+      const newContent = {
+        propExampleA: 'University XYZ Sidebar',
+        propExampleB: SomeOtherIcon,
+      };
+      const modifiedWidget = widget;
+      modifiedWidget.content = newContent;
+      return modifiedWidget;
+    };
 
     /*
       * {String} op - Name of plugin operation
@@ -229,7 +285,18 @@ Modify
 Wrap
 ''''
 
+Unlike Modify, the Wrap operation adds a React component around the widget, and a single widget can receive more than
+one wrap operation. Each wrapper function takes in a ``component`` and ``id`` prop.
+
   .. code-block::
+
+    const wrapWidget = ({ component, idx }) => (
+      <div className="bg-warning" data-testid={`wrapper${idx + 1}`} key={idx}>
+        <p>This is a wrapper component that is placed around the widget.</p>
+        {component}
+        <p>With this wrapper, you can add anything before or after the widget.</p>
+      </div>
+    );
 
     /*
       * {String} op - Name of plugin operation
@@ -241,10 +308,12 @@ Wrap
       op: PLUGIN_OPERATIONS.Wrap,
       widgetId: 'default_content_in_slot',
       wrapper: wrapWidget,
-    },
+    }
 
 Hide
 ''''
+
+The Hide operation will simply hide whatever content is desired. This is generally used for the default content.
 
   .. code-block::
 
@@ -257,12 +326,6 @@ Hide
       op: PLUGIN_OPERATIONS.Hide,
       widgetId: 'default_content_in_slot',
     }
-
-Priority
-````````
-The priority property determines where the widgets should be placed based on a 1-100 scale. A widget with a priority of 10
-will appear above a widget with a priority of 20. The default content will have a priority of 50, allowing for any plugins
-to appear before or after the default content.
 
 Using a Child Micro-frontend (MFE) for iFrame-based Plugins and Fallback Behavior
 ---------------------------------------------------------------------------------
