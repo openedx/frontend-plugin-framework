@@ -150,9 +150,9 @@ file as well to define its plugin slots.
     export default config;
 
 For more information on how JS based configuration works, see:
-* `config.js`_ file in ``frontend-platform``
-* ``frontend-build`` ADR on `JavaScript-based environment configuration`_
-* ``frontend-platform`` ADR to `Promote JavaScript file configuration and deprecate environment variable configuration`_
+  * `config.js`_ file in ``frontend-platform``
+  * ``frontend-build`` ADR on `JavaScript-based environment configuration`_
+  * ``frontend-platform`` ADR to `Promote JavaScript file configuration and deprecate environment variable configuration`_
 
 .. _config.js: https://github.com/openedx/frontend-platform/blob/master/src/config.js
 .. _JavaScript-based environment configuration: https://github.com/openedx/frontend-platform/blob/master/docs/decisions/0007-javascript-file-configuration.rst
