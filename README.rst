@@ -367,8 +367,8 @@ Development Roadmap
 ===================
 
 The main priority in developing this library is to extract components from a Host MFE to:
-#. allow for teams to develop experimental features without impeding on any other team's work or the core functionality of the Host MFE.
-#. allow for customizing/extending the functionality of a Host MFE without having org-specific functionality in an open-source project.
+  #. allow for teams to develop experimental features without impeding on any other team's work or the core functionality of the Host MFE.
+  #. allow for customizing/extending the functionality of a Host MFE without having org-specific functionality in an open-source project.
 
 Getting Help
 ============
