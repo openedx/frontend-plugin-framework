@@ -20,12 +20,10 @@ Frontend Plugin Framework
 Purpose
 =======
 
-This is the Frontend Plugin Framework library. This framework is designed to allow for any type of plugin to be used
-when plugging a child component into a Host MFE. The current plugins made available are either the Direct Plugin or
-iFrame-based Plugin.
+The Frontend Plugin Framework is designed to be an extension point to customize an Open edX MFE. This framework supports two types of plugins: iFrame-based and "Direct" plugins.
 
-The Direct Plugin allows for a component in the Host MFE or React dependency be made into a plugin and inserted into a
-slot.
+A Direct plugin allows for a component in the Host MFE -- or a React dependency -- to be made into a plugin and inserted in a plugin slot within the Host MFE.
+
 The iFrame-based Plugin allows for a component that lives in another MFE (the Child MFE) to be plugged into a slot in
 the Host MFE.
 
@@ -60,6 +58,7 @@ Host Micro-frontend (MFE)
 Host MFEs define ``PluginSlot`` components in areas of the UI where they intend to accept plugin extensions.
 The Host MFE, and thus the maintainers of the Host MFE, are responsible for deciding where it is acceptable to add a
 plugin slot.
+
 The slot also determines the dimensions and responsiveness of each plugin, and supports passing any additional
 data to the plugin as part of its contract.
 
@@ -150,9 +149,14 @@ file as well to define its plugin slots.
 
     export default config;
 
-For more information on how JS based configuration works, see the `config.js`_ file in frontend-platform.
+For more information on how JS based configuration works, see:
+* `config.js`_ file in ``frontend-platform``
+* ``frontend-build`` ADR on `JavaScript-based environment configuration`_
+* ``frontend-platform`` ADR to `Promote JavaScript file configuration and deprecate environment variable configuration`_
 
 .. _config.js: https://github.com/openedx/frontend-platform/blob/master/src/config.js
+.. _JavaScript-based environment configuration: https://github.com/openedx/frontend-platform/blob/master/docs/decisions/0007-javascript-file-configuration.rst
+.. _Promote JavaScript file configuration and deprecate environment variable configuration: https://github.com/openedx/frontend-platform/blob/master/docs/decisions/0007-javascript-file-configuration.rst
 
 Default Content
 ```````````````
@@ -362,8 +366,9 @@ Known Issues
 Development Roadmap
 ===================
 
-The main priority in developing this library is to extract components from a Host MFE to allow for teams to develop 
-experimental features without impeding on any other team's work or the core functionality of the Host MFE.
+The main priority in developing this library is to extract components from a Host MFE to:
+#. allow for teams to develop experimental features without impeding on any other team's work or the core functionality of the Host MFE.
+#. allow for customizing/extending the functionality of a Host MFE without having org-specific functionality in an open-source project.
 
 Getting Help
 ============
