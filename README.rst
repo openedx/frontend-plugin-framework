@@ -150,9 +150,10 @@ file as well to define its plugin slots.
     export default config;
 
 For more information on how JS based configuration works, see:
-  * `config.js`_ file in Frontend Platform
-  * Frontend Build ADR on `JavaScript-based environment configuration`_
-  * Frontend Platform ADR to `Promote JavaScript file configuration and deprecate environment variable configuration`_
+
+* `config.js`_ file in Frontend Platform
+* Frontend Build ADR on `JavaScript-based environment configuration`_
+* Frontend Platform ADR to `Promote JavaScript file configuration and deprecate environment variable configuration`_
 
 .. _config.js: https://github.com/openedx/frontend-platform/blob/master/src/config.js
 .. _JavaScript-based environment configuration: https://github.com/openedx/frontend-platform/blob/master/docs/decisions/0007-javascript-file-configuration.rst
@@ -367,8 +368,9 @@ Development Roadmap
 ===================
 
 The main priority in developing this library is to extract components from a Host MFE to:
-  #. allow for teams to develop experimental features without impeding on any other team's work or the core functionality of the Host MFE.
-  #. allow for customizing/extending the functionality of a Host MFE without having org-specific functionality in an open-source project.
+
+#. allow for teams to develop experimental features without impeding on any other team's work or the core functionality of the Host MFE.
+#. allow for customizing/extending the functionality of a Host MFE without having org-specific functionality in an open-source project.
 
 Getting Help
 ============
