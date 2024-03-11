@@ -6,7 +6,7 @@ import {
 } from '@edx/frontend-plugin-framework';
 import DefaultDirectWidget from './src/components/DefaultDirectWidget';
 import PluginDirect from './src/components/PluginDirect';
-import ModularDirectPlugin from './src/components/ModularComponent';
+import ModularComponent from './src/components/ModularComponent';
 
 const modifyWidget = (widget) => {
   const newContent = {
@@ -98,18 +98,7 @@ const config = {
       ],
     },
     slot_with_modular_plugins: {
-      defaultContents: [
-        {
-          id: 'default_direct_widget',
-          type: DIRECT_PLUGIN,
-          priority: 10,
-          RenderWidget: ModularDirectPlugin,
-          content: {
-            title: 'Default Direct Widget',
-            uniqueText: 'This is a direct widget with priority of 10, which is why it appears second in this slot.',
-          },
-        },
-      ],
+      keepDefault: true,
       plugins: [
         {
           op: PLUGIN_OPERATIONS.Insert,
@@ -117,15 +106,52 @@ const config = {
             id: 'inserted_direct_plugin',
             type: DIRECT_PLUGIN,
             priority: 1,
-            RenderWidget: ModularDirectPlugin,
+            RenderWidget: ModularComponent,
             content: {
-              title: 'Inserted Direct Plugin',
+              title: 'Modular Direct Plugin',
               uniqueText: 'This is a direct plugin with priority of 1, which is why it appears first in this slot.',
             },
           },
         },
       ],
     },
+    slot_without_default: {
+      keepDefault: false,
+      plugins: [
+        {
+          op: PLUGIN_OPERATIONS.Insert,
+          widget: {
+            id: 'inserted_direct_plugin',
+            type: DIRECT_PLUGIN,
+            priority: 1,
+            RenderWidget: ModularComponent,
+            content: {
+              title: 'Modular Direct Plugin With Content Defined in JS Config',
+              uniqueText: 'This modular component receives some of its content from the JS config (such as this text).',
+            },
+          },
+        },
+        {
+          op: PLUGIN_OPERATIONS.Insert,
+          widget: {
+            id: 'inserted_direct_plugin',
+            type: DIRECT_PLUGIN,
+            priority: 10,
+            RenderWidget: PluginDirect,
+          },
+        },
+        {
+          op: PLUGIN_OPERATIONS.Insert,
+          widget: {
+            id: 'inserted_iframe_plugin',
+            type: IFRAME_PLUGIN,
+            priority: 30,
+            url: 'http://localhost:8081/plugin_iframe',
+            title: 'The iFrame plugin that is inserted in the slot',
+          },
+        },
+      ],
+    }
   },
 };
 

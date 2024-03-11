@@ -6,7 +6,7 @@ export default function ModularComponent({ content }) {
     <section className="bg-light p-3">
       <h3>{ content.title }</h3>
       <p>
-        This is a component that lives in the example app.
+        This is a modular component that lives in the example app.
       </p>
       <p>
         <em>{content.uniqueText}</em>

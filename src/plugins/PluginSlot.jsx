@@ -29,7 +29,7 @@ const PluginSlot = forwardRef(({
         RenderWidget: children,
       }]);
     }
-    return {};
+    return [{}];
   }, [children, keepDefault]);
 
   const finalPlugins = React.useMemo(() => organizePlugins(defaultContents, plugins), [defaultContents, plugins]);
