@@ -76,7 +76,12 @@ data to the plugin as part of its contract.
           style={{
             height: 700,
           }}
-        />
+        >
+          <SideBar
+            propExampleA: 'edX Sidebar',
+            propExampleB: SomeIcon,
+          >
+        </PluginSlot >
       </Route>
       <Route path="/page2">
         <OtherRouteContent />
@@ -110,18 +115,7 @@ file as well to define its plugin slots.
       // additional environment variables
       pluginSlots: {
         sidebar: { // plugin slot id
-          defaultContents: [
-            {
-              id: 'default_sidebar_widget',
-              type: DIRECT_PLUGIN,
-              priority: 10,
-              RenderWidget: SideBar,
-              content: {
-                propExampleA: 'edX Sidebar',
-                propExampleB: SomeIcon,
-              },
-            },
-          ],
+          keepDefault: true,
           plugins: [
             {
               op: PLUGIN_OPERATIONS.Insert,
@@ -134,12 +128,12 @@ file as well to define its plugin slots.
             },
             {
               op: PLUGIN_OPERATIONS.Wrap,
-              widgetId: 'default_content_in_slot',
+              widgetId: 'default_contents',
               wrapper: wrapWidget,
             },
             {
               op: PLUGIN_OPERATIONS.Modify,
-              widgetId: 'default_content_in_slot',
+              widgetId: 'social_media_link',
               fn: modifyWidget,
             },
           ]
@@ -159,51 +153,23 @@ For more information on how JS based configuration works, see:
 .. _JavaScript-based environment configuration: https://github.com/openedx/frontend-platform/blob/master/docs/decisions/0007-javascript-file-configuration.rst
 .. _Promote JavaScript file configuration and deprecate environment variable configuration: https://github.com/openedx/frontend-platform/blob/master/docs/decisions/0007-javascript-file-configuration.rst
 
-Default Content
-```````````````
-
-The default content of a plugin slot is defined in ``env.config.js``, with some differing properties being needed for
-a Direct Plugin over an iFrame plugin. Note: this configuration will change soon so that the default content lives in
-the Host MFE as opposed to a config document.
-
-  .. code-block::
-
-    /*
-      * {String} id - The widget id needed for referencing when using Modify/Wrap/Hide
-      * {String} type - The type of plugin being used
-      * {Number} priority - The place to insert the widget based on the priority of other widgets (between 1 - 100)
-      * {Function} RenderWidget - The React component to be used for a Direct Plugin
-      * {Object} [content] - Any props to pass into the RenderWidget component
-      * {String} url - The URL from a Child MFE to fetch the widget component
-      * {String} title - The title of the iFrame that is read aloud with screen readers
-    */
-
-    defaultContents: [
-      {
-        id: 'default_sidebar_widget',
-        type: DIRECT_PLUGIN,
-        priority: 10,
-        RenderWidget: SideBar,
-        content: {
-          propExampleA: 'Open edX Sidebar',
-          propExampleB: SomeIcon,
-        }
-      },
-      {
-        id: 'iFrame_widget',
-        type: IFRAME_PLUGIN,
-        priority: 15,
-        url: 'http://{child_mfe_url}/plugin_iframe',
-        title: 'Login with XYZ',
-      }
-    ]
-
 Priority
 ````````
 
 The priority property determines where the widgets should be placed based on a 1-100 scale. A widget with a priority of 10
-will appear above a widget with a priority of 20. The default content will have a priority of 50, allowing for any plugins
-to appear before or after the default content.
+will appear above a widget with a priority of 20.
+
+Default Content
+```````````````
+
+The component that is wrapped by a Plugin Slot is referred to as the "default content". In order to render the content,
+the ``keepDefault`` boolean in the slot should be set to ``true``. For organizations who aren't using the Plugin Slot
+(and thus don't define the slot via JS config), keepDefault will default to ``true``, thus ensuring that the developer
+experience doesn't change other than having a Plugin Slot wrapper around the component.
+
+To use the Wrap or Modify operation on default content, the ``widgetId`` you would use to refer to the content is ``defaults_contents``.
+
+Note: The default content will have a priority of 50, allowing for any plugins to appear before or after the default content.
 
 Plugin Operations
 `````````````````
@@ -282,8 +248,8 @@ or its priority. The operation requires the id of the widget that will be modifi
     */
 
     {
-      op: PLUGIN_OPERATIONS.Insert,
-      widgetId: 'default_content_in_slot',
+      op: PLUGIN_OPERATIONS.Modify,
+      widgetId: 'sidebar_plugin',
       fn: modifyWidget,
     }
 
@@ -329,7 +295,7 @@ The Hide operation will simply hide whatever content is desired. This is general
 
     {
       op: PLUGIN_OPERATIONS.Hide,
-      widgetId: 'default_content_in_slot',
+      widgetId: 'some_undesired_plugin',
     }
 
 Using a Child Micro-frontend (MFE) for iFrame-based Plugins and Fallback Behavior

@@ -10,8 +10,8 @@ import ModularComponent from './src/components/ModularComponent';
 
 const modifyWidget = (widget) => {
   const newContent = {
-    title: 'Modified Default Widget',
-    uniqueText: 'Note that the default text is replaced by this one that is defined in the JS configuration.',
+    title: 'Modified Modular Plugin',
+    uniqueText: 'Note that the original text defined in the JS config is replaced by this modified one.',
   };
   const modifiedWidget = widget;
   modifiedWidget.content = newContent;
@@ -20,9 +20,10 @@ const modifyWidget = (widget) => {
 
 const wrapWidget = ({ component, idx }) => (
   <div className="bg-warning" data-testid={`wrapper${idx + 1}`} key={idx}>
-    <p>This is a wrapper component that is placed around the widget.</p>
+    <p>This is a wrapper component that is placed around the default content.</p>
     {component}
-    <p>With this wrapper, you can add anything before or after the widget.</p>
+    <p>With this wrapper, you can add anything before or after a component.</p>
+    <p>By the way, note in the JS config that an iFrame plugin was Inserted, but a Hide operation was also used to hide it!</p>
   </div>
 );
 
@@ -86,14 +87,41 @@ const config = {
       keepDefault: true,
       plugins: [
         {
+          op: PLUGIN_OPERATIONS.Insert,
+          widget: {
+            id: 'inserted_plugin',
+            type: DIRECT_PLUGIN,
+            priority: 10,
+            RenderWidget: ModularComponent,
+            content: {
+              title: 'Modular Direct Plugin',
+              uniqueText: 'This is some text that will be replaced by the Modify operation below.',
+            },
+          },
+        },
+        {
+          op: PLUGIN_OPERATIONS.Insert,
+          widget: {
+            id: 'inserted_iframe_plugin',
+            type: IFRAME_PLUGIN,
+            priority: 30,
+            url: 'http://localhost:8081/plugin_iframe',
+            title: 'This iFrame plugin will be hidden due to the Hide operation in this config.',
+          },
+        },
+        {
           op: PLUGIN_OPERATIONS.Wrap,
           widgetId: 'default_contents',
           wrapper: wrapWidget,
         },
         {
           op: PLUGIN_OPERATIONS.Modify,
-          widgetId: 'default_contents',
+          widgetId: 'inserted_plugin',
           fn: modifyWidget,
+        },
+        {
+          op: PLUGIN_OPERATIONS.Hide,
+          widgetId: "inserted_iframe_plugin",
         },
       ],
     },
