@@ -22,7 +22,7 @@ export default function ExamplePage() {
       <div className="d-flex flex-column">
         <PluginSlotWithInsert />
         <PluginSlotWithModifyWrapHide />
-        <PluginSlotWithModularPlugins />
+        {/* <PluginSlotWithModularPlugins /> */}
       </div>
     </main>
   );

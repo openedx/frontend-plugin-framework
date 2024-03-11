@@ -87,7 +87,7 @@ jest.mock('@edx/frontend-platform', () => ({
     pluginSlots: {
       example_plugin_slot: {
         slotChanges: mockSlotChanges,
-        defaultContent: mockDefaultContent,
+        keepDefault: true,
       },
     },
   })),
@@ -241,7 +241,7 @@ describe('getConfigSlots', () => {
     const expected = {
       example_plugin_slot: {
         slotChanges: mockSlotChanges,
-        defaultContent: mockDefaultContent,
+        keepDefault: true,
       },
     };
     expect(getConfigSlots()).toStrictEqual(expected);

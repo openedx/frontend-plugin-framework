@@ -12,14 +12,25 @@ import PluginContainer from './PluginContainer';
 import { organizePlugins, wrapComponent } from './data/utils';
 
 const PluginSlot = forwardRef(({
-  as, id, pluginProps, ...props
+  as, children, id, pluginProps, ...props
 }, ref) => {
   /** the plugins below are obtained by the id passed into PluginSlot by the Host MFE. See example/src/PluginsPage.jsx
   for an example of how PluginSlot is populated, and example/src/index.jsx for a dummy JS config that holds all plugins
   */
 
-  const { plugins, defaultContents } = usePluginSlot(id);
+  const { keepDefault, plugins } = usePluginSlot(id);
   const { formatMessage } = useIntl();
+
+  const defaultContents = React.useMemo(() => {
+    if (keepDefault) {
+      return ([{
+        id: 'default_contents',
+        priority: 50,
+        RenderWidget: children,
+      }]);
+    }
+    return {};
+  }, [children, keepDefault]);
 
   const finalPlugins = React.useMemo(() => organizePlugins(defaultContents, plugins), [defaultContents, plugins]);
 
@@ -42,24 +53,30 @@ const PluginSlot = forwardRef(({
     finalPlugins.forEach((pluginConfig) => {
       // If hidden, don't push to finalChildren
       if (!pluginConfig.hidden) {
-        const newContainer = (
-          <PluginContainer
-            key={pluginConfig.id}
-            config={pluginConfig}
-            loadingFallback={finalLoadingFallback}
-            {...pluginProps}
-          />
-        );
+        let container;
+        // If default content, render children
+        if (pluginConfig.id === 'default_contents') {
+          container = pluginConfig.RenderWidget;
+        } else {
+          container = (
+            <PluginContainer
+              key={pluginConfig.id}
+              config={pluginConfig}
+              loadingFallback={finalLoadingFallback}
+              {...pluginProps}
+            />
+          );
+        }
         // If wrappers are provided, wrap the Plugin
         if (pluginConfig.wrappers) {
           finalChildren.push(
             wrapComponent(
-              () => newContainer,
+              () => container,
               pluginConfig.wrappers,
             ),
           );
         } else {
-          finalChildren.push(newContainer);
+          finalChildren.push(container);
         }
       }
     });
@@ -80,6 +97,8 @@ export default PluginSlot;
 PluginSlot.propTypes = {
   /** Element type for the PluginSlot wrapper component */
   as: PropTypes.elementType,
+  /** Default children for the PluginSlot */
+  children: PropTypes.node,
   /** ID of the PluginSlot configuration */
   id: PropTypes.string.isRequired,
   /** Props that are passed down to each Plugin in the Slot */
@@ -88,5 +107,6 @@ PluginSlot.propTypes = {
 
 PluginSlot.defaultProps = {
   as: 'div',
+  children: null,
   pluginProps: {},
 };

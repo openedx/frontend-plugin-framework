@@ -1,6 +1,12 @@
 import React from 'react';
 
 import { PluginSlot } from '@edx/frontend-plugin-framework';
+import ModularComponent from '../components/ModularComponent';
+
+const content = {
+  title: 'Default Content',
+  uniqueText:  "This widget's content will be modified by the Modify operation in the JS config."
+}
 
 function PluginSlotWithModifyWrapHide() {
   return (
@@ -9,7 +15,9 @@ function PluginSlotWithModifyWrapHide() {
       <PluginSlot
         id="slot_with_modify_wrap_hidden_operations"
         data-testid="testing"
-      />
+      >
+        <ModularComponent content={content}/>
+      </PluginSlot>
     </div>
   );
 }

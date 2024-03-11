@@ -4,9 +4,9 @@ import {
   IFRAME_PLUGIN,
   PLUGIN_OPERATIONS,
 } from '@edx/frontend-plugin-framework';
-import DefaultDirectWidget from './src/directPlugins/DefaultDirectWidget';
-import PluginDirect from './src/directPlugins/PluginDirect';
-import ModularDirectPlugin from './src/directPlugins/ModularDirectPlugin';
+import DefaultDirectWidget from './src/components/DefaultDirectWidget';
+import PluginDirect from './src/components/PluginDirect';
+import ModularDirectPlugin from './src/components/ModularComponent';
 
 const modifyWidget = (widget) => {
   const newContent = {
@@ -59,22 +59,17 @@ const config = {
   PORT: 8080,
   pluginSlots: {
     slot_with_insert_operation: {
-      defaultContents: [
-        {
-          id: 'default_iframe_widget',
-          type: IFRAME_PLUGIN,
-          priority: 1,
-          url: 'http://localhost:8081/default_iframe',
-          title: 'The default iFrame widget that appears in the plugin slot',
-        },
-        {
-          id: 'default_direct_widget',
-          type: DIRECT_PLUGIN,
-          priority: 20,
-          RenderWidget: DefaultDirectWidget,
-        },
-      ],
+      keepDefault: true,
       plugins: [
+        {
+          op: PLUGIN_OPERATIONS.Insert,
+          widget: {
+            id: 'inserted_direct_plugin',
+            type: DIRECT_PLUGIN,
+            priority: 10,
+            RenderWidget: PluginDirect,
+          },
+        },
         {
           op: PLUGIN_OPERATIONS.Insert,
           widget: {
@@ -85,51 +80,20 @@ const config = {
             title: 'The iFrame plugin that is inserted in the slot',
           },
         },
-        {
-          op: PLUGIN_OPERATIONS.Insert,
-          widget: {
-            id: 'inserted_direct_plugin',
-            type: DIRECT_PLUGIN,
-            priority: 10,
-            RenderWidget: PluginDirect,
-          },
-        },
       ],
     },
     slot_with_modify_wrap_hidden_operations: {
-      defaultContents: [
-        {
-          id: 'default_direct_widget',
-          type: DIRECT_PLUGIN,
-          priority: 1,
-          RenderWidget: ModularDirectPlugin,
-          content: {
-            title: 'Default Direct Widget',
-            uniqueText: "This widget's content will be modified by the Modify operation below.",
-          },
-        },
-        {
-          id: 'default_iframe_widget',
-          type: IFRAME_PLUGIN,
-          priority: 2,
-          url: 'http://localhost:8081/default_iframe',
-          title: 'The default iFrame widget that appears in the plugin slot',
-        },
-      ],
+      keepDefault: true,
       plugins: [
         {
           op: PLUGIN_OPERATIONS.Wrap,
-          widgetId: 'default_direct_widget',
+          widgetId: 'default_contents',
           wrapper: wrapWidget,
         },
         {
           op: PLUGIN_OPERATIONS.Modify,
-          widgetId: 'default_direct_widget',
+          widgetId: 'default_contents',
           fn: modifyWidget,
-        },
-        {
-          op: PLUGIN_OPERATIONS.Hide,
-          widgetId: 'default_iframe_widget',
         },
       ],
     },
