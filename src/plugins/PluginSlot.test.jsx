@@ -19,25 +19,11 @@ const iframePluginConfig = {
   },
 };
 
-const directHomeConfig = {
-  id: 'home',
-  type: 'DIRECT_PLUGIN',
-  priority: 5,
-  RenderWidget: ({ id, content }) => (
-    <div data-testid={id}>
-      {content.text}
-    </div>
-  ),
-  content: { text: 'This is a widget.' },
-};
-
 const defaultSlotConfig = {
   plugins: [
     iframePluginConfig,
   ],
-  defaultContents: [
-    directHomeConfig,
-  ],
+  keepDefault: true,
 };
 
 jest.mock('./data/hooks', () => ({
@@ -61,12 +47,17 @@ global.ResizeObserver = jest.fn(function mockResizeObserver() {
 });
 
 // TODO: APER-3119 — Write unit tests for plugin scenarios not already tested for https://2u-internal.atlassian.net/browse/APER-3119
+const content = { text: 'This is a widget.' };
 const TestPluginSlot = (
   <IntlProvider locale="en">
     <PluginSlot
       id="test-slot"
       data-testid="test-slot-id"
-    />
+    >
+      <div data-testid="default_contents">
+        {content.text}
+      </div>
+    </PluginSlot>
   </IntlProvider>
 );
 
@@ -82,17 +73,17 @@ describe('PluginSlot', () => {
   it('should render multiple types of Plugin in a single slot config', () => {
     const { container, getByTestId } = render(TestPluginSlot);
     const iframeElement = container.querySelector('iframe');
-    const directHomeElement = getByTestId(directHomeConfig.id);
+    const defaultContent = getByTestId('default_contents');
     const pluginSlot = getByTestId('test-slot-id');
 
     expect(pluginSlot).toContainElement(iframeElement);
-    expect(pluginSlot).toContainElement(directHomeElement);
+    expect(pluginSlot).toContainElement(defaultContent);
   });
 
   it('should order each Plugin by priority', () => {
     const { container, getByTestId } = render(TestPluginSlot);
     const iframeElement = container.querySelector('iframe');
-    const directHomeElement = getByTestId(directHomeConfig.id);
+    const defaultContent = getByTestId('default_contents');
     const pluginSlot = getByTestId('test-slot-id');
 
     // Dispatch a 'ready' event manually.
@@ -104,7 +95,7 @@ describe('PluginSlot', () => {
     fireEvent(window, readyEvent);
 
     expect(pluginSlot.children[0]).toEqual(iframeElement);
-    expect(pluginSlot.children[1]).toEqual(directHomeElement);
+    expect(pluginSlot.children[1]).toEqual(defaultContent);
   });
 
   it('should wrap a Plugin when using the "wrap" operation', () => {
@@ -112,7 +103,7 @@ describe('PluginSlot', () => {
       plugins: [
         {
           op: 'wrap',
-          widgetId: 'home',
+          widgetId: 'default_contents',
           wrapper: ({ component, idx }) => (
             <div key={idx} data-testid={`wrapper${idx + 1}`}>
               {component}
@@ -120,33 +111,31 @@ describe('PluginSlot', () => {
           ),
         },
       ],
-      defaultContents: [
-        directHomeConfig,
-      ],
+      keepDefault: true,
     });
 
     const { getByTestId } = render(TestPluginSlot);
     const wrapper1 = getByTestId('wrapper1');
-    const directHomeElement = getByTestId(directHomeConfig.id);
+    const defaultContent = getByTestId('default_contents');
 
-    expect(wrapper1).toContainElement(directHomeElement);
+    expect(wrapper1).toContainElement(defaultContent);
   });
 
-  it('should not render a Plugin when using the "hide" operation', () => {
+  it('should not render a widget if the Hide operation is applied to it', () => {
     usePluginSlot.mockReturnValueOnce({
       plugins: [
+        iframePluginConfig,
         {
           op: 'hide',
-          widgetId: 'home',
+          widgetId: 'iframe_config',
         },
       ],
-      defaultContents: [
-        directHomeConfig,
-      ],
+      keepDefault: true,
     });
-    const { queryByTestId } = render(TestPluginSlot);
+    const { container } = render(TestPluginSlot);
+    const iframeElement = container.querySelector('iframe');
 
-    expect(queryByTestId(directHomeConfig.id)).not.toBeInTheDocument();
+    expect(iframeElement).toBeNull();
   });
 
   it('should throw an error for invalid config type', () => {
@@ -160,9 +149,7 @@ describe('PluginSlot', () => {
           },
         },
       ],
-      defaultContents: [
-        directHomeConfig,
-      ],
+      keepDefault: true,
     });
     render(TestPluginSlot);
 

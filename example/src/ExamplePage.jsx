@@ -3,6 +3,7 @@ import React from 'react';
 import PluginSlotWithInsert from './pluginSlots/PluginSlotWithInsert';
 import PluginSlotWithModifyWrapHide from './pluginSlots/PluginSlotWithModifyWrapHide';
 import PluginSlotWithModularPlugins from './pluginSlots/PluginSlotWithModularPlugins';
+import PluginSlotWithoutDefault from './pluginSlots/PluginSlotWithoutDefault';
 
 export default function ExamplePage() {
   return (
@@ -23,6 +24,7 @@ export default function ExamplePage() {
         <PluginSlotWithInsert />
         <PluginSlotWithModifyWrapHide />
         <PluginSlotWithModularPlugins />
+        <PluginSlotWithoutDefault />
       </div>
     </main>
   );

@@ -58,7 +58,7 @@ export const wrapComponent = (renderComponent, wrappers) => wrappers.reduce(
  * Called by usePluginSlot to retrieve the most up-to-date Config Document*
  * @returns {Object} - The pluginSlots object in Config Document
  */
-export const getConfigSlots = () => getConfig().pluginSlots;
+export const getConfigSlots = () => getConfig()?.pluginSlots;
 
 export default {
   getConfigSlots,
