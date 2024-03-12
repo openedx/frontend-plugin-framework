@@ -162,12 +162,12 @@ will appear above a widget with a priority of 20.
 Default Content
 ```````````````
 
-The component that is wrapped by a Plugin Slot is referred to as the "default content". In order to render the content,
+The component that is wrapped by a Plugin Slot is referred to as the "default content". In order to render this content,
 the ``keepDefault`` boolean in the slot should be set to ``true``. For organizations who aren't using the Plugin Slot
-(and thus don't define the slot via JS config), keepDefault will default to ``true``, thus ensuring that the developer
-experience doesn't change other than having a Plugin Slot wrapper around the component.
+(and therefore aren't defining a slot via JS config), ``keepDefault`` will default to ``true``, thus ensuring that the developer
+experience isn't affected; the only change to note is that the component is now wrapped in a Plugin Slot.
 
-To use the Wrap or Modify operation on default content, the ``widgetId`` you would use to refer to the content is ``defaults_contents``.
+If you need to use a plugin operation (e.g. Wrap, Hide, Modify) on default content, the ``widgetId`` you would use to refer to the content is ``defaults_contents``.
 
 Note: The default content will have a priority of 50, allowing for any plugins to appear before or after the default content.
 

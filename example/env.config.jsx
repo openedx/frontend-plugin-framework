@@ -23,7 +23,7 @@ const wrapWidget = ({ component, idx }) => (
     <p>This is a wrapper component that is placed around the default content.</p>
     {component}
     <p>With this wrapper, you can add anything before or after a component.</p>
-    <p>By the way, note in the JS config that an iFrame plugin was Inserted, but a Hide operation was also used to hide it!</p>
+    <p>Note in the JS config that an iFrame plugin was Inserted, but a Hide operation was also used to hide it!</p>
   </div>
 );
 
