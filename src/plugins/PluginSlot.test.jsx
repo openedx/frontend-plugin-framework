@@ -121,19 +121,21 @@ describe('PluginSlot', () => {
     expect(wrapper1).toContainElement(defaultContent);
   });
 
-  it('should not render default content when using the "hide" operation even if keepDefault is true', () => {
+  it('should not render a widget if the Hide operation is applied to it', () => {
     usePluginSlot.mockReturnValueOnce({
       plugins: [
+        iframePluginConfig,
         {
           op: 'hide',
-          widgetId: 'default_contents',
+          widgetId: 'iframe_config',
         },
       ],
       keepDefault: true,
     });
-    const { queryByTestId } = render(TestPluginSlot);
+    const { container } = render(TestPluginSlot);
+    const iframeElement = container.querySelector('iframe');
 
-    expect(queryByTestId('default_contents')).not.toBeInTheDocument();
+    expect(iframeElement).toBeNull();
   });
 
   it('should throw an error for invalid config type', () => {
