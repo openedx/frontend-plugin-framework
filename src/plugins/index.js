@@ -15,3 +15,7 @@ export {
   DIRECT_PLUGIN,
   PLUGIN_OPERATIONS,
 } from './data/constants';
+export {
+  usePluginContext,
+  default as PluginProvider,
+} from './PluginProvider';

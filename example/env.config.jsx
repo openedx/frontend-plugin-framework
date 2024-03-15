@@ -7,6 +7,7 @@ import {
 import DefaultDirectWidget from './src/components/DefaultDirectWidget';
 import PluginDirect from './src/components/PluginDirect';
 import ModularComponent from './src/components/ModularComponent';
+import CallbackOverrideComponent from './src/components/CallbackOverrideComponent';
 
 const modifyWidget = (widget) => {
   const newContent = {
@@ -179,7 +180,21 @@ const config = {
           },
         },
       ],
-    }
+    },
+    slot_with_callback_override: {
+      keepDefault: true,
+      plugins: [
+        {
+          op: PLUGIN_OPERATIONS.Insert,
+          widget: {
+            id: 'callback_override_insert',
+            type: DIRECT_PLUGIN,
+            priority: 10,
+            RenderWidget: CallbackOverrideComponent,
+          },
+        },
+      ],
+    },
   },
 };
 

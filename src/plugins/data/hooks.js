@@ -179,3 +179,44 @@ export function useElementSize() {
     [measuredRef, element, dimensions, offset],
   );
 }
+
+/**
+ * Used to provide hooks for plugins provider
+ *
+ * @returns Memoized value that contains hooks for plugins provider
+ */
+export function useProviderHooks() {
+  const [plugins, setPlugins] = useState({});
+
+  const registerPluginCallback = useCallback((pluginId, callbackName, callback) => {
+    setPlugins({
+      ...plugins,
+      [pluginId]: {
+        ...plugins[pluginId],
+        callback: {
+          ...plugins[pluginId].callback,
+          [callbackName]: callback,
+        },
+      },
+    });
+  }, [plugins, setPlugins]);
+
+  const usePluginCallback = useCallback((callbackName, callback) => {
+    const finalCallback = () => {
+      let result = callback();
+      Object.values(plugins).forEach((plugin) => {
+        if (plugin.callback[callbackName]) {
+          result = plugin.callback[callbackName](result);
+        }
+      });
+      return result;
+    };
+    return finalCallback;
+  }, [plugins]);
+
+  return useMemo(() => ({
+    plugins,
+    registerPluginCallback,
+    usePluginCallback,
+  }), [plugins, registerPluginCallback, usePluginCallback]);
+}

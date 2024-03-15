@@ -17,13 +17,16 @@ import { subscribe } from '@edx/frontend-platform/pubSub';
 
 import ExamplePage from './ExamplePage';
 import './index.scss';
+import { PluginProvider } from '@edx/frontend-plugin-framework';
 
 subscribe(APP_READY, () => {
   ReactDOM.render(
     <AppProvider>
-      <Routes>
-        <Route path="/" element={<PageWrap><ExamplePage /></PageWrap>} />
-      </Routes>
+      <PluginProvider>
+        <Routes>
+          <Route path="/" element={<PageWrap><ExamplePage /></PageWrap>} />
+        </Routes>
+      </PluginProvider>
     </AppProvider>,
     document.getElementById('root'),
   );
