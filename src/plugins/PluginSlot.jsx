@@ -106,7 +106,7 @@ PluginSlot.propTypes = {
 };
 
 PluginSlot.defaultProps = {
-  as: 'div',
+  as: React.Fragment,
   children: null,
   pluginProps: {},
 };
