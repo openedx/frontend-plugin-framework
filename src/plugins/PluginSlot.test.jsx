@@ -53,6 +53,7 @@ const TestPluginSlot = (
     <PluginSlot
       id="test-slot"
       data-testid="test-slot-id"
+      as="div"
     >
       <div data-testid="default_contents">
         {content.text}
