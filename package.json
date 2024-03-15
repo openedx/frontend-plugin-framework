@@ -24,7 +24,7 @@
       "pre-commit": "npm run lint"
     }
   },
-  "author": "edX",
+  "author": "Open edX Community",
   "license": "AGPL-3.0",
   "homepage": "https://github.com/openedx/frontend-plugin-framework#readme",
   "publishConfig": {
