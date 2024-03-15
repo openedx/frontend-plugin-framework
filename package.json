@@ -1,6 +1,6 @@
 {
   "name": "@edx/frontend-plugin-framework",
-  "version": "0.1.0",
+  "version": "1.0.0-semantically-released",
   "description": "Frontend Plugin Framework ",
   "repository": {
     "type": "git",
@@ -65,6 +65,7 @@
     "@testing-library/react": "^12.1.5",
     "glob": "7.2.3",
     "husky": "7.0.4",
-    "jest": "29.7.0"
+    "jest": "29.7.0",
+    "semantic-release": "^22.0.12"
   }
 }
