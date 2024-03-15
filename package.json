@@ -1,5 +1,5 @@
 {
-  "name": "@edx/frontend-plugin-framework",
+  "name": "@openedx/frontend-plugin-framework",
   "version": "1.0.0-semantically-released",
   "description": "Frontend Plugin Framework ",
   "repository": {
