@@ -3,7 +3,12 @@
  */
 
 import {
-  useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
 } from 'react';
 import { getConfigSlots } from './utils';
 import { PLUGIN_MOUNTED, PLUGIN_READY, PLUGIN_UNMOUNTED } from './constants';
@@ -149,7 +154,7 @@ export function useElementSize() {
   const [element, setElement] = useState(null);
 
   // Sets a reference to the Plugin element when passed to the Plugin element as a "ref" attribute (eg. <iframe>)
-  const measuredRef = useCallback(_element => {
+  const measuredRef = useCallback((_element) => {
     setElement(_element);
   }, []);
 
@@ -175,7 +180,14 @@ export function useElementSize() {
   }, [element]);
 
   return useMemo(
-    () => ([measuredRef, element, dimensions.width, dimensions.height, offset.x, offset.y]),
+    () => [
+      measuredRef,
+      element,
+      dimensions.width,
+      dimensions.height,
+      offset.x,
+      offset.y,
+    ],
     [measuredRef, element, dimensions, offset],
   );
 }
@@ -189,34 +201,43 @@ export function useProviderHooks() {
   const [plugins, setPlugins] = useState({});
 
   const registerPluginCallback = useCallback((pluginId, callbackName, callback) => {
-    setPlugins({
-      ...plugins,
-      [pluginId]: {
-        ...plugins[pluginId],
-        callback: {
-          ...plugins[pluginId].callback,
-          [callbackName]: callback,
+    setPlugins(prevState => {
+      const newState = {
+        ...prevState,
+        [pluginId]: {
+          ...prevState[pluginId],
+          callback: {
+            ...prevState[pluginId]?.callback,
+            [callbackName]: callback,
+          },
         },
-      },
+      };
+      return newState;
     });
-  }, [plugins, setPlugins]);
+  }, []);
 
-  const usePluginCallback = useCallback((callbackName, callback) => {
-    const finalCallback = () => {
-      let result = callback();
-      Object.values(plugins).forEach((plugin) => {
-        if (plugin.callback[callbackName]) {
-          result = plugin.callback[callbackName](result);
-        }
-      });
-      return result;
-    };
-    return finalCallback;
-  }, [plugins]);
+  const pluginCallback = useCallback(
+    (callbackName, callback) => {
+      const finalCallback = () => {
+        let result = callback();
+        Object.values(plugins).forEach((plugin) => {
+          if (plugin.callback[callbackName]) {
+            result = plugin.callback[callbackName](result);
+          }
+        });
+        return result;
+      };
+      return finalCallback;
+    },
+    [plugins],
+  );
 
-  return useMemo(() => ({
-    plugins,
-    registerPluginCallback,
-    usePluginCallback,
-  }), [plugins, registerPluginCallback, usePluginCallback]);
+  return useMemo(
+    () => ({
+      plugins,
+      registerPluginCallback,
+      pluginCallback,
+    }),
+    [plugins, registerPluginCallback, pluginCallback],
+  );
 }

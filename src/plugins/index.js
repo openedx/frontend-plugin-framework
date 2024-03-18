@@ -17,5 +17,7 @@ export {
 } from './data/constants';
 export {
   usePluginContext,
+  usePluginCallback,
+  useRegisterPluginCallback,
   default as PluginProvider,
 } from './PluginProvider';

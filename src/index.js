@@ -6,4 +6,6 @@ export {
   DIRECT_PLUGIN,
   usePluginContext,
   PluginProvider,
+  usePluginCallback,
+  useRegisterPluginCallback,
 } from './plugins';
