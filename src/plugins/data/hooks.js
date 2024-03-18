@@ -201,18 +201,12 @@ export function useProviderHooks() {
   const [plugins, setPlugins] = useState({});
 
   const registerPluginCallback = useCallback((pluginId, callbackName, callback) => {
-    setPlugins(prevState => {
-      const newState = {
-        ...prevState,
-        [pluginId]: {
-          ...prevState[pluginId],
-          callback: {
-            ...prevState[pluginId]?.callback,
-            [callbackName]: callback,
-          },
-        },
-      };
-      return newState;
+    setPlugins((state) => {
+    // eslint-disable-next-line no-param-reassign
+      state[pluginId] = state[pluginId] || {};
+      // eslint-disable-next-line no-param-reassign
+      state[pluginId][callbackName] = callback;
+      return state;
     });
   }, []);
 
@@ -221,8 +215,8 @@ export function useProviderHooks() {
       const finalCallback = () => {
         let result = callback();
         Object.values(plugins).forEach((plugin) => {
-          if (plugin.callback[callbackName]) {
-            result = plugin.callback[callbackName](result);
+          if (plugin[callbackName]) {
+            result = plugin[callbackName](result);
           }
         });
         return result;

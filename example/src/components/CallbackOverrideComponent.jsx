@@ -1,14 +1,15 @@
 import React, { useCallback } from "react";
-import { useRegisterPluginCallback } from "@edx/frontend-plugin-framework";
+import { usePluginContext, useRegisterPluginCallback } from "@edx/frontend-plugin-framework";
 
 export default function CallbackOverrideComponent({ id }) {
   const [items, setItems] = React.useState([]);
+  const { registerPluginCallback } = usePluginContext();
 
   const addItem = useCallback(() => [...items, "Plugin click"], [items]);
 
   const pluginOnlyClick = () => setItems(addItem());
 
-  useRegisterPluginCallback(id, "pluginOverride", (prev) => {
+  registerPluginCallback(id, "pluginOverride", (prev) => {
     const result = addItem();
     setItems(result);
     return [...prev, "Plugin click"];
