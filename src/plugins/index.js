@@ -15,3 +15,9 @@ export {
   DIRECT_PLUGIN,
   PLUGIN_OPERATIONS,
 } from './data/constants';
+export {
+  usePluginContext,
+  usePluginCallback,
+  useRegisterPluginCallback,
+  default as PluginProvider,
+} from './PluginProvider';

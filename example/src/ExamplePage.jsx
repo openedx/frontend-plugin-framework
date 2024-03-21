@@ -4,6 +4,7 @@ import PluginSlotWithInsert from './pluginSlots/PluginSlotWithInsert';
 import PluginSlotWithModifyWrapHide from './pluginSlots/PluginSlotWithModifyWrapHide';
 import PluginSlotWithModularPlugins from './pluginSlots/PluginSlotWithModularPlugins';
 import PluginSlotWithoutDefault from './pluginSlots/PluginSlotWithoutDefault';
+import PluginSlotWithCallbackOverride from './pluginSlots/PluginSlotWithCallbackOverride';
 
 export default function ExamplePage() {
   return (
@@ -25,6 +26,7 @@ export default function ExamplePage() {
         <PluginSlotWithModifyWrapHide />
         <PluginSlotWithModularPlugins />
         <PluginSlotWithoutDefault />
+        <PluginSlotWithCallbackOverride />
       </div>
     </main>
   );
