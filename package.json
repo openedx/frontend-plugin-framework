@@ -1,7 +1,8 @@
 {
   "name": "@openedx/frontend-plugin-framework",
   "version": "1.0.0-semantically-released",
-  "description": "Frontend Plugin Framework ",
+  "description": "Frontend Plugin Framework",
+  "main": "dist/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/openedx/frontend-plugin-framework.git"
@@ -10,7 +11,7 @@
     "extends @edx/browserslist-config"
   ],
   "scripts": {
-    "build": "fedx-scripts webpack",
+    "build": "make build",
     "i18n_extract": "fedx-scripts formatjs extract",
     "lint": "fedx-scripts eslint --ext .js --ext .jsx .",
     "lint:fix": "fedx-scripts eslint --fix --ext .js --ext .jsx .",
