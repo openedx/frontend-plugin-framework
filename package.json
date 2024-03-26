@@ -16,8 +16,8 @@
     "lint": "fedx-scripts eslint --ext .js --ext .jsx .",
     "lint:fix": "fedx-scripts eslint --fix --ext .js --ext .jsx .",
     "snapshot": "fedx-scripts jest --updateSnapshot",
-    "start": "npm --prefix example start",
-    "start:plugins": "npm --prefix example-plugin-app start",
+    "start": "./node_modules/.bin/fedx-scripts babel src --watch --out-dir dist --source-maps --ignore **/*.test.jsx,**/*.test.js,**/setupTest.js --copy-files",
+    "start:example": "npm --prefix example start & npm --prefix example-plugin-app start",
     "test": "fedx-scripts jest --coverage --passWithNoTests"
   },
   "husky": {
