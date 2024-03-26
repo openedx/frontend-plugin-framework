@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { PluginSlot } from '@edx/frontend-plugin-framework';
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 
 function PluginSlotWithInsert() {
   return (

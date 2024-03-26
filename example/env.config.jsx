@@ -3,7 +3,7 @@ import {
   DIRECT_PLUGIN,
   IFRAME_PLUGIN,
   PLUGIN_OPERATIONS,
-} from '@edx/frontend-plugin-framework';
+} from '@openedx/frontend-plugin-framework';
 import DefaultDirectWidget from './src/components/DefaultDirectWidget';
 import PluginDirect from './src/components/PluginDirect';
 import ModularComponent from './src/components/ModularComponent';

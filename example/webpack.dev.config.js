@@ -8,7 +8,7 @@ module.exports = createConfig('webpack-dev', {
       // applications. Because this example app is using code from the parent frontend-plugin-framework
       // library, it runs into the same issues our applications do when loading libraries from
       // local source, rather than from their node_modules directory.
-      '@edx/frontend-plugin-framework': path.resolve(__dirname, '..', 'src/plugins'),
+      '@openedx/frontend-plugin-framework': path.resolve(__dirname, '..', 'src/plugins'),
       react: path.resolve(__dirname, 'node_modules', 'react'),
       'react-dom': path.resolve(__dirname, 'node_modules', 'react-dom'),
       'react-router-dom': path.resolve(__dirname, 'node_modules', 'react-router-dom'),

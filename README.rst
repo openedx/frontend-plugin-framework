@@ -103,7 +103,7 @@ file as well to define its plugin slots.
 
     // env.config.js
 
-    import { DIRECT_PLUGIN, IFRAME_PLUGIN, PLUGIN_OPERATIONS } from '@edx/frontend-plugin-framework';
+    import { DIRECT_PLUGIN, IFRAME_PLUGIN, PLUGIN_OPERATIONS } from '@openedx/frontend-plugin-framework';
     
     // import any additional dependencies or functions to be used for each plugin operation
     import Sidebar from './widgets/social/Sidebar';
