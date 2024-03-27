@@ -5,7 +5,7 @@ const config = createConfig('eslint');
 
 config.rules = {
   'import/no-unresolved': ['error', {
-    ignore: ['@edx/frontend-plugin-framework/example*'],
+    ignore: ['@openedx/frontend-plugin-framework/example*'],
   }],
   'import/no-extraneous-dependencies': ['error', {
     devDependencies: true,

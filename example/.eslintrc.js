@@ -8,7 +8,7 @@ config.rules = {
     packageDir: path.join(__dirname, '..'),
   }],
   'import/no-unresolved': ['error', {
-    ignore: ['@edx/frontend-plugin-framework*'],
+    ignore: ['@openedx/frontend-plugin-framework*'],
   }],
 };
 
