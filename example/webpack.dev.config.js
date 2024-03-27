@@ -14,8 +14,4 @@ module.exports = createConfig('webpack-dev', {
       'react-router-dom': path.resolve(__dirname, 'node_modules', 'react-router-dom'),
     },
   },
-  devServer: {
-    port: 8081,
-    allowedHosts: 'all',
-  },
 });

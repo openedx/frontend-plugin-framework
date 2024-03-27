@@ -15,7 +15,7 @@ module.exports = createConfig('webpack-dev', {
     },
   },
   devServer: {
-    port: 8082,
+    port: 8081,
     allowedHosts: 'all',
   },
 });
