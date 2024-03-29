@@ -35,17 +35,13 @@ Getting Started
 Using the Example Apps
 ----------------------
 
-1. Run ``npm install`` in the root directory.
+1. Run ``make requirements`` in the root directory.
 
-2. In separate terminals, run ``npm install`` inside both example app directories (``/example`` and ``/example-plugin-app``).
+2. Run ``npm run start`` in the root directory.
 
-3. Run ``npm run start`` in both directories.
+3. Open another terminal and run ``npm run start:example`` to start the example app. You can visit http://localhost:8080 to see the example app.
 
-Alternatively, once the packages are installed in both apps, you can run the apps from the root directory.
-
-1. ``npm run start`` runs the host MFE (``example``)
-
-2. ``npm run start:plugins`` runs the child MFE (``example-plugin-app``)
+4. Make change to the existing code, everything should be hot reloaded.
 
 Add Library Dependency
 ----------------------
@@ -103,7 +99,7 @@ file as well to define its plugin slots.
 
     // env.config.js
 
-    import { DIRECT_PLUGIN, IFRAME_PLUGIN, PLUGIN_OPERATIONS } from '@edx/frontend-plugin-framework';
+    import { DIRECT_PLUGIN, IFRAME_PLUGIN, PLUGIN_OPERATIONS } from '@openedx/frontend-plugin-framework';
     
     // import any additional dependencies or functions to be used for each plugin operation
     import Sidebar from './widgets/social/Sidebar';

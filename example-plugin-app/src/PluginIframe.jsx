@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plugin } from '@edx/frontend-plugin-framework';
+import { Plugin } from '@openedx/frontend-plugin-framework';
 
 export default function PluginIframe() {
   return (
