@@ -39,7 +39,7 @@ Using the Example Apps
 
 2. Run ``npm run start`` in the root directory.
 
-3. Open another terminal and run ``npm run start:example`` to start the example app. You can visit http://localhost:8080 to see the example app.
+3. Open another terminal and run ``npm run start:example-vite`` to start the example app. You can visit http://localhost:8080 to see the example app.
 
 4. Make change to the existing code, everything should be hot reloaded.
 

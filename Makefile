@@ -25,6 +25,7 @@ precommit:
 requirements:
 	npm ci
 	cd example && npm ci && cd ..
+	cd example-vite && npm ci && cd ..
 	cd example-plugin-app && npm ci && cd ..
 
 i18n.extract:

@@ -3,6 +3,11 @@
   "version": "1.0.0-semantically-released",
   "description": "Frontend Plugin Framework",
   "main": "dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./src/index.js"
+    }
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/openedx/frontend-plugin-framework.git"
@@ -18,6 +23,7 @@
     "snapshot": "fedx-scripts jest --updateSnapshot",
     "start": "./node_modules/.bin/fedx-scripts babel src --watch --out-dir dist --source-maps --ignore **/*.test.jsx,**/*.test.js,**/setupTest.js --copy-files",
     "start:example": "npm --prefix example start & npm --prefix example-plugin-app start",
+    "start:example-vite": "npm --prefix example-vite run dev & npm --prefix example-plugin-app start",
     "test": "fedx-scripts jest --coverage --passWithNoTests"
   },
   "husky": {
