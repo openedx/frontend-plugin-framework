@@ -23,6 +23,6 @@
     "@edx/frontend-component-header": "5.0.2"
   },
   "devDependencies": {
-    "@openedx/frontend-build": "^13.0.0"
+    "@openedx/frontend-build": "^14.0.0"
   }
 }

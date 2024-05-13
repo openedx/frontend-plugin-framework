@@ -12,7 +12,7 @@
   "author": "edX",
   "license": "AAGPL-3.0",
   "dependencies": {
-    "@openedx/frontend-build": "^13.0.28",
+    "@openedx/frontend-build": "^14.0.0",
     "core-js": "^3.29.1",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
