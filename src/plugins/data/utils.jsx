@@ -32,7 +32,7 @@ export const organizePlugins = (defaultContents, plugins) => {
         newContents[widgetIdx] = newWidget;
       }
     } else {
-      throw new Error('unknown direct plugin change operation');
+      throw new Error('unknown plugin change operation');
     }
   });
 
@@ -60,8 +60,78 @@ export const wrapComponent = (renderComponent, wrappers) => wrappers.reduce(
  */
 export const getConfigSlots = () => getConfig()?.pluginSlots;
 
+// TODO: validating plugin operations. likely use combination of Object.keys to check each key and typeof to check each property's type
+// consider: storing config shapes in shapes.js, writing a util function validatePlugin that gets called for each operation here
+// write tests for validatePlugin
+// on error, validatePlugin throws typeError with message of plugin id
+
+/* Insert must include the following configuration
+  widget: {
+    id: 'new_plugin',
+    priority: 10,
+    type: DIRECT_PLUGIN,
+    RenderWidget: SomeComponent
+  }
+
+  widget: {
+    id: 'iframe_plugin',
+    priority: 10,
+    type: IFRAME_PLUGIN
+    title: 'iframe plugin',
+    url: 'example.url.com'
+  }
+
+  widget: {
+    id: 'inserted_plugin',
+    type: DIRECT_PLUGIN,
+    priority: 10,
+    RenderWidget: ModularComponent,
+    content: {
+      title: 'Modular Direct Plugin',
+      uniqueText: 'This is some text that will be replaced by the Modify operation below.',
+    },
+  },
+*/
+
+/* Hide must include the following configuration
+  widgetId,
+*/
+
+/* Modify must include the following configuration
+  widgetId,
+  fn
+*/
+
+/* must include the following configuration
+  widget: {
+    id: 'new_plugin',
+    priority: 10,
+    type: DIRECT_PLUGIN,
+    RenderWidget: SomeComponent
+  }
+*/
+
+export const validatePlugin = ({ op, widget }) => {
+  if (op === PLUGIN_OPERATIONS.Insert) {
+    const requiredFields = ['id', 'priority', 'type'];
+    const requiredTypes = {
+      id: 'string',
+      priority: 'number',
+      type: 'string',
+      RenderWidget: 'function',
+      title: 'string',
+      url: 'string',
+      content: 'object',
+    };
+
+    const isValidField = requiredFields.every((field) => Object.keys(widget).includes(field));
+    const isValidTypes = Object.keys(widget).every((key) => typeof widget[key] === requiredTypes[key]);
+    return isValidField && isValidTypes;
+  }
+}
 export default {
   getConfigSlots,
   organizePlugins,
+  validatePlugin,
   wrapComponent,
 };

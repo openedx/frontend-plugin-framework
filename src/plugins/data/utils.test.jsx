@@ -4,10 +4,10 @@ import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
 
 import {
-  getConfigSlots, organizePlugins, wrapComponent,
+  getConfigSlots, organizePlugins, validatePlugin, wrapComponent,
 } from './utils';
 
-import { PLUGIN_OPERATIONS } from './constants';
+import { PLUGIN_OPERATIONS, IFRAME_PLUGIN, DIRECT_PLUGIN } from './constants';
 
 const mockModifyWidget = (widget) => {
   const newContent = {
@@ -52,11 +52,13 @@ const mockSlotChanges = [
     widgetId: 'lookUp',
     fn: mockModifyWidget,
   },
+  // TODO: update the Insert slot configuration to include the type
   {
     op: PLUGIN_OPERATIONS.Insert,
     widget: {
       id: 'login',
       priority: 50,
+      type: IFRAME_PLUGIN,
       content: {
         url: '/login', label: 'Login',
       },
@@ -196,7 +198,7 @@ describe('organizePlugins', () => {
       try {
         await organizePlugins(mockDefaultContent, mockSlotChanges);
       } catch (error) {
-        expect(error.message).toBe('unknown direct plugin change operation');
+        expect(error.message).toBe('unknown plugin change operation');
       }
     });
   });
@@ -245,5 +247,49 @@ describe('getConfigSlots', () => {
       },
     };
     expect(getConfigSlots()).toStrictEqual(expected);
+  });
+});
+
+describe('validatePlugin', () => {
+  it('returns true if the plugin config is correctly configured', () => {
+    const insertDirectConfig = {
+      op: PLUGIN_OPERATIONS.Insert,
+      widget: {
+        id: 'new_plugin',
+        priority: 10,
+        type: DIRECT_PLUGIN,
+        RenderWidget: mockRenderWidget,
+      },
+    };
+    const insertIFrameConfig = {
+      op: PLUGIN_OPERATIONS.Insert,
+      widget: {
+        id: 'new_plugin',
+        priority: 10,
+        type: IFRAME_PLUGIN,
+        title: 'iframe plugin',
+        url: 'example.url.com',
+      },
+    };
+    const insertDirectModularConfig = {
+      op: PLUGIN_OPERATIONS.Insert,
+      widget: {
+        id: 'inserted_plugin',
+        type: DIRECT_PLUGIN,
+        priority: 10,
+        RenderWidget: mockRenderWidget,
+        content: {
+          title: 'Modular Direct Plugin',
+          uniqueText: 'This is some text.',
+        },
+      },
+    };
+
+    expect(validatePlugin(insertDirectConfig)).toBe(true);
+    expect(validatePlugin(insertIFrameConfig)).toBe(true);
+    expect(validatePlugin(insertDirectModularConfig)).toBe(true);
+  });
+  it('returns false if the plugin config is incorrectly configured', () => {
+
   });
 });
