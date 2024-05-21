@@ -1,6 +1,6 @@
 import React from 'react';
 import { getConfig } from '@edx/frontend-platform';
-import { PLUGIN_OPERATIONS } from './constants';
+import { PLUGIN_OPERATIONS, DIRECT_PLUGIN, IFRAME_PLUGIN } from './constants';
 
 /**
  * Called by PluginSlot to prepare the plugin changes for the given slot
@@ -60,8 +60,10 @@ export const wrapComponent = (renderComponent, wrappers) => wrappers.reduce(
  */
 export const getConfigSlots = () => getConfig()?.pluginSlots;
 
-// TODO: validating plugin operations. likely use combination of Object.keys to check each key and typeof to check each property's type
-// consider: storing config shapes in shapes.js, writing a util function validatePlugin that gets called for each operation here
+// TODO: validating plugin operations. likely use combination of Object.keys to
+// check each key and typeof to check each property's type
+// consider: storing config shapes in shapes.js, writing a util function validatePlugin
+// that gets called for each operation here
 // write tests for validatePlugin
 // on error, validatePlugin throws typeError with message of plugin id
 
@@ -102,7 +104,7 @@ export const getConfigSlots = () => getConfig()?.pluginSlots;
   fn
 */
 
-/* must include the following configuration
+/* Wrap must include the following configuration
   widget: {
     id: 'new_plugin',
     priority: 10,
@@ -116,34 +118,36 @@ const validateRequirements = (requiredTypes, widgetConfig) => (Object.keys(requi
 ));
 
 export const validatePlugin = ({ op, widget }) => {
-  if (!widget) { throw new Error('plugin configuration is missing widget object'); }
-
   let isValidConfig = true;
 
   if (op === PLUGIN_OPERATIONS.Insert) {
-    const requiredBaseTypes = {
-      id: 'string',
-      priority: 'number',
-      type: 'string',
-    };
-    const requiredDirectTypes = {
-      RenderWidget: 'function',
-    };
-    const requiredIFrameTypes = {
-      title: 'string',
-      url: 'string',
+    const requiredTypes = {
+      base: {
+        id: 'string',
+        priority: 'number',
+        type: 'string',
+      },
+      direct_plugin: {
+        RenderWidget: 'function',
+      },
+      iframe_plugin: {
+        title: 'string',
+        url: 'string',
+      },
     };
 
-    if (widget.type === 'DIRECT_PLUGIN') {
-      isValidConfig = validateRequirements({ ...requiredBaseTypes, ...requiredDirectTypes }, widget);
-    } else if (widget.type === 'IFRAME_PLUGIN') {
-      isValidConfig = validateRequirements({ ...requiredBaseTypes, ...requiredIFrameTypes }, widget);
-    } else {
+    const plugins = [DIRECT_PLUGIN, IFRAME_PLUGIN];
+    if (!widget) { throw new Error('plugin configuration is missing widget object'); }
+    if (!plugins.includes(widget.type)) { throw new Error(`${op} configuration for widget id (${widget.id}) has unknown plugin type or it is missing`); }
+    if (!requiredTypes[widget.type.toLowerCase()]) {
       throw new Error(`${op} configuration for widget id (${widget.id}) has unknown plugin type or it is missing`);
     }
+
+    isValidConfig = validateRequirements({ ...requiredTypes.base, ...requiredTypes[widget.type.toLowerCase()] }, widget);
+
+    if (!isValidConfig) { throw new Error(`${op} configuration is invalid for ${widget.type} with widget id: ${widget.id || 'MISSING ID'}`); }
+    return true;
   }
-  if (!isValidConfig) { throw new Error(`${op} configuration is invalid for ${widget.type} with widget id: ${widget.id || 'MISSING ID'}`); }
-  return true;
 };
 
 export default {
