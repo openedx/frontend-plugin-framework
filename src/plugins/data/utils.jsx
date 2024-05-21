@@ -111,24 +111,41 @@ export const getConfigSlots = () => getConfig()?.pluginSlots;
   }
 */
 
+const validateRequirements = (requiredTypes, widgetConfig) => (Object.keys(requiredTypes).every(
+  (field) => (widgetConfig[field] && (typeof widgetConfig[field] === requiredTypes[field])),
+));
+
 export const validatePlugin = ({ op, widget }) => {
+  if (!widget) { throw new Error('plugin configuration is missing widget object'); }
+
+  let isValidConfig = true;
+
   if (op === PLUGIN_OPERATIONS.Insert) {
-    const requiredFields = ['id', 'priority', 'type'];
-    const requiredTypes = {
+    const requiredBaseTypes = {
       id: 'string',
       priority: 'number',
       type: 'string',
+    };
+    const requiredDirectTypes = {
       RenderWidget: 'function',
+    };
+    const requiredIFrameTypes = {
       title: 'string',
       url: 'string',
-      content: 'object',
     };
 
-    const isValidField = requiredFields.every((field) => Object.keys(widget).includes(field));
-    const isValidTypes = Object.keys(widget).every((key) => typeof widget[key] === requiredTypes[key]);
-    return isValidField && isValidTypes;
+    if (widget.type === 'DIRECT_PLUGIN') {
+      isValidConfig = validateRequirements({ ...requiredBaseTypes, ...requiredDirectTypes }, widget);
+    } else if (widget.type === 'IFRAME_PLUGIN') {
+      isValidConfig = validateRequirements({ ...requiredBaseTypes, ...requiredIFrameTypes }, widget);
+    } else {
+      throw new Error(`${op} configuration for widget id (${widget.id}) has unknown plugin type or it is missing`);
+    }
   }
-}
+  if (!isValidConfig) { throw new Error(`${op} configuration is invalid for ${widget.type} with widget id: ${widget.id || 'MISSING ID'}`); }
+  return true;
+};
+
 export default {
   getConfigSlots,
   organizePlugins,

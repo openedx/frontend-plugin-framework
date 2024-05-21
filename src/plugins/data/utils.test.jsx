@@ -251,45 +251,107 @@ describe('getConfigSlots', () => {
 });
 
 describe('validatePlugin', () => {
-  it('returns true if the plugin config is correctly configured', () => {
-    const insertDirectConfig = {
-      op: PLUGIN_OPERATIONS.Insert,
-      widget: {
-        id: 'new_plugin',
-        priority: 10,
-        type: DIRECT_PLUGIN,
-        RenderWidget: mockRenderWidget,
-      },
-    };
-    const insertIFrameConfig = {
-      op: PLUGIN_OPERATIONS.Insert,
-      widget: {
-        id: 'new_plugin',
-        priority: 10,
-        type: IFRAME_PLUGIN,
-        title: 'iframe plugin',
-        url: 'example.url.com',
-      },
-    };
-    const insertDirectModularConfig = {
-      op: PLUGIN_OPERATIONS.Insert,
-      widget: {
-        id: 'inserted_plugin',
-        type: DIRECT_PLUGIN,
-        priority: 10,
-        RenderWidget: mockRenderWidget,
-        content: {
-          title: 'Modular Direct Plugin',
-          uniqueText: 'This is some text.',
+  describe('insert plugin', () => {
+    it('returns true if the plugin config is correctly configured', () => {
+      const insertDirectConfig = {
+        op: PLUGIN_OPERATIONS.Insert,
+        widget: {
+          id: 'new_plugin',
+          priority: 10,
+          type: DIRECT_PLUGIN,
+          RenderWidget: mockRenderWidget,
         },
-      },
-    };
+      };
+      const insertIFrameConfig = {
+        op: PLUGIN_OPERATIONS.Insert,
+        widget: {
+          id: 'new_plugin',
+          priority: 10,
+          type: IFRAME_PLUGIN,
+          title: 'iframe plugin',
+          url: 'example.url.com',
+        },
+      };
+      const insertDirectModularConfig = {
+        op: PLUGIN_OPERATIONS.Insert,
+        widget: {
+          id: 'inserted_plugin',
+          type: DIRECT_PLUGIN,
+          priority: 10,
+          RenderWidget: mockRenderWidget,
+          content: {
+            title: 'Modular Direct Plugin',
+            uniqueText: 'This is some text.',
+          },
+        },
+      };
 
-    expect(validatePlugin(insertDirectConfig)).toBe(true);
-    expect(validatePlugin(insertIFrameConfig)).toBe(true);
-    expect(validatePlugin(insertDirectModularConfig)).toBe(true);
-  });
-  it('returns false if the plugin config is incorrectly configured', () => {
+      expect(validatePlugin(insertDirectConfig)).toBe(true);
+      expect(validatePlugin(insertIFrameConfig)).toBe(true);
+      expect(validatePlugin(insertDirectModularConfig)).toBe(true);
+    });
 
+    it('returns false if the plugin config is incorrectly configured', () => {
+      // missing id for Direct Plugin
+      const insertBrokenDirectConfig = {
+        op: PLUGIN_OPERATIONS.Insert,
+        widget: {
+          priority: 10,
+          type: DIRECT_PLUGIN,
+          RenderWidget: mockRenderWidget,
+        },
+      };
+      // missing RenderWidget for Direct Plugin
+      const insertBrokenDirectConfig2 = {
+        op: PLUGIN_OPERATIONS.Insert,
+        widget: {
+          id: 'new_plugin',
+          priority: 10,
+          type: DIRECT_PLUGIN,
+        },
+      };
+      // properties need to be wrapped in widget key
+      const insertBrokenDirectConfig3 = {
+        op: PLUGIN_OPERATIONS.Insert,
+        id: 'new_plugin',
+        priority: 10,
+        type: DIRECT_PLUGIN,
+        RenderWidget: mockRenderWidget,
+      };
+      // missing title for iFrame Plugin
+      const insertBrokenIFrameConfig = {
+        op: PLUGIN_OPERATIONS.Insert,
+        widget: {
+          id: 'new_iframe_plugin',
+          priority: 10,
+          type: IFRAME_PLUGIN,
+          url: 'www.example_url.com',
+        },
+      };
+
+      try {
+        validatePlugin(insertBrokenDirectConfig);
+      } catch (error) {
+        expect(error.message).toBe('insert configuration is invalid for DIRECT_PLUGIN with widget id: MISSING ID');
+      }
+
+      try {
+        validatePlugin(insertBrokenDirectConfig2);
+      } catch (error) {
+        expect(error.message).toBe('insert configuration is invalid for DIRECT_PLUGIN with widget id: new_plugin');
+      }
+
+      try {
+        validatePlugin(insertBrokenDirectConfig3);
+      } catch (error) {
+        expect(error.message).toBe('plugin configuration is missing widget object');
+      }
+
+      try {
+        validatePlugin(insertBrokenIFrameConfig);
+      } catch (error) {
+        expect(error.message).toBe('insert configuration is invalid for IFRAME_PLUGIN with widget id: new_iframe_plugin');
+      }
+    });
   });
 });
