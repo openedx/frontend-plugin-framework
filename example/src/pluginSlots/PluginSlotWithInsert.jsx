@@ -8,7 +8,6 @@ function PluginSlotWithInsert() {
       <h2 className="pl-3">Plugin Operation: Insert</h2>
       <PluginSlot
         id="slot_with_insert_operation"
-        data-testid="testing"
       >
         <section className="bg-success p-3 text-light">
           <h3>Default Content</h3>

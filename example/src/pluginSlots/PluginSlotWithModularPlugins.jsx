@@ -14,7 +14,6 @@ function PluginSlotWithModularPlugins() {
       <h2 className="pl-3">Direct Plugins Using Modular Components</h2>
       <PluginSlot
         id="slot_with_modular_plugins"
-        data-testid="testing"
       >
         <ModularComponent content={content} />
       </PluginSlot>
