@@ -8,7 +8,6 @@ function PluginSlotWithoutDefault() {
       <h2 className="pl-3">Default Content Set to False</h2>
       <PluginSlot
         id="slot_without_default"
-        data-testid="testing"
       >
       </PluginSlot>
     </div>

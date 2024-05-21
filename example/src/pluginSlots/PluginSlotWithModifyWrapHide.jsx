@@ -15,7 +15,6 @@ function PluginSlotWithModifyWrapHide() {
       <h2 className="pl-3">Plugin Operation: Modify, Wrap, and Hide</h2>
       <PluginSlot
         id="slot_with_modify_wrap_hidden_operations"
-        data-testid="testing"
       >
         <ModularComponent content={content}/>
       </PluginSlot>
