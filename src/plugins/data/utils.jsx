@@ -117,10 +117,12 @@ const validateRequirements = (requiredTypes, widgetConfig) => (Object.keys(requi
   (field) => (widgetConfig[field] && (typeof widgetConfig[field] === requiredTypes[field])),
 ));
 
-export const validatePlugin = ({ op, widget }) => {
+export const validatePlugin = (pluginConfig) => {
   let isValidConfig = true;
+  const { op, ...config } = pluginConfig;
 
   if (op === PLUGIN_OPERATIONS.Insert) {
+    const { widget = undefined } = config;
     const requiredTypes = {
       base: {
         id: 'string',
@@ -146,8 +148,15 @@ export const validatePlugin = ({ op, widget }) => {
     isValidConfig = validateRequirements({ ...requiredTypes.base, ...requiredTypes[widget.type.toLowerCase()] }, widget);
 
     if (!isValidConfig) { throw new Error(`${op} configuration is invalid for ${widget.type} with widget id: ${widget.id || 'MISSING ID'}`); }
-    return true;
+  } else if (op === PLUGIN_OPERATIONS.Hide) {
+    const requiredTypes = {
+      widgetId: 'string',
+    };
+
+    if (!config.widgetId) { throw new Error('the Hide operation is missing a widgetId'); }
+    isValidConfig = validateRequirements(requiredTypes, config);
   }
+  return isValidConfig;
 };
 
 export default {

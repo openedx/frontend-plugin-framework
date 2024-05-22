@@ -251,7 +251,7 @@ describe('getConfigSlots', () => {
 });
 
 describe('validatePlugin', () => {
-  describe('insert plugin', () => {
+  describe('insert plugin configuration', () => {
     it('returns true if the plugin config is correctly configured', () => {
       const insertDirectConfig = {
         op: PLUGIN_OPERATIONS.Insert,
@@ -353,5 +353,55 @@ describe('validatePlugin', () => {
         expect(error.message).toBe('insert configuration is invalid for IFRAME_PLUGIN with widget id: new_iframe_plugin');
       }
     });
+  });
+  describe('hide plugin configuration', () => {
+    it('returns true if the Hidden operation is configured', () => {
+      const validHideConfig = {
+        op: PLUGIN_OPERATIONS.Hide,
+        widgetId: 'default_content',
+      };
+      expect(validatePlugin(validHideConfig)).toBe(true);
+    });
+    it('returns an error if the Hidden configuration is missing a key', () => {
+      const invalidHideConfig = {
+        op: PLUGIN_OPERATIONS.Hide,
+      };
+
+      try {
+        validatePlugin(invalidHideConfig);
+      } catch (error) {
+        expect(error.message).toBe('the Hide operation is missing a widgetId');
+      }
+    });
+  });
+  describe('modify plugin configuration', () => {
+    const validModifyConfig = {
+      op: PLUGIN_OPERATIONS.Modify,
+      widgetId: 'random_plugin',
+      fn: mockModifyWidget,
+    };
+    const invalidModifyConfig1 = {
+      op: PLUGIN_OPERATIONS.Modify,
+      widgetId: 'random_plugin',
+    };
+    const invalidModifyConfig2 = {
+      op: PLUGIN_OPERATIONS.Modify,
+      fn: mockModifyWidget,
+    };
+
+    expect(validatePlugin(validModifyConfig)).toBe(true);
+    try {
+      validatePlugin(invalidModifyConfig1);
+    } catch (error) {
+      expect(error.message).toBe('modify configuration is invalid for widget id: random_plugin');
+    }
+    try {
+      validatePlugin(invalidModifyConfig2);
+    } catch (error) {
+      expect(error.message).toBe('modify configuration is invalid for widget id: MISSING ID');
+    }
+  });
+  describe('wrap plugin configuration', () => {
+
   });
 });
