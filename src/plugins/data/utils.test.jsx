@@ -362,7 +362,7 @@ describe('validatePlugin', () => {
       };
       expect(validatePlugin(validHideConfig)).toBe(true);
     });
-    it('returns an error if the Hidden configuration is missing a key', () => {
+    it('returns an error if the Hidden operation is configured incorrectly', () => {
       const invalidHideConfig = {
         op: PLUGIN_OPERATIONS.Hide,
       };
@@ -370,38 +370,70 @@ describe('validatePlugin', () => {
       try {
         validatePlugin(invalidHideConfig);
       } catch (error) {
-        expect(error.message).toBe('the Hide operation is missing a widgetId');
+        expect(error.message).toBe('the hide operation is missing a widgetId');
       }
     });
   });
   describe('modify plugin configuration', () => {
-    const validModifyConfig = {
-      op: PLUGIN_OPERATIONS.Modify,
-      widgetId: 'random_plugin',
-      fn: mockModifyWidget,
-    };
-    const invalidModifyConfig1 = {
-      op: PLUGIN_OPERATIONS.Modify,
-      widgetId: 'random_plugin',
-    };
-    const invalidModifyConfig2 = {
-      op: PLUGIN_OPERATIONS.Modify,
-      fn: mockModifyWidget,
-    };
+    it('returns true if the Modify operation is configured correctly', () => {
+      const validModifyConfig = {
+        op: PLUGIN_OPERATIONS.Modify,
+        widgetId: 'random_plugin',
+        fn: mockModifyWidget,
+      };
+      expect(validatePlugin(validModifyConfig)).toBe(true);
+    });
+    it('returns an error if the Modify operation is configured incorrectly', () => {
+      const invalidModifyConfig1 = {
+        op: PLUGIN_OPERATIONS.Modify,
+        widgetId: 'random_plugin',
+      };
+      const invalidModifyConfig2 = {
+        op: PLUGIN_OPERATIONS.Modify,
+        fn: mockModifyWidget,
+      };
 
-    expect(validatePlugin(validModifyConfig)).toBe(true);
-    try {
-      validatePlugin(invalidModifyConfig1);
-    } catch (error) {
-      expect(error.message).toBe('modify configuration is invalid for widget id: random_plugin');
-    }
-    try {
-      validatePlugin(invalidModifyConfig2);
-    } catch (error) {
-      expect(error.message).toBe('modify configuration is invalid for widget id: MISSING ID');
-    }
+      try {
+        validatePlugin(invalidModifyConfig1);
+      } catch (error) {
+        expect(error.message).toBe('the modify configuration is invalid for widget id: random_plugin');
+      }
+      try {
+        validatePlugin(invalidModifyConfig2);
+      } catch (error) {
+        expect(error.message).toBe('the modify configuration is invalid for widget id: MISSING ID');
+      }
+    });
   });
   describe('wrap plugin configuration', () => {
+    it('returns true if the Wrap operation is configured correctly', () => {
+      const validWrapConfig = {
+        op: PLUGIN_OPERATIONS.Wrap,
+        widgetId: 'random_plugin',
+        wrapper: mockElementWrapper,
+      };
+      expect(validatePlugin(validWrapConfig)).toBe(true);
+    });
+    it('returns an error if the Wrap operation is configured incorrectly', () => {
+      const invalidWrapConfig1 = {
+        op: PLUGIN_OPERATIONS.Wrap,
+        widgetId: 'random_plugin',
+      };
+      const invalidWrapConfig2 = {
+        op: PLUGIN_OPERATIONS.Wrap,
+        wrapper: mockElementWrapper,
+      };
 
+      try {
+        validatePlugin(invalidWrapConfig1);
+      } catch (error) {
+        expect(error.message).toBe('the wrap configuration is invalid for widget id: random_plugin');
+      }
+      try {
+        validatePlugin(invalidWrapConfig2);
+      } catch (error) {
+        expect(error.message).toBe('the wrap configuration is invalid for widget id: MISSING ID');
+      }
+    });
   });
 });

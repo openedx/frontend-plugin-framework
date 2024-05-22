@@ -153,8 +153,24 @@ export const validatePlugin = (pluginConfig) => {
       widgetId: 'string',
     };
 
-    if (!config.widgetId) { throw new Error('the Hide operation is missing a widgetId'); }
     isValidConfig = validateRequirements(requiredTypes, config);
+    if (!isValidConfig) { throw new Error(`the ${op} operation is missing a widgetId`); }
+  } else if (op === PLUGIN_OPERATIONS.Modify) {
+    const requiredTypes = {
+      widgetId: 'string',
+      fn: 'function',
+    };
+
+    isValidConfig = validateRequirements(requiredTypes, config);
+    if (!isValidConfig) { throw new Error(`the ${op} configuration is invalid for widget id: ${config.widgetId || 'MISSING ID'}`); }
+  } else if (op === PLUGIN_OPERATIONS.Wrap) {
+    const requiredTypes = {
+      widgetId: 'string',
+      wrapper: 'function',
+    };
+
+    isValidConfig = validateRequirements(requiredTypes, config);
+    if (!isValidConfig) { throw new Error(`the ${op} configuration is invalid for widget id: ${config.widgetId || 'MISSING ID'}`); }
   }
   return isValidConfig;
 };
