@@ -131,7 +131,7 @@ const config = {
         {
           op: PLUGIN_OPERATIONS.Insert,
           widget: {
-            id: 'inserted_direct_plugin',
+            id: 'insert_modular_direct_plugin',
             type: DIRECT_PLUGIN,
             priority: 1,
             RenderWidget: ModularComponent,
@@ -149,7 +149,7 @@ const config = {
         {
           op: PLUGIN_OPERATIONS.Insert,
           widget: {
-            id: 'inserted_direct_plugin',
+            id: 'insert_direct_plugin',
             type: DIRECT_PLUGIN,
             priority: 1,
             RenderWidget: ModularComponent,
@@ -162,7 +162,7 @@ const config = {
         {
           op: PLUGIN_OPERATIONS.Insert,
           widget: {
-            id: 'inserted_direct_plugin',
+            id: 'insert_another_direct_plugin',
             type: DIRECT_PLUGIN,
             priority: 10,
             RenderWidget: PluginDirect,
