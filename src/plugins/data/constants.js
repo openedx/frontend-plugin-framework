@@ -22,3 +22,31 @@ export const PLUGIN_OPERATIONS = {
   Modify: 'modify',
   Wrap: 'wrap',
 };
+
+export const requiredPluginTypes = {
+  insert: {
+    base: {
+      id: 'string',
+      priority: 'number',
+      type: 'string',
+    },
+    direct_plugin: {
+      RenderWidget: 'function',
+    },
+    iframe_plugin: {
+      title: 'string',
+      url: 'string',
+    },
+  },
+  hide: {
+    widgetId: 'string',
+  },
+  modify: {
+    widgetId: 'string',
+    fn: 'function',
+  },
+  wrap: {
+    widgetId: 'string',
+    wrapper: 'function',
+  },
+};

@@ -2,6 +2,7 @@
 
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
+import { logError } from '@edx/frontend-platform/logging';
 
 import {
   getConfigSlots, organizePlugins, validatePlugin, wrapComponent,
@@ -10,12 +11,9 @@ import {
 import { PLUGIN_OPERATIONS, IFRAME_PLUGIN, DIRECT_PLUGIN } from './constants';
 
 const mockModifyWidget = (widget) => {
-  const newContent = {
-    url: '/search',
-    label: 'Search',
-  };
   const modifiedWidget = widget;
-  modifiedWidget.content = newContent;
+  modifiedWidget.url = '/search';
+  modifiedWidget.title = 'Search';
   return modifiedWidget;
 };
 
@@ -39,50 +37,37 @@ const mockRenderWidget = () => (
 
 const mockSlotChanges = [
   {
-    op: PLUGIN_OPERATIONS.Wrap,
-    widgetId: 'drafts',
-    wrapper: mockIsAdminWrapper,
-  },
-  {
-    op: PLUGIN_OPERATIONS.Hide,
-    widgetId: 'home',
-  },
-  {
-    op: PLUGIN_OPERATIONS.Modify,
-    widgetId: 'lookUp',
-    fn: mockModifyWidget,
-  },
-  // TODO: update the Insert slot configuration to include the type
-  {
     op: PLUGIN_OPERATIONS.Insert,
     widget: {
       id: 'login',
       priority: 50,
       type: IFRAME_PLUGIN,
-      content: {
-        url: '/login', label: 'Login',
-      },
+      url: '/login',
+      title: 'Login',
     },
+  },
+  {
+    op: PLUGIN_OPERATIONS.Wrap,
+    widgetId: 'login',
+    wrapper: mockIsAdminWrapper,
+  },
+  {
+    op: PLUGIN_OPERATIONS.Hide,
+    widgetId: 'default_contents',
+  },
+  {
+    op: PLUGIN_OPERATIONS.Modify,
+    widgetId: 'login',
+    fn: mockModifyWidget,
   },
 ];
 
-const mockDefaultContent = [
-  {
-    id: 'home',
-    priority: 5,
-    content: { url: '/', label: 'Home' },
-  },
-  {
-    id: 'lookUp',
-    priority: 25,
-    content: { url: '/lookup', label: 'Lookup' },
-  },
-  {
-    id: 'drafts',
-    priority: 35,
-    content: { url: '/drafts', label: 'Drafts' },
-  },
-];
+const mockDefaultContent = [{
+  id: 'default_contents',
+  keepDefault: true,
+  priority: 50,
+  RenderWidget: jest.fn(),
+}];
 
 jest.mock('@edx/frontend-platform', () => ({
   getConfig: jest.fn(() => ({
@@ -93,6 +78,10 @@ jest.mock('@edx/frontend-platform', () => ({
       },
     },
   })),
+}));
+
+jest.mock('@edx/frontend-platform/logging', () => ({
+  logError: jest.fn(),
 }));
 
 describe('organizePlugins', () => {
@@ -121,29 +110,29 @@ describe('organizePlugins', () => {
 
     it('should return an array of defaultContent if no changes for plugins in slot', () => {
       const plugins = organizePlugins(mockDefaultContent, []);
-      expect(plugins.length).toEqual(3);
+      expect(plugins.length).toEqual(1);
       expect(plugins).toEqual(mockDefaultContent);
     });
 
     it('should remove plugins with PluginOperation.Hide', () => {
       const plugins = organizePlugins(mockDefaultContent, mockSlotChanges);
-      const widget = plugins.find((w) => w.id === 'home');
-      expect(plugins.length).toEqual(4);
+      const widget = plugins.find((w) => w.id === 'default_contents');
+      expect(plugins.length).toEqual(2);
       expect(widget.hidden).toBe(true);
     });
 
     it('should modify plugins with PluginOperation.Modify', () => {
       const plugins = organizePlugins(mockDefaultContent, mockSlotChanges);
-      const widget = plugins.find((w) => w.id === 'lookUp');
+      const widget = plugins.find((w) => w.id === 'login');
 
-      expect(plugins.length).toEqual(4);
-      expect(widget.content.url).toEqual('/search');
+      expect(plugins.length).toEqual(2);
+      expect(widget.url).toEqual('/search');
     });
 
     it('should wrap plugins with PluginOperation.Wrap', () => {
       const plugins = organizePlugins(mockDefaultContent, mockSlotChanges);
-      const widget = plugins.find((w) => w.id === 'drafts');
-      expect(plugins.length).toEqual(4);
+      const widget = plugins.find((w) => w.id === 'login');
+      expect(plugins.length).toEqual(2);
       expect(widget.wrappers.length).toEqual(1);
     });
 
@@ -154,13 +143,13 @@ describe('organizePlugins', () => {
       };
       const newPluginChange = {
         op: PLUGIN_OPERATIONS.Wrap,
-        widgetId: 'drafts',
+        widgetId: 'login',
         wrapper: newMockWrapComponent,
       };
       mockSlotChanges.push(newPluginChange);
       const plugins = organizePlugins(mockDefaultContent, mockSlotChanges);
-      const widget = plugins.find((w) => w.id === 'drafts');
-      expect(plugins.length).toEqual(4);
+      const widget = plugins.find((w) => w.id === 'login');
+      expect(plugins.length).toEqual(2);
       expect(widget.wrappers.length).toEqual(2);
       expect(widget.wrappers[0]).toEqual(mockIsAdminWrapper);
       expect(widget.wrappers[1]).toEqual(newMockWrapComponent);
@@ -172,19 +161,17 @@ describe('organizePlugins', () => {
         widget: {
           id: 'profile',
           priority: 1,
-          content: {
-            url: '/profile', label: 'Profile',
-          },
+          type: IFRAME_PLUGIN,
+          url: '/profile',
+          title: 'Profile',
         },
       };
       mockSlotChanges.push(newPluginChange);
       const plugins = organizePlugins(mockDefaultContent, mockSlotChanges);
-      expect(plugins.length).toEqual(5);
+      expect(plugins.length).toEqual(3);
       expect(plugins[0].id).toBe('profile');
-      expect(plugins[1].id).toBe('home');
-      expect(plugins[2].id).toBe('lookUp');
-      expect(plugins[3].id).toBe('drafts');
-      expect(plugins[4].id).toBe('login');
+      expect(plugins[1].id).toBe('default_contents');
+      expect(plugins[2].id).toBe('login');
     });
 
     it('should raise an error for an operation that does not exist', async () => {
@@ -198,7 +185,7 @@ describe('organizePlugins', () => {
       try {
         await organizePlugins(mockDefaultContent, mockSlotChanges);
       } catch (error) {
-        expect(error.message).toBe('unknown plugin change operation');
+        expect(logError).toHaveBeenCalledWith('the INVALID operation config is invalid for widget id: drafts');
       }
     });
   });
@@ -251,6 +238,10 @@ describe('getConfigSlots', () => {
 });
 
 describe('validatePlugin', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe('insert plugin configuration', () => {
     it('returns true if the plugin config is correctly configured', () => {
       const insertDirectConfig = {
@@ -291,7 +282,7 @@ describe('validatePlugin', () => {
       expect(validatePlugin(insertDirectModularConfig)).toBe(true);
     });
 
-    it('returns false if the plugin config is incorrectly configured', () => {
+    it('returns error message if the plugin config is incorrectly configured', () => {
       // missing id for Direct Plugin
       const insertBrokenDirectConfig = {
         op: PLUGIN_OPERATIONS.Insert,
@@ -328,29 +319,44 @@ describe('validatePlugin', () => {
           url: 'www.example_url.com',
         },
       };
+      // missing plugin type
+      const insertBrokenIFrameConfig2 = {
+        op: PLUGIN_OPERATIONS.Insert,
+        widget: {
+          id: 'new_iframe_plugin',
+          priority: 10,
+          url: 'www.example_url.com',
+        },
+      };
 
       try {
         validatePlugin(insertBrokenDirectConfig);
       } catch (error) {
-        expect(error.message).toBe('insert configuration is invalid for DIRECT_PLUGIN with widget id: MISSING ID');
+        expect(logError).toHaveBeenCalledWith('the insert configuration is invalid for widget id: MISSING ID');
       }
 
       try {
         validatePlugin(insertBrokenDirectConfig2);
       } catch (error) {
-        expect(error.message).toBe('insert configuration is invalid for DIRECT_PLUGIN with widget id: new_plugin');
+        expect(logError).toHaveBeenCalledWith('the insert configuration is invalid for widget id: new_plugin');
       }
 
       try {
         validatePlugin(insertBrokenDirectConfig3);
       } catch (error) {
-        expect(error.message).toBe('plugin configuration is missing widget object');
+        expect(logError).toHaveBeenCalledWith('insert operation config is missing widget object');
       }
 
       try {
         validatePlugin(insertBrokenIFrameConfig);
       } catch (error) {
-        expect(error.message).toBe('insert configuration is invalid for IFRAME_PLUGIN with widget id: new_iframe_plugin');
+        expect(logError).toHaveBeenCalledWith('the insert configuration is invalid for widget id: new_iframe_plugin');
+      }
+
+      try {
+        validatePlugin(insertBrokenIFrameConfig2);
+      } catch (error) {
+        expect(logError).toHaveBeenCalledWith('the insert configuration is invalid for widget id: new_iframe_plugin');
       }
     });
   });
@@ -370,7 +376,7 @@ describe('validatePlugin', () => {
       try {
         validatePlugin(invalidHideConfig);
       } catch (error) {
-        expect(error.message).toBe('the hide operation is missing a widgetId');
+        expect(logError).toHaveBeenCalledWith('the hide operation config is invalid for widget id: MISSING ID');
       }
     });
   });
@@ -396,12 +402,12 @@ describe('validatePlugin', () => {
       try {
         validatePlugin(invalidModifyConfig1);
       } catch (error) {
-        expect(error.message).toBe('the modify configuration is invalid for widget id: random_plugin');
+        expect(logError).toHaveBeenCalledWith('the modify operation config is invalid for widget id: random_plugin');
       }
       try {
         validatePlugin(invalidModifyConfig2);
       } catch (error) {
-        expect(error.message).toBe('the modify configuration is invalid for widget id: MISSING ID');
+        expect(logError).toHaveBeenCalledWith('the modify operation config is invalid for widget id: MISSING ID');
       }
     });
   });
@@ -427,12 +433,12 @@ describe('validatePlugin', () => {
       try {
         validatePlugin(invalidWrapConfig1);
       } catch (error) {
-        expect(error.message).toBe('the wrap configuration is invalid for widget id: random_plugin');
+        expect(logError).toHaveBeenCalledWith('the wrap operation config is invalid for widget id: random_plugin');
       }
       try {
         validatePlugin(invalidWrapConfig2);
       } catch (error) {
-        expect(error.message).toBe('the wrap configuration is invalid for widget id: MISSING ID');
+        expect(logError).toHaveBeenCalledWith('the wrap operation config is invalid for widget id: MISSING ID');
       }
     });
   });
