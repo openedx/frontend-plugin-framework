@@ -2,7 +2,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { logError } from '@edx/frontend-platform/logging';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import PluginContainerIframe from './PluginContainerIframe';
