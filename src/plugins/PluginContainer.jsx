@@ -33,7 +33,6 @@ function PluginContainer({ config, ...props }) {
       );
       break;
     default:
-      logError(`Config type ${config.type} is not valid.`);
       break;
   }
 

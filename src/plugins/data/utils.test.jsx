@@ -173,21 +173,6 @@ describe('organizePlugins', () => {
       expect(plugins[1].id).toBe('default_contents');
       expect(plugins[2].id).toBe('login');
     });
-
-    it('should raise an error for an operation that does not exist', async () => {
-      const badPluginChange = {
-        op: PLUGIN_OPERATIONS.Destroy,
-        widgetId: 'drafts',
-      };
-      mockSlotChanges.push(badPluginChange);
-
-      expect.assertions(1);
-      try {
-        await organizePlugins(mockDefaultContent, mockSlotChanges);
-      } catch (error) {
-        expect(logError).toHaveBeenCalledWith('the INVALID operation config is invalid for widget id: drafts');
-      }
-    });
   });
 });
 
@@ -439,6 +424,20 @@ describe('validatePlugin', () => {
         validatePlugin(invalidWrapConfig2);
       } catch (error) {
         expect(logError).toHaveBeenCalledWith('the wrap operation config is invalid for widget id: MISSING ID');
+      }
+    });
+  });
+  describe('an invalid plugin configuration', () => {
+    it('should raise an error for an operation that does not exist', () => {
+      const invalidPluginConfig = {
+        op: PLUGIN_OPERATIONS.Destroy,
+        widgetId: 'drafts',
+      };
+
+      try {
+        validatePlugin(invalidPluginConfig);
+      } catch (error) {
+        expect(logError).toHaveBeenCalledWith('There is a config with an invalid PLUGIN_OPERATION. Check to make sure it is configured correctly.');
       }
     });
   });

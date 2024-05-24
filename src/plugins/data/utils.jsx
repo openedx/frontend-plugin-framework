@@ -20,6 +20,7 @@ export const validatePlugin = (pluginConfig) => {
   let requiredTypes = {};
   // eslint-disable-next-line prefer-const
   let { op, ...config } = pluginConfig;
+  if (!op) { logError('There is a config with an invalid PLUGIN_OPERATION. Check to make sure it is configured correctly.'); }
 
   if (op === PLUGIN_OPERATIONS.Insert) {
     config = config.widget;
@@ -34,7 +35,7 @@ export const validatePlugin = (pluginConfig) => {
   }
 
   if (!validateRequirements(requiredTypes, config)) {
-    logError(`the ${op || 'INVALID'} operation config is invalid for widget id: ${config.widgetId || config.id || 'MISSING ID'}`);
+    logError(`the ${op} operation config is invalid for widget id: ${config.widgetId || config.id || 'MISSING ID'}`);
   }
   return true;
 };
@@ -69,8 +70,6 @@ export const organizePlugins = (defaultContents, plugins) => {
         newWidget.wrappers.push(change.wrapper);
         newContents[widgetIdx] = newWidget;
       }
-    } else {
-      throw new Error('unknown plugin change operation');
     }
   });
 

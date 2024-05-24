@@ -2,7 +2,7 @@ import '@testing-library/jest-dom';
 import { getConfig } from '@edx/frontend-platform';
 import { usePluginSlot } from './hooks';
 
-import { PLUGIN_OPERATIONS } from './constants';
+import { IFRAME_PLUGIN, PLUGIN_OPERATIONS } from './constants';
 
 const mockSlotChanges = [
   {
@@ -10,9 +10,9 @@ const mockSlotChanges = [
     widget: {
       id: 'login',
       priority: 50,
-      content: {
-        url: '/login', label: 'Login',
-      },
+      type: IFRAME_PLUGIN,
+      url: '/login',
+      title: 'Login',
     },
   },
 ];

@@ -7,9 +7,10 @@ import { logError } from '@edx/frontend-platform/logging';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import PluginSlot from './PluginSlot';
 import { usePluginSlot } from './data/hooks';
+import { PLUGIN_OPERATIONS } from './data/constants';
 
 const iframePluginConfig = {
-  op: 'insert',
+  op: PLUGIN_OPERATIONS.Insert,
   widget: {
     id: 'iframe_config',
     url: 'http://localhost/plugin1',
@@ -103,7 +104,7 @@ describe('PluginSlot', () => {
     usePluginSlot.mockReturnValueOnce({
       plugins: [
         {
-          op: 'wrap',
+          op: PLUGIN_OPERATIONS.Wrap,
           widgetId: 'default_contents',
           wrapper: ({ component, idx }) => (
             <div key={idx} data-testid={`wrapper${idx + 1}`}>
@@ -127,7 +128,7 @@ describe('PluginSlot', () => {
       plugins: [
         iframePluginConfig,
         {
-          op: 'hide',
+          op: PLUGIN_OPERATIONS.Hide,
           widgetId: 'iframe_config',
         },
       ],
@@ -143,7 +144,7 @@ describe('PluginSlot', () => {
     usePluginSlot.mockReturnValueOnce({
       plugins: [
         {
-          op: 'insert',
+          op: PLUGIN_OPERATIONS.Insert,
           widget: {
             id: 'invalid_config',
             type: 'INVALID_TYPE',
@@ -154,6 +155,6 @@ describe('PluginSlot', () => {
     });
     render(TestPluginSlot);
 
-    expect(logError).toHaveBeenCalledWith('Config type INVALID_TYPE is not valid.');
+    expect(logError).toHaveBeenCalledWith('the insert operation config is invalid for widget id: invalid_config');
   });
 });
