@@ -1,6 +1,44 @@
 import React from 'react';
 import { getConfig } from '@edx/frontend-platform';
-import { PLUGIN_OPERATIONS } from './constants';
+import { logError } from '@edx/frontend-platform/logging';
+import { PLUGIN_OPERATIONS, requiredPluginTypes } from './constants';
+
+/**
+ * Called by validatePlugin to compare plugin config to the required data and data types
+ * @returns {Boolean} - returns true if all types are correct and present according to the plugin operation
+ */
+const validateRequirements = (requiredTypes, widgetConfig) => (Object.keys(requiredTypes).every(
+  // eslint-disable-next-line valid-typeof
+  (field) => (widgetConfig[field] && (typeof widgetConfig[field] === requiredTypes[field])),
+));
+
+/**
+ * Called by organizePlugins to validate plugin configurations
+ * @returns {Boolean} - boolean if all types are correct and present, else throws an error
+ */
+export const validatePlugin = (pluginConfig) => {
+  let requiredTypes = {};
+  // eslint-disable-next-line prefer-const
+  let { op, ...config } = pluginConfig;
+  if (!op) { logError('There is a config with an invalid PLUGIN_OPERATION. Check to make sure it is configured correctly.'); }
+
+  if (op === PLUGIN_OPERATIONS.Insert) {
+    config = config.widget;
+    if (!config) { logError('insert operation config is missing widget object'); }
+
+    requiredTypes = {
+      ...requiredPluginTypes[op].base,
+      ...requiredPluginTypes[op][config.type?.toLowerCase()],
+    };
+  } else {
+    requiredTypes = requiredPluginTypes[op];
+  }
+
+  if (!validateRequirements(requiredTypes, config)) {
+    logError(`the ${op} operation config is invalid for widget id: ${config.widgetId || config.id || 'MISSING ID'}`);
+  }
+  return true;
+};
 
 /**
  * Called by PluginSlot to prepare the plugin changes for the given slot
@@ -13,6 +51,7 @@ export const organizePlugins = (defaultContents, plugins) => {
   const newContents = [...defaultContents];
 
   plugins.forEach(change => {
+    validatePlugin(change);
     if (change.op === PLUGIN_OPERATIONS.Insert) {
       newContents.push(change.widget);
     } else if (change.op === PLUGIN_OPERATIONS.Hide) {
@@ -31,8 +70,6 @@ export const organizePlugins = (defaultContents, plugins) => {
         newWidget.wrappers.push(change.wrapper);
         newContents[widgetIdx] = newWidget;
       }
-    } else {
-      throw new Error('unknown direct plugin change operation');
     }
   });
 
@@ -63,5 +100,6 @@ export const getConfigSlots = () => getConfig()?.pluginSlots;
 export default {
   getConfigSlots,
   organizePlugins,
+  validatePlugin,
   wrapComponent,
 };

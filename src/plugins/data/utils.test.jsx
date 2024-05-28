@@ -2,20 +2,18 @@
 
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
+import { logError } from '@edx/frontend-platform/logging';
 
 import {
-  getConfigSlots, organizePlugins, wrapComponent,
+  getConfigSlots, organizePlugins, validatePlugin, wrapComponent,
 } from './utils';
 
-import { PLUGIN_OPERATIONS } from './constants';
+import { PLUGIN_OPERATIONS, IFRAME_PLUGIN, DIRECT_PLUGIN } from './constants';
 
 const mockModifyWidget = (widget) => {
-  const newContent = {
-    url: '/search',
-    label: 'Search',
-  };
   const modifiedWidget = widget;
-  modifiedWidget.content = newContent;
+  modifiedWidget.url = '/search';
+  modifiedWidget.title = 'Search';
   return modifiedWidget;
 };
 
@@ -39,48 +37,37 @@ const mockRenderWidget = () => (
 
 const mockSlotChanges = [
   {
-    op: PLUGIN_OPERATIONS.Wrap,
-    widgetId: 'drafts',
-    wrapper: mockIsAdminWrapper,
-  },
-  {
-    op: PLUGIN_OPERATIONS.Hide,
-    widgetId: 'home',
-  },
-  {
-    op: PLUGIN_OPERATIONS.Modify,
-    widgetId: 'lookUp',
-    fn: mockModifyWidget,
-  },
-  {
     op: PLUGIN_OPERATIONS.Insert,
     widget: {
       id: 'login',
       priority: 50,
-      content: {
-        url: '/login', label: 'Login',
-      },
+      type: IFRAME_PLUGIN,
+      url: '/login',
+      title: 'Login',
     },
+  },
+  {
+    op: PLUGIN_OPERATIONS.Wrap,
+    widgetId: 'login',
+    wrapper: mockIsAdminWrapper,
+  },
+  {
+    op: PLUGIN_OPERATIONS.Hide,
+    widgetId: 'default_contents',
+  },
+  {
+    op: PLUGIN_OPERATIONS.Modify,
+    widgetId: 'login',
+    fn: mockModifyWidget,
   },
 ];
 
-const mockDefaultContent = [
-  {
-    id: 'home',
-    priority: 5,
-    content: { url: '/', label: 'Home' },
-  },
-  {
-    id: 'lookUp',
-    priority: 25,
-    content: { url: '/lookup', label: 'Lookup' },
-  },
-  {
-    id: 'drafts',
-    priority: 35,
-    content: { url: '/drafts', label: 'Drafts' },
-  },
-];
+const mockDefaultContent = [{
+  id: 'default_contents',
+  keepDefault: true,
+  priority: 50,
+  RenderWidget: jest.fn(),
+}];
 
 jest.mock('@edx/frontend-platform', () => ({
   getConfig: jest.fn(() => ({
@@ -91,6 +78,10 @@ jest.mock('@edx/frontend-platform', () => ({
       },
     },
   })),
+}));
+
+jest.mock('@edx/frontend-platform/logging', () => ({
+  logError: jest.fn(),
 }));
 
 describe('organizePlugins', () => {
@@ -119,29 +110,29 @@ describe('organizePlugins', () => {
 
     it('should return an array of defaultContent if no changes for plugins in slot', () => {
       const plugins = organizePlugins(mockDefaultContent, []);
-      expect(plugins.length).toEqual(3);
+      expect(plugins.length).toEqual(1);
       expect(plugins).toEqual(mockDefaultContent);
     });
 
     it('should remove plugins with PluginOperation.Hide', () => {
       const plugins = organizePlugins(mockDefaultContent, mockSlotChanges);
-      const widget = plugins.find((w) => w.id === 'home');
-      expect(plugins.length).toEqual(4);
+      const widget = plugins.find((w) => w.id === 'default_contents');
+      expect(plugins.length).toEqual(2);
       expect(widget.hidden).toBe(true);
     });
 
     it('should modify plugins with PluginOperation.Modify', () => {
       const plugins = organizePlugins(mockDefaultContent, mockSlotChanges);
-      const widget = plugins.find((w) => w.id === 'lookUp');
+      const widget = plugins.find((w) => w.id === 'login');
 
-      expect(plugins.length).toEqual(4);
-      expect(widget.content.url).toEqual('/search');
+      expect(plugins.length).toEqual(2);
+      expect(widget.url).toEqual('/search');
     });
 
     it('should wrap plugins with PluginOperation.Wrap', () => {
       const plugins = organizePlugins(mockDefaultContent, mockSlotChanges);
-      const widget = plugins.find((w) => w.id === 'drafts');
-      expect(plugins.length).toEqual(4);
+      const widget = plugins.find((w) => w.id === 'login');
+      expect(plugins.length).toEqual(2);
       expect(widget.wrappers.length).toEqual(1);
     });
 
@@ -152,13 +143,13 @@ describe('organizePlugins', () => {
       };
       const newPluginChange = {
         op: PLUGIN_OPERATIONS.Wrap,
-        widgetId: 'drafts',
+        widgetId: 'login',
         wrapper: newMockWrapComponent,
       };
       mockSlotChanges.push(newPluginChange);
       const plugins = organizePlugins(mockDefaultContent, mockSlotChanges);
-      const widget = plugins.find((w) => w.id === 'drafts');
-      expect(plugins.length).toEqual(4);
+      const widget = plugins.find((w) => w.id === 'login');
+      expect(plugins.length).toEqual(2);
       expect(widget.wrappers.length).toEqual(2);
       expect(widget.wrappers[0]).toEqual(mockIsAdminWrapper);
       expect(widget.wrappers[1]).toEqual(newMockWrapComponent);
@@ -170,34 +161,17 @@ describe('organizePlugins', () => {
         widget: {
           id: 'profile',
           priority: 1,
-          content: {
-            url: '/profile', label: 'Profile',
-          },
+          type: IFRAME_PLUGIN,
+          url: '/profile',
+          title: 'Profile',
         },
       };
       mockSlotChanges.push(newPluginChange);
       const plugins = organizePlugins(mockDefaultContent, mockSlotChanges);
-      expect(plugins.length).toEqual(5);
+      expect(plugins.length).toEqual(3);
       expect(plugins[0].id).toBe('profile');
-      expect(plugins[1].id).toBe('home');
-      expect(plugins[2].id).toBe('lookUp');
-      expect(plugins[3].id).toBe('drafts');
-      expect(plugins[4].id).toBe('login');
-    });
-
-    it('should raise an error for an operation that does not exist', async () => {
-      const badPluginChange = {
-        op: PLUGIN_OPERATIONS.Destroy,
-        widgetId: 'drafts',
-      };
-      mockSlotChanges.push(badPluginChange);
-
-      expect.assertions(1);
-      try {
-        await organizePlugins(mockDefaultContent, mockSlotChanges);
-      } catch (error) {
-        expect(error.message).toBe('unknown direct plugin change operation');
-      }
+      expect(plugins[1].id).toBe('default_contents');
+      expect(plugins[2].id).toBe('login');
     });
   });
 });
@@ -245,5 +219,226 @@ describe('getConfigSlots', () => {
       },
     };
     expect(getConfigSlots()).toStrictEqual(expected);
+  });
+});
+
+describe('validatePlugin', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  describe('insert plugin configuration', () => {
+    it('returns true if the plugin config is correctly configured', () => {
+      const insertDirectConfig = {
+        op: PLUGIN_OPERATIONS.Insert,
+        widget: {
+          id: 'new_plugin',
+          priority: 10,
+          type: DIRECT_PLUGIN,
+          RenderWidget: mockRenderWidget,
+        },
+      };
+      const insertIFrameConfig = {
+        op: PLUGIN_OPERATIONS.Insert,
+        widget: {
+          id: 'new_plugin',
+          priority: 10,
+          type: IFRAME_PLUGIN,
+          title: 'iframe plugin',
+          url: 'example.url.com',
+        },
+      };
+      const insertDirectModularConfig = {
+        op: PLUGIN_OPERATIONS.Insert,
+        widget: {
+          id: 'inserted_plugin',
+          type: DIRECT_PLUGIN,
+          priority: 10,
+          RenderWidget: mockRenderWidget,
+          content: {
+            title: 'Modular Direct Plugin',
+            uniqueText: 'This is some text.',
+          },
+        },
+      };
+
+      expect(validatePlugin(insertDirectConfig)).toBe(true);
+      expect(validatePlugin(insertIFrameConfig)).toBe(true);
+      expect(validatePlugin(insertDirectModularConfig)).toBe(true);
+    });
+
+    it('returns error message if the plugin config is incorrectly configured', () => {
+      // missing id for Direct Plugin
+      const insertBrokenDirectConfig = {
+        op: PLUGIN_OPERATIONS.Insert,
+        widget: {
+          priority: 10,
+          type: DIRECT_PLUGIN,
+          RenderWidget: mockRenderWidget,
+        },
+      };
+      // missing RenderWidget for Direct Plugin
+      const insertBrokenDirectConfig2 = {
+        op: PLUGIN_OPERATIONS.Insert,
+        widget: {
+          id: 'new_plugin',
+          priority: 10,
+          type: DIRECT_PLUGIN,
+        },
+      };
+      // properties need to be wrapped in widget key
+      const insertBrokenDirectConfig3 = {
+        op: PLUGIN_OPERATIONS.Insert,
+        id: 'new_plugin',
+        priority: 10,
+        type: DIRECT_PLUGIN,
+        RenderWidget: mockRenderWidget,
+      };
+      // missing title for iFrame Plugin
+      const insertBrokenIFrameConfig = {
+        op: PLUGIN_OPERATIONS.Insert,
+        widget: {
+          id: 'new_iframe_plugin',
+          priority: 10,
+          type: IFRAME_PLUGIN,
+          url: 'www.example_url.com',
+        },
+      };
+      // missing plugin type
+      const insertBrokenIFrameConfig2 = {
+        op: PLUGIN_OPERATIONS.Insert,
+        widget: {
+          id: 'new_iframe_plugin',
+          priority: 10,
+          url: 'www.example_url.com',
+        },
+      };
+
+      try {
+        validatePlugin(insertBrokenDirectConfig);
+      } catch (error) {
+        expect(logError).toHaveBeenCalledWith('the insert configuration is invalid for widget id: MISSING ID');
+      }
+
+      try {
+        validatePlugin(insertBrokenDirectConfig2);
+      } catch (error) {
+        expect(logError).toHaveBeenCalledWith('the insert configuration is invalid for widget id: new_plugin');
+      }
+
+      try {
+        validatePlugin(insertBrokenDirectConfig3);
+      } catch (error) {
+        expect(logError).toHaveBeenCalledWith('insert operation config is missing widget object');
+      }
+
+      try {
+        validatePlugin(insertBrokenIFrameConfig);
+      } catch (error) {
+        expect(logError).toHaveBeenCalledWith('the insert configuration is invalid for widget id: new_iframe_plugin');
+      }
+
+      try {
+        validatePlugin(insertBrokenIFrameConfig2);
+      } catch (error) {
+        expect(logError).toHaveBeenCalledWith('the insert configuration is invalid for widget id: new_iframe_plugin');
+      }
+    });
+  });
+  describe('hide plugin configuration', () => {
+    it('returns true if the Hidden operation is configured', () => {
+      const validHideConfig = {
+        op: PLUGIN_OPERATIONS.Hide,
+        widgetId: 'default_content',
+      };
+      expect(validatePlugin(validHideConfig)).toBe(true);
+    });
+    it('returns an error if the Hidden operation is configured incorrectly', () => {
+      const invalidHideConfig = {
+        op: PLUGIN_OPERATIONS.Hide,
+      };
+
+      try {
+        validatePlugin(invalidHideConfig);
+      } catch (error) {
+        expect(logError).toHaveBeenCalledWith('the hide operation config is invalid for widget id: MISSING ID');
+      }
+    });
+  });
+  describe('modify plugin configuration', () => {
+    it('returns true if the Modify operation is configured correctly', () => {
+      const validModifyConfig = {
+        op: PLUGIN_OPERATIONS.Modify,
+        widgetId: 'random_plugin',
+        fn: mockModifyWidget,
+      };
+      expect(validatePlugin(validModifyConfig)).toBe(true);
+    });
+    it('returns an error if the Modify operation is configured incorrectly', () => {
+      const invalidModifyConfig1 = {
+        op: PLUGIN_OPERATIONS.Modify,
+        widgetId: 'random_plugin',
+      };
+      const invalidModifyConfig2 = {
+        op: PLUGIN_OPERATIONS.Modify,
+        fn: mockModifyWidget,
+      };
+
+      try {
+        validatePlugin(invalidModifyConfig1);
+      } catch (error) {
+        expect(logError).toHaveBeenCalledWith('the modify operation config is invalid for widget id: random_plugin');
+      }
+      try {
+        validatePlugin(invalidModifyConfig2);
+      } catch (error) {
+        expect(logError).toHaveBeenCalledWith('the modify operation config is invalid for widget id: MISSING ID');
+      }
+    });
+  });
+  describe('wrap plugin configuration', () => {
+    it('returns true if the Wrap operation is configured correctly', () => {
+      const validWrapConfig = {
+        op: PLUGIN_OPERATIONS.Wrap,
+        widgetId: 'random_plugin',
+        wrapper: mockElementWrapper,
+      };
+      expect(validatePlugin(validWrapConfig)).toBe(true);
+    });
+    it('returns an error if the Wrap operation is configured incorrectly', () => {
+      const invalidWrapConfig1 = {
+        op: PLUGIN_OPERATIONS.Wrap,
+        widgetId: 'random_plugin',
+      };
+      const invalidWrapConfig2 = {
+        op: PLUGIN_OPERATIONS.Wrap,
+        wrapper: mockElementWrapper,
+      };
+
+      try {
+        validatePlugin(invalidWrapConfig1);
+      } catch (error) {
+        expect(logError).toHaveBeenCalledWith('the wrap operation config is invalid for widget id: random_plugin');
+      }
+      try {
+        validatePlugin(invalidWrapConfig2);
+      } catch (error) {
+        expect(logError).toHaveBeenCalledWith('the wrap operation config is invalid for widget id: MISSING ID');
+      }
+    });
+  });
+  describe('an invalid plugin configuration', () => {
+    it('should raise an error for an operation that does not exist', () => {
+      const invalidPluginConfig = {
+        op: PLUGIN_OPERATIONS.Destroy,
+        widgetId: 'drafts',
+      };
+
+      try {
+        validatePlugin(invalidPluginConfig);
+      } catch (error) {
+        expect(logError).toHaveBeenCalledWith('There is a config with an invalid PLUGIN_OPERATION. Check to make sure it is configured correctly.');
+      }
+    });
   });
 });
