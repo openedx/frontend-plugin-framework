@@ -37,7 +37,7 @@
   "dependencies": {
     "@edx/brand": "npm:@openedx/brand-openedx@^1.2.2",
     "classnames": "^2.3.2",
-    "core-js": "3.36.0",
+    "core-js": "3.37.1",
     "react-redux": "7.2.9",
     "redux": "4.2.1",
     "regenerator-runtime": "0.14.1"
