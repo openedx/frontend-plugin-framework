@@ -44,7 +44,7 @@
   },
   "devDependencies": {
     "@edx/browserslist-config": "^1.1.1",
-    "@edx/frontend-platform": "8.0.0",
+    "@edx/frontend-platform": "8.1.1",
     "@edx/reactifex": "^2.1.1",
     "@openedx/frontend-build": "14.0.3",
     "@openedx/paragon": "^22.2.0",
