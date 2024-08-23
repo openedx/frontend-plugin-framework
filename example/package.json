@@ -12,6 +12,7 @@
   "author": "edX",
   "license": "AAGPL-3.0",
   "dependencies": {
+    "classnames": "^2.5.1",
     "core-js": "^3.29.1",
     "prop-types": "^15.8.1",
     "react": "^17.0.0",

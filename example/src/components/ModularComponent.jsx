@@ -4,11 +4,11 @@ import PropTypes from 'prop-types';
 export default function ModularComponent({ content }) {
   return (
     <section className="bg-light p-3">
-      <h3>{ content.title }</h3>
+      <h4>{content.title}</h4>
       <p>
         This is a modular component that lives in the example app.
       </p>
-      <p>
+      <p className="mb-0">
         <em>{content.uniqueText}</em>
       </p>
     </section>
