@@ -21,14 +21,14 @@ const pluginExamples = [
     Component: PluginSlotWithModifyWrapHide,
   },
   {
-    id: 'plugin-operation-modify-default-content',
-    label: 'Plugin Operation: Modify Default Content',
-    Component: PluginSlotWithModifyDefaultContents,
-  },
-  {
     id: 'plugin-operation-modify-default-content-link',
     label: 'Plugin Operation: Modify Default Content (Link)',
     Component: PluginSlotWithModifyDefaultContentsLink,
+  },
+  {
+    id: 'plugin-operation-modify-default-content',
+    label: 'Plugin Operation: Modify Default Content',
+    Component: PluginSlotWithModifyDefaultContents,
   },
   {
     id: 'direct-plugins-modular-components',

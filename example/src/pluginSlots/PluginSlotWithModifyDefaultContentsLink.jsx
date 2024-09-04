@@ -26,7 +26,6 @@ function PluginSlotWithModifyDefaultContentsLink({ id, label }) {
       <PluginSlot
         id="slot_with_hyperlink"
         as="div"
-        // Default slotOptions
         slotOptions={{
           mergeProps: true,
         }}

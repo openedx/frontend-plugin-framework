@@ -56,12 +56,9 @@ function PluginSlotWithModifyDefaultContents({ id, label }) {
         id="slot_with_username_pii"
         as="div"
         // Default slotOptions
-        slotOptions={{
-          mergeProps: false,
-        }}
       >
         <UsernameWithPluginContent
-          className="tetsing"
+          className="testing"
           onClick={(e) => {
             console.log('Username clicked!', 'prop', e);
           }}
@@ -80,7 +77,6 @@ function PluginSlotWithModifyDefaultContents({ id, label }) {
             console.log('Username clicked!', 'prop', e);
           }}
         />
-        {/* <Username className="ghi789" /> // Note: uncomment to see example of incorrectly using multiple `children` elements within `PluginSlot` */}
       </PluginSlot>
       <PluginSlot
         id="slot_with_username_pii"

@@ -17,7 +17,7 @@ const modifyWidget = (widget) => {
   return modifiedWidget;
 };
 
-const modifyWidgetDefaultContents = (widget) => {
+const modifyWidgetDefaultContentsUsernamePII = (widget) => {
   const newContent = {
     'data-custom-attr': 'customValue',
     'data-another-custom-attr': '',
@@ -206,7 +206,7 @@ const config = {
         {
           op: PLUGIN_OPERATIONS.Modify,
           widgetId: 'default_contents',
-          fn: modifyWidgetDefaultContents,
+          fn: modifyWidgetDefaultContentsUsernamePII,
         },
       ],
     },
