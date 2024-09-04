@@ -2,7 +2,6 @@ import {
   Container, Row, Col, Stack,
 } from '@openedx/paragon';
 
-import PluginSlotWithModifyDefaultContentsLink from './pluginSlots/PluginSlotWithModifyDefaultContentsLink';
 import PluginSlotWithModifyDefaultContents from './pluginSlots/PluginSlotWithModifyDefaultContents';
 import PluginSlotWithInsert from './pluginSlots/PluginSlotWithInsert';
 import PluginSlotWithModifyWrapHide from './pluginSlots/PluginSlotWithModifyWrapHide';
@@ -19,11 +18,6 @@ const pluginExamples = [
     id: 'plugin-operation-modify-wrap-hide',
     label: 'Plugin Operation: Modify, Wrap, and Hide',
     Component: PluginSlotWithModifyWrapHide,
-  },
-  {
-    id: 'plugin-operation-modify-default-content-link',
-    label: 'Plugin Operation: Modify Default Content (Link)',
-    Component: PluginSlotWithModifyDefaultContentsLink,
   },
   {
     id: 'plugin-operation-modify-default-content',

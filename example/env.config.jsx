@@ -8,24 +8,21 @@ import PluginDirect from './src/components/PluginDirect';
 import ModularComponent from './src/components/ModularComponent';
 
 const modifyWidget = (widget) => {
-  const newContent = {
+  widget.content = {
     title: 'Modified Modular Plugin',
     uniqueText: 'Note that the original text defined in the JS config is replaced by this modified one.',
   };
-  const modifiedWidget = widget;
-  modifiedWidget.content = newContent;
-  return modifiedWidget;
+  return widget;
 };
 
 const modifyWidgetDefaultContentsUsernamePII = (widget) => {
-  const newContent = {
+  widget.content = {
     'data-custom-attr': 'customValue',
     'data-another-custom-attr': '',
     className: 'font-weight-bold',
     style: { color: 'blue' },
     onClick: (e) => { console.log('Username clicked!', 'custom', e); },
   };
-  widget.content = newContent;
   return widget;
 };
 
