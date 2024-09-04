@@ -6,7 +6,7 @@ import { Stack } from '@openedx/paragon';
 
 
 // Example sub-components used as the default childen within a PluginSlot
-const LinkExample = ({ href, content, ...rest }) => {
+const LinkExample = ({ href, ...rest }) => {
   return <a href={href} {...rest}>Hello world</a>;
 };
 
