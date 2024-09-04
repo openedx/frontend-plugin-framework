@@ -29,6 +29,11 @@ const modifyWidgetDefaultContents = (widget) => {
   return widget;
 };
 
+const modifyWidgetDefaultContentsLink = (widget) => {
+  widget.content.href = 'https://openedx.org';
+  return widget;
+};
+
 const wrapWidget = ({ component }) => (
   <div className="bg-warning" data-testid="wrapper">
     <div className="px-3">
@@ -202,6 +207,16 @@ const config = {
           op: PLUGIN_OPERATIONS.Modify,
           widgetId: 'default_contents',
           fn: modifyWidgetDefaultContents,
+        },
+      ],
+    },
+    slot_with_hyperlink: {
+      keepDefault: true,
+      plugins: [
+        {
+          op: PLUGIN_OPERATIONS.Modify,
+          widgetId: 'default_contents',
+          fn: modifyWidgetDefaultContentsLink,
         },
       ],
     },

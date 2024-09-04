@@ -61,7 +61,7 @@ export const organizePlugins = (defaultContents, plugins) => {
     } else if (change.op === PLUGIN_OPERATIONS.Modify) {
       const widgetIdx = newContents.findIndex((w) => w.id === change.widgetId);
       if (widgetIdx >= 0) {
-        const widget = { ...newContents[widgetIdx] };
+        const widget = { content: {}, ...newContents[widgetIdx] };
         newContents[widgetIdx] = change.fn(widget);
       }
     } else if (change.op === PLUGIN_OPERATIONS.Wrap) {
