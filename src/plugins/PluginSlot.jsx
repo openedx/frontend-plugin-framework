@@ -61,7 +61,7 @@ const PluginSlot = forwardRef(({
       if (!pluginConfig.hidden) {
         let container;
         // If default content, render children (merging any custom defined props from
-        // pluginConfig.content with existing props, if any, on `RenderWidget`).
+        // pluginConfig.content with any existing props on `RenderWidget`).
         if (pluginConfig.id === 'default_contents') {
           const propsForRenderWidget = (pluginConfig.RenderWidget && React.isValidElement(pluginConfig.RenderWidget))
             ? pluginConfig.RenderWidget.props
