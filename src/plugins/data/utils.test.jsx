@@ -22,12 +22,14 @@ const mockIsAdminWrapper = ({ widget }) => {
   return isAdmin ? widget : null;
 };
 
-const mockElementWrapper = ({ component, idx }) => (
-  <div data-testid={`wrapper${idx + 1}`} key={idx}>
-    This is a wrapper.
-    {component}
-  </div>
-);
+const makeMockElementWrapper = (testId = 0) => function MockElementWrapper({ component }) {
+  return (
+    <div data-testid={`wrapper${testId}`}>
+      This is a wrapper.
+      {component}
+    </div>
+  );
+};
 
 const mockRenderWidget = () => (
   <div data-testid="widget">
@@ -179,11 +181,11 @@ describe('organizePlugins', () => {
 describe('wrapComponent', () => {
   describe('when provided with a single wrapper in an array', () => {
     it('should wrap the provided component', () => {
-      const wrappedComponent = wrapComponent(mockRenderWidget, [mockElementWrapper]);
+      const wrappedComponent = wrapComponent(mockRenderWidget, [makeMockElementWrapper()]);
 
       const { getByTestId } = render(wrappedComponent);
 
-      const wrapper = getByTestId('wrapper1');
+      const wrapper = getByTestId('wrapper0');
       const widget = getByTestId('widget');
 
       expect(wrapper).toContainElement(widget);
@@ -193,14 +195,14 @@ describe('wrapComponent', () => {
     it('should wrap starting with the first wrapper in the array', () => {
       const wrappedComponent = wrapComponent(
         mockRenderWidget,
-        [mockElementWrapper, mockElementWrapper, mockElementWrapper],
+        [makeMockElementWrapper(), makeMockElementWrapper(1), makeMockElementWrapper(2)],
       );
 
       const { getByTestId } = render(wrappedComponent);
 
-      const innermostWrapper = getByTestId('wrapper1');
-      const middleWrapper = getByTestId('wrapper2');
-      const outermostWrapper = getByTestId('wrapper3');
+      const innermostWrapper = getByTestId('wrapper0');
+      const middleWrapper = getByTestId('wrapper1');
+      const outermostWrapper = getByTestId('wrapper2');
       const widget = getByTestId('widget');
 
       expect(innermostWrapper).toContainElement(widget);
@@ -401,7 +403,7 @@ describe('validatePlugin', () => {
       const validWrapConfig = {
         op: PLUGIN_OPERATIONS.Wrap,
         widgetId: 'random_plugin',
-        wrapper: mockElementWrapper,
+        wrapper: makeMockElementWrapper(),
       };
       expect(validatePlugin(validWrapConfig)).toBe(true);
     });
@@ -412,7 +414,7 @@ describe('validatePlugin', () => {
       };
       const invalidWrapConfig2 = {
         op: PLUGIN_OPERATIONS.Wrap,
-        wrapper: mockElementWrapper,
+        wrapper: makeMockElementWrapper(),
       };
 
       try {

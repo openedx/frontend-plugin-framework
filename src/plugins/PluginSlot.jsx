@@ -9,10 +9,16 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './Plugin.messages';
 import { usePluginSlot } from './data/hooks';
 import PluginContainer from './PluginContainer';
-import { organizePlugins, wrapComponent } from './data/utils';
+import { mergeRenderWidgetPropsWithPluginContent, organizePlugins, wrapComponent } from './data/utils';
+import { slotOptionsShape } from './data/shapes';
 
 const PluginSlot = forwardRef(({
-  as, children, id, pluginProps, ...props
+  as,
+  children,
+  id,
+  pluginProps,
+  slotOptions,
+  ...props
 }, ref) => {
   /** the plugins below are obtained by the id passed into PluginSlot by the Host MFE. See example/src/PluginsPage.jsx
   for an example of how PluginSlot is populated, and example/src/index.jsx for a dummy JS config that holds all plugins
@@ -22,14 +28,14 @@ const PluginSlot = forwardRef(({
   const { formatMessage } = useIntl();
 
   const defaultContents = React.useMemo(() => {
-    if (keepDefault) {
-      return ([{
-        id: 'default_contents',
-        priority: 50,
-        RenderWidget: children,
-      }]);
+    if (!keepDefault) {
+      return [];
     }
-    return [];
+    return ([{
+      id: 'default_contents',
+      priority: 50,
+      RenderWidget: children,
+    }]);
   }, [children, keepDefault]);
 
   const finalPlugins = React.useMemo(() => organizePlugins(defaultContents, plugins), [defaultContents, plugins]);
@@ -54,15 +60,28 @@ const PluginSlot = forwardRef(({
       // If hidden, don't push to finalChildren
       if (!pluginConfig.hidden) {
         let container;
-        // If default content, render children
+        // If default content, render children (merging any custom defined props from
+        // pluginConfig.content with any existing props on `RenderWidget`).
         if (pluginConfig.id === 'default_contents') {
-          container = pluginConfig.RenderWidget;
+          const propsForRenderWidget = (pluginConfig.RenderWidget && React.isValidElement(pluginConfig.RenderWidget))
+            ? pluginConfig.RenderWidget.props
+            : {};
+          const updatedPropsForRenderWidget = mergeRenderWidgetPropsWithPluginContent({
+            pluginSlotOptions: slotOptions,
+            pluginConfig,
+            pluginProps,
+            renderWidgetProps: propsForRenderWidget,
+          });
+          container = React.isValidElement(pluginConfig.RenderWidget)
+            ? React.cloneElement(pluginConfig.RenderWidget, { ...updatedPropsForRenderWidget, key: pluginConfig.id })
+            : pluginConfig.RenderWidget;
         } else {
           container = (
             <PluginContainer
               key={pluginConfig.id}
               config={pluginConfig}
               loadingFallback={finalLoadingFallback}
+              slotOptions={slotOptions}
               {...pluginProps}
             />
           );
@@ -91,6 +110,7 @@ const PluginSlot = forwardRef(({
     finalChildren,
   );
 });
+PluginSlot.displayName = 'PluginSlot';
 
 export default PluginSlot;
 
@@ -102,11 +122,14 @@ PluginSlot.propTypes = {
   /** ID of the PluginSlot configuration */
   id: PropTypes.string.isRequired,
   /** Props that are passed down to each Plugin in the Slot */
-  pluginProps: PropTypes.object, // eslint-disable-line
+  pluginProps: PropTypes.shape(),
+  /** Options passed to the PluginSlot */
+  slotOptions: PropTypes.shape(slotOptionsShape),
 };
 
 PluginSlot.defaultProps = {
   as: React.Fragment,
   children: null,
   pluginProps: {},
+  slotOptions: {},
 };

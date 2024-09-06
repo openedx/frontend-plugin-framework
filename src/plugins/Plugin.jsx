@@ -92,7 +92,7 @@ Plugin.propTypes = {
 };
 
 Plugin.defaultProps = {
-  className: null,
+  className: undefined,
   ErrorFallbackComponent: null,
   style: {},
   ready: true,

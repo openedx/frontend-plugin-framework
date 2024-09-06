@@ -228,13 +228,11 @@ or its priority. The operation requires the id of the widget that will be modifi
   .. code-block::
 
     const modifyWidget = (widget) => {
-      const newContent = {
+      widget.content = {
         propExampleA: 'University XYZ Sidebar',
         propExampleB: SomeOtherIcon,
       };
-      const modifiedWidget = widget;
-      modifiedWidget.content = newContent;
-      return modifiedWidget;
+      return widget;
     };
 
     /*

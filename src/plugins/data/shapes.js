@@ -27,3 +27,7 @@ export const directPluginConfigShape = {
   /** Content that is passed to the RenderWidget function */
   content: PropTypes.object,
 };
+
+export const slotOptionsShape = {
+  mergeProps: PropTypes.bool,
+};
