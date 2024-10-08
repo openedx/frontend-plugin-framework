@@ -2,6 +2,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { ErrorBoundary } from '@edx/frontend-platform/react';
 
 import PluginContainerIframe from './PluginContainerIframe';
 import PluginContainerDirect from './PluginContainerDirect';
@@ -17,6 +18,7 @@ function PluginContainer({ config, slotOptions, ...props }) {
     return null;
   }
 
+	// TODO: start here and maybe have the ErrorBoundary at the Container level??
   // this will allow for future plugin types to be inserted in the PluginErrorBoundary
   let renderer = null;
   switch (config.type) {
