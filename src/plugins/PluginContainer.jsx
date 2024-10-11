@@ -13,12 +13,13 @@ import {
 } from './data/constants';
 import { pluginConfigShape, slotOptionsShape } from './data/shapes';
 
-function PluginContainer({ config, slotOptions, ...props }) {
+function PluginContainer({
+  config, slotOptions, slotErrorFallbackComponent, ...props
+}) {
   if (!config) {
     return null;
   }
 
-	// TODO: start here and maybe have the ErrorBoundary at the Container level??
   // this will allow for future plugin types to be inserted in the PluginErrorBoundary
   let renderer = null;
   switch (config.type) {
@@ -43,7 +44,16 @@ function PluginContainer({ config, slotOptions, ...props }) {
       break;
   }
 
-  return renderer;
+  // Retrieve a fallback component from JS config if one exists
+  // Otherwise, use the fallback component specific to the PluginSlot if one exists
+  // Otherwise, default to fallback from frontend-platform's ErrorBoundary
+  const finalFallback = config.errorFallbackComponent || slotErrorFallbackComponent;
+
+  return (
+    <ErrorBoundary fallbackComponent={finalFallback}>
+      {renderer}
+    </ErrorBoundary>
+  );
 }
 
 export default PluginContainer;
@@ -53,9 +63,12 @@ PluginContainer.propTypes = {
   config: PropTypes.shape(pluginConfigShape),
   /** Options passed to the PluginSlot */
   slotOptions: PropTypes.shape(slotOptionsShape),
+  /** Error fallback component for the PluginSlot */
+  slotErrorFallbackComponent: PropTypes.elementType,
 };
 
 PluginContainer.defaultProps = {
   config: null,
   slotOptions: {},
+  slotErrorFallbackComponent: React.Fragment,
 };
