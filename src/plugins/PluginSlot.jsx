@@ -18,7 +18,7 @@ const PluginSlot = forwardRef(({
   id,
   pluginProps,
   slotOptions,
-  errorFallbackComponent,
+  slotErrorFallbackComponent,
   ...props
 }, ref) => {
   /** the plugins below are obtained by the id passed into PluginSlot by the Host MFE. See example/src/PluginsPage.jsx
@@ -82,7 +82,7 @@ const PluginSlot = forwardRef(({
               key={pluginConfig.id}
               config={pluginConfig}
               loadingFallback={finalLoadingFallback}
-              errorFallbackComponent={errorFallbackComponent}
+              slotErrorFallbackComponent={slotErrorFallbackComponent}
               slotOptions={slotOptions}
               {...pluginProps}
             />
@@ -128,7 +128,7 @@ PluginSlot.propTypes = {
   /** Options passed to the PluginSlot */
   slotOptions: PropTypes.shape(slotOptionsShape),
   /** Error fallback component to use for each plugin */
-  errorFallbackComponent: PropTypes.elementType,
+  slotErrorFallbackComponent: PropTypes.node,
 };
 
 PluginSlot.defaultProps = {
@@ -136,5 +136,5 @@ PluginSlot.defaultProps = {
   children: null,
   pluginProps: {},
   slotOptions: {},
-  errorFallbackComponent: undefined,
+  slotErrorFallbackComponent: undefined,
 };

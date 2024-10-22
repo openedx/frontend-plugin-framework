@@ -7,27 +7,16 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import PluginContainer from './PluginContainer';
 import { IFRAME_PLUGIN, DIRECT_PLUGIN } from './data/constants';
 import PluginContainerDirect from './PluginContainerDirect';
+import MockErrorBoundary from '../test/MockErrorBoundary';
 
 jest.mock('./PluginContainerIframe', () => jest.fn(() => 'Iframe plugin'));
 
 jest.mock('./PluginContainerDirect', () => jest.fn(() => 'Direct plugin'));
 
-// TODO: figure out how to mock <Error Page /> that is imported into the ErrorBoundary component
-// This is causing issues with i18n when it tries to render
-// Options:
-// mock the whole ErrorBoundary component and have it return a mockErrorPage instead
-// find if there is a way to mock the import from <Error Page /> that happens in <ErrorBoundary />
-
-// Feels perhaps best to just mock the ErrorBoundary here in FPF
-// IF this were an MFE, we could use the initializeMockApp helper function from frontend-platform
-// since FPF is not an MFE, that mock won't work for us here
-
-// There may be use cases in the future for testing this ErrorBoundary so perhaps there is value in mocking it here
-
-// jest.mock('@edx/frontend-platform/react', () ({
-//   ...jest.requireActual,
-//   ErrorBoundary: ({children}) =>
-// }))
+jest.mock('@edx/frontend-platform/react', () => ({
+  ...jest.requireActual,
+  ErrorBoundary: (props) => <MockErrorBoundary {...props} />,
+}));
 
 jest.mock('@edx/frontend-platform/logging', () => ({
   logError: jest.fn(),
@@ -38,7 +27,7 @@ const mockConfig = {
   errorFallbackComponent: undefined,
 };
 
-function PluginContainerWrapper({ type = DIRECT_PLUGIN, config = mockConfig, slotErrorFallbackComponent = false }) {
+function PluginContainerWrapper({ type = DIRECT_PLUGIN, config = mockConfig, slotErrorFallbackComponent }) {
   return (
     <IntlProvider locale="en">
       <PluginContainer
@@ -50,18 +39,13 @@ function PluginContainerWrapper({ type = DIRECT_PLUGIN, config = mockConfig, slo
 }
 
 describe('PluginContainer', () => {
-  // TODO: test for each error boundary
-  // it renders from the JS config if it exists
-  // it renders from the PluginSlot if it exists
-  // it renders the default if no config or PluginSlot fallback are provided
-
-  it('renders a PluginContainerIframe when passed IFRAME_PLUGIN in the configuration', () => {
+  it('renders a PluginContainerIframe when passed the IFRAME_PLUGIN type in the configuration', () => {
     const { getByText } = render(<PluginContainerWrapper type={IFRAME_PLUGIN} />);
 
     expect(getByText('Iframe plugin')).toBeInTheDocument();
   });
 
-  it('renders a PluginContainerDirect when passed DIRECT_PLUGIN in the configuration', () => {
+  it('renders a PluginContainerDirect when passed the DIRECT_PLUGIN type in the configuration', () => {
     const { getByText } = render(<PluginContainerWrapper type={DIRECT_PLUGIN} />);
 
     expect(getByText('Direct plugin')).toBeInTheDocument();
@@ -112,8 +96,8 @@ describe('PluginContainer', () => {
     });
 
     it('renders default fallback <ErrorPage /> when there is no fallback set in configuration', () => {
-      const { getByRole } = render(<PluginContainerWrapper />);
-      expect(getByRole('button', { name: 'Try Again' })).toBeInTheDocument();
+      const { getByText } = render(<PluginContainerWrapper />);
+      expect(getByText('Try again')).toBeInTheDocument();
     });
   });
 });

@@ -64,11 +64,11 @@ PluginContainer.propTypes = {
   /** Options passed to the PluginSlot */
   slotOptions: PropTypes.shape(slotOptionsShape),
   /** Error fallback component for the PluginSlot */
-  slotErrorFallbackComponent: PropTypes.elementType,
+  slotErrorFallbackComponent: PropTypes.node,
 };
 
 PluginContainer.defaultProps = {
   config: null,
   slotOptions: {},
-  slotErrorFallbackComponent: React.Fragment,
+  slotErrorFallbackComponent: undefined,
 };
