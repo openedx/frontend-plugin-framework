@@ -18,6 +18,7 @@ const PluginSlot = forwardRef(({
   id,
   pluginProps,
   slotOptions,
+  slotErrorFallbackComponent,
   ...props
 }, ref) => {
   /** the plugins below are obtained by the id passed into PluginSlot by the Host MFE. See example/src/PluginsPage.jsx
@@ -40,8 +41,8 @@ const PluginSlot = forwardRef(({
 
   const finalPlugins = React.useMemo(() => organizePlugins(defaultContents, plugins), [defaultContents, plugins]);
 
-  // TODO: APER-3178 — Unique plugin props
-  // https://2u-internal.atlassian.net/browse/APER-3178
+  // TODO: Unique plugin props
+  // https://github.com/openedx/frontend-plugin-framework/issues/72
   const { loadingFallback } = pluginProps;
 
   const defaultLoadingFallback = (
@@ -81,6 +82,7 @@ const PluginSlot = forwardRef(({
               key={pluginConfig.id}
               config={pluginConfig}
               loadingFallback={finalLoadingFallback}
+              slotErrorFallbackComponent={slotErrorFallbackComponent}
               slotOptions={slotOptions}
               {...pluginProps}
             />
@@ -125,6 +127,8 @@ PluginSlot.propTypes = {
   pluginProps: PropTypes.shape(),
   /** Options passed to the PluginSlot */
   slotOptions: PropTypes.shape(slotOptionsShape),
+  /** Error fallback component to use for each plugin */
+  slotErrorFallbackComponent: PropTypes.node,
 };
 
 PluginSlot.defaultProps = {
@@ -132,4 +136,5 @@ PluginSlot.defaultProps = {
   children: null,
   pluginProps: {},
   slotOptions: {},
+  slotErrorFallbackComponent: undefined,
 };

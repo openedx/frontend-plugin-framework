@@ -168,12 +168,12 @@ If you need to use a plugin operation (e.g. Wrap, Hide, Modify) on default conte
 Note: The default content will have a priority of 50, allowing for any plugins to appear before or after the default content.
 
 Plugin Operations
-`````````````````
+=================
 
 There are four plugin operations that each require specific properties.
 
 Insert a Direct Plugin
-''''''''''''''''''''''
+``````````````````````
 
 The Insert operation will add a widget in the plugin slot. The contents required for a Direct Plugin is the same as
 is demonstrated in the Default Contents section above, with the ``content`` key being optional.
@@ -196,7 +196,7 @@ is demonstrated in the Default Contents section above, with the ``content`` key 
     }
 
 Insert an iFrame Plugin
-'''''''''''''''''''''''
+```````````````````````
 
 The Insert operation will add a widget in the plugin slot. The contents required for an iFrame Plugin is the same as
 is demonstrated in the Default Contents section above.
@@ -220,7 +220,7 @@ is demonstrated in the Default Contents section above.
     }
 
 Modify
-''''''
+``````
 
 The Modify operation allows us to modify the contents of a widget, including its id, type, content, RenderWidget function,
 or its priority. The operation requires the id of the widget that will be modified and a function to make those changes.
@@ -248,7 +248,7 @@ or its priority. The operation requires the id of the widget that will be modifi
     }
 
 Wrap
-''''
+````
 
 Unlike Modify, the Wrap operation adds a React component around the widget, and a single widget can receive more than
 one wrap operation. Each wrapper function takes in a ``component`` and ``id`` prop.
@@ -276,7 +276,7 @@ one wrap operation. Each wrapper function takes in a ``component`` and ``id`` pr
     }
 
 Hide
-''''
+````
 
 The Hide operation will simply hide whatever content is desired. This is generally used for the default content.
 
@@ -292,14 +292,58 @@ The Hide operation will simply hide whatever content is desired. This is general
       widgetId: 'some_undesired_plugin',
     }
 
-Using a Child Micro-frontend (MFE) for iFrame-based Plugins and Fallback Behavior
----------------------------------------------------------------------------------
+Using a Child Micro-frontend (MFE) for iFrame-based Plugins
+-----------------------------------------------------------
 
-The Child MFE is no different than any other MFE except that it can define a component that can then be pass into the Host MFE
+The Child MFE is no different than any other MFE except that it can define a `Plugin` component that can then be pass into the Host MFE
 as an iFrame-based plugin via a route.
 This component communicates (via ``postMessage``) with the Host MFE and resizes its content to match the dimensions
 available in the Host's plugin slot.
 
+Fallback Behavior
+-----------------
+
+Setting a Fallback component
+''''''''''''''''''''''''''''
+The two main places to configure a fallback component for a given implementation are in the PluginSlot props and in the JS configuration. The JS configuration fallback will be prioritized over the PluginSlot props fallback.
+
+PluginSlot props
+````````````````
+Can be used when setting a fallback for the slot that will be used for all of its child plugins. To configure, set the `slotErrorFallbackComponent` prop in the `PluginSlot` to a React component. This will replace the default `<ErrorPage />` from frontend-platform.
+
+  .. code-block::
+    <PluginSlot
+      id='my-plugin-slot'
+      slotErrorFallbackComponent={<MyCustomFallbackComponent />}
+    />
+
+JS configuration
+````````````````
+Can be used when setting a fallback for a specific plugin within a slot. Set the `errorFallbackComponent` field for the specific plugin to the custom fallback component in the JS configuration. This will be prioritized over any other fallback components.
+
+  .. code-block::
+    const config = {
+      pluginSlots: {
+        my_plugin_slot: {
+          keepDefault: false,
+          plugins: [
+            {
+              op: PLUGIN_OPERATIONS.Insert,
+              widget: {
+                id: 'this_is_a_plugin',
+                type: DIRECT_PLUGIN,
+                priority: 60,
+                RenderWidget: ReactPluginComponent,
+                errorFallbackComponent: MyCustomFallbackComponent,
+              },
+            },
+          ],
+        },
+      },
+    };
+
+iFrame-based Plugins
+''''''''''''''''''''
 It's notoriously difficult to know in the Host MFE when an iFrame has failed to load.
 Because of security sandboxing, the host isn't allowed to know the HTTP status of the request or to inspect what was
 loaded, so we have to rely on waiting for a ``postMessage`` event from within the iFrame to know it has successfully loaded.
