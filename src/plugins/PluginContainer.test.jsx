@@ -2,20 +2,20 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import PluginContainer from './PluginContainer';
 import { IFRAME_PLUGIN, DIRECT_PLUGIN } from './data/constants';
 import PluginContainerDirect from './PluginContainerDirect';
-import MockErrorBoundary from '../test/MockErrorBoundary';
 
 jest.mock('./PluginContainerIframe', () => jest.fn(() => 'Iframe plugin'));
 
 jest.mock('./PluginContainerDirect', () => jest.fn(() => 'Direct plugin'));
 
-jest.mock('@edx/frontend-platform/react', () => ({
-  ...jest.requireActual,
-  ErrorBoundary: (props) => <MockErrorBoundary {...props} />,
+jest.mock('@edx/frontend-platform/i18n', () => ({
+  getLocale: jest.fn(),
+  getMessages: jest.fn(),
+  FormattedMessage: ({ defaultMessage }) => defaultMessage,
+  IntlProvider: ({ children }) => <div>{children}</div>,
 }));
 
 jest.mock('@edx/frontend-platform/logging', () => ({
@@ -29,12 +29,10 @@ const mockConfig = {
 
 function PluginContainerWrapper({ type = DIRECT_PLUGIN, config = mockConfig, slotErrorFallbackComponent }) {
   return (
-    <IntlProvider locale="en">
-      <PluginContainer
-        config={{ type, ...config }}
-        slotErrorFallbackComponent={slotErrorFallbackComponent}
-      />
-    </IntlProvider>
+    <PluginContainer
+      config={{ type, ...config }}
+      slotErrorFallbackComponent={slotErrorFallbackComponent}
+    />
   );
 }
 
@@ -96,8 +94,8 @@ describe('PluginContainer', () => {
     });
 
     it('renders default fallback <ErrorPage /> when there is no fallback set in configuration', () => {
-      const { getByText } = render(<PluginContainerWrapper />);
-      expect(getByText('Try again')).toBeInTheDocument();
+      const { getByRole } = render(<PluginContainerWrapper />);
+      expect(getByRole('button', { name: 'Try again' })).toBeInTheDocument();
     });
   });
 });
