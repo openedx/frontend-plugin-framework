@@ -309,7 +309,7 @@ The two main places to configure a fallback component for a given implementation
 
 PluginSlot props
 ````````````````
-Can be used when setting a fallback for the slot that will be used for all of its child plugins. To configure, set the `slotErrorFallbackComponent` prop in the `PluginSlot` to a React component. This will replace the default `<ErrorPage />` from frontend-platform.
+This is ideally used when the same fallback should be applied to all of the plugins in the `PluginSlot`. To configure, set the `slotErrorFallbackComponent` prop in the `PluginSlot` to a React component. This will replace the default `<ErrorPage />` component from frontend-platform.
 
   .. code-block::
     <PluginSlot
