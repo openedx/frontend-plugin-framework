@@ -58,7 +58,7 @@ plugin slot.
 The slot also determines the dimensions and responsiveness of each plugin, and supports passing any additional
 data to the plugin as part of its contract.
 
-  .. code-block::
+  .. code-block:: javascript
 
     <HostApp>
       <Route path="/page1">
@@ -74,9 +74,9 @@ data to the plugin as part of its contract.
           }}
         >
           <SideBar
-            propExampleA: 'edX Sidebar',
-            propExampleB: SomeIcon,
-          >
+            propExampleA="edX Sidebar"
+            propExampleB={SomeIcon},
+          />
         </PluginSlot >
       </Route>
       <Route path="/page2">
@@ -95,7 +95,7 @@ However, note that any Child MFE can theoretically contain one or more ``PluginS
 thereby making it both a Child MFE and a Host MFE. In this instance, the Child MFE would need its own ``env.config.js``
 file as well to define its plugin slots.
 
-  .. code-block::
+  .. code-block:: javascript
 
     // env.config.js
 
@@ -178,7 +178,7 @@ Insert a Direct Plugin
 The Insert operation will add a widget in the plugin slot. The contents required for a Direct Plugin is the same as
 is demonstrated in the Default Contents section above, with the ``content`` key being optional.
 
-  .. code-block::
+  .. code-block:: javascript
 
     /*
       * {String} op - Name of plugin operation
@@ -201,7 +201,7 @@ Insert an iFrame Plugin
 The Insert operation will add a widget in the plugin slot. The contents required for an iFrame Plugin is the same as
 is demonstrated in the Default Contents section above.
 
-  .. code-block::
+  .. code-block:: javascript
 
     /*
       * {String} op - Name of plugin operation
@@ -225,7 +225,7 @@ Modify
 The Modify operation allows us to modify the contents of a widget, including its id, type, content, RenderWidget function,
 or its priority. The operation requires the id of the widget that will be modified and a function to make those changes.
 
-  .. code-block::
+  .. code-block:: javascript
 
     const modifyWidget = (widget) => {
       widget.content = {
@@ -253,7 +253,7 @@ Wrap
 Unlike Modify, the Wrap operation adds a React component around the widget, and a single widget can receive more than
 one wrap operation. Each wrapper function takes in a ``component`` and ``id`` prop.
 
-  .. code-block::
+  .. code-block:: javascript
 
     const wrapWidget = ({ component, idx }) => (
       <div className="bg-warning" data-testid={`wrapper${idx + 1}`} key={idx}>
@@ -280,7 +280,7 @@ Hide
 
 The Hide operation will simply hide whatever content is desired. This is generally used for the default content.
 
-  .. code-block::
+  .. code-block:: javascript
 
     /*
       * {String} op - Name of plugin operation
@@ -291,6 +291,26 @@ The Hide operation will simply hide whatever content is desired. This is general
       op: PLUGIN_OPERATIONS.Hide,
       widgetId: 'some_undesired_plugin',
     }
+
+``PluginSlot`` options
+``````````````````````
+
+You may optionally pass the ``slotOptions`` prop to customize the behavior of a ``PluginSlot``, including changing the behavior of plugin operations for widgets within the ``PluginSlot``.
+
+``mergeProps``
+''''''''''''''
+
+When enabled, this option will merge custom/overridden attributes with existing props passed to the widget, as opposed to passing these attributes to the widget via a ``content`` prop. This is especially useful when using a ``PluginSlot`` to support any custom attributes as well as handle special cases such as merging of custom class names with existing class names.
+
+  .. code-block:: javascript
+
+    <PluginSlot
+      id="plugin_slot_id"
+      slotOptions={{ mergeProps: true }}
+    >
+      <DefaultContents />
+    </PluginSlot>
+
 
 Using a Child Micro-frontend (MFE) for iFrame-based Plugins and Fallback Behavior
 ---------------------------------------------------------------------------------
@@ -306,7 +326,7 @@ loaded, so we have to rely on waiting for a ``postMessage`` event from within th
 A fallback component can be provided to the Plugin that is wrapped around the component, as noted below.
 Otherwise, the `default Error fallback from Frontend Platform`_ would be used.
 
-  .. code-block::
+  .. code-block:: javascript
 
     <MyMFE>
       <Route path="/mainContent">
