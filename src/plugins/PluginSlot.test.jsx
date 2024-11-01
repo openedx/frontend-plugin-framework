@@ -54,7 +54,8 @@ const pluginContentOnClick = jest.fn();
 const defaultContentsOnClick = jest.fn();
 const mockOnClick = jest.fn();
 
-// TODO: APER-3119 — Write unit tests for plugin scenarios not already tested for https://2u-internal.atlassian.net/browse/APER-3119
+// TODO: https://github.com/openedx/frontend-plugin-framework/issues/73
+
 const content = { text: 'This is a widget.' };
 function DefaultContents({ className, onClick, ...rest }) {
   const handleOnClick = (e) => {

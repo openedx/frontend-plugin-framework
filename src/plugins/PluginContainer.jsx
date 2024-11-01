@@ -2,6 +2,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { ErrorBoundary } from '@edx/frontend-platform/react';
 
 import PluginContainerIframe from './PluginContainerIframe';
 import PluginContainerDirect from './PluginContainerDirect';
@@ -12,7 +13,9 @@ import {
 } from './data/constants';
 import { pluginConfigShape, slotOptionsShape } from './data/shapes';
 
-function PluginContainer({ config, slotOptions, ...props }) {
+function PluginContainer({
+  config, slotOptions, slotErrorFallbackComponent, ...props
+}) {
   if (!config) {
     return null;
   }
@@ -41,7 +44,16 @@ function PluginContainer({ config, slotOptions, ...props }) {
       break;
   }
 
-  return renderer;
+  // Retrieve a fallback component from JS config if one exists
+  // Otherwise, use the fallback component specific to the PluginSlot if one exists
+  // Otherwise, default to fallback from frontend-platform's ErrorBoundary
+  const finalFallback = config.errorFallbackComponent || slotErrorFallbackComponent;
+
+  return (
+    <ErrorBoundary fallbackComponent={finalFallback}>
+      {renderer}
+    </ErrorBoundary>
+  );
 }
 
 export default PluginContainer;
@@ -51,9 +63,12 @@ PluginContainer.propTypes = {
   config: PropTypes.shape(pluginConfigShape),
   /** Options passed to the PluginSlot */
   slotOptions: PropTypes.shape(slotOptionsShape),
+  /** Error fallback component for the PluginSlot */
+  slotErrorFallbackComponent: PropTypes.node,
 };
 
 PluginContainer.defaultProps = {
   config: null,
   slotOptions: {},
+  slotErrorFallbackComponent: undefined,
 };
