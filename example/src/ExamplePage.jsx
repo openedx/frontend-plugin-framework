@@ -2,11 +2,11 @@ import {
   Container, Row, Col, Stack,
 } from '@openedx/paragon';
 
-import PluginSlotWithModifyDefaultContents from './pluginSlots/PluginSlotWithModifyDefaultContents';
-import PluginSlotWithInsert from './pluginSlots/PluginSlotWithInsert';
-import PluginSlotWithModifyWrapHide from './pluginSlots/PluginSlotWithModifyWrapHide';
-import PluginSlotWithModularPlugins from './pluginSlots/PluginSlotWithModularPlugins';
-import PluginSlotWithoutDefault from './pluginSlots/PluginSlotWithoutDefault';
+import PluginSlotWithModifyDefaultContents from './plugin-slots/PluginSlotWithModifyDefaultContents';
+import PluginSlotWithInsert from './plugin-slots/PluginSlotWithInsert';
+import PluginSlotWithModifyWrapHide from './plugin-slots/PluginSlotWithModifyWrapHide';
+import PluginSlotWithModularPlugins from './plugin-slots/PluginSlotWithModularPlugins';
+import PluginSlotWithoutDefault from './plugin-slots/PluginSlotWithoutDefault';
 
 const pluginExamples = [
   {
