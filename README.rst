@@ -100,7 +100,7 @@ file as well to define its plugin slots.
     // env.config.js
 
     import { DIRECT_PLUGIN, IFRAME_PLUGIN, PLUGIN_OPERATIONS } from '@openedx/frontend-plugin-framework';
-    
+
     // import any additional dependencies or functions to be used for each plugin operation
     import Sidebar from './widgets/social/Sidebar';
     import SocialMediaLink from './widgets/social/SocialMediaLink';
@@ -168,12 +168,12 @@ If you need to use a plugin operation (e.g. Wrap, Hide, Modify) on default conte
 Note: The default content will have a priority of 50, allowing for any plugins to appear before or after the default content.
 
 Plugin Operations
-=================
+`````````````````
 
 There are four plugin operations that each require specific properties.
 
 Insert a Direct Plugin
-``````````````````````
+''''''''''''''''''''''
 
 The Insert operation will add a widget in the plugin slot. The contents required for a Direct Plugin is the same as
 is demonstrated in the Default Contents section above, with the ``content`` key being optional.
@@ -196,7 +196,7 @@ is demonstrated in the Default Contents section above, with the ``content`` key 
     }
 
 Insert an iFrame Plugin
-```````````````````````
+'''''''''''''''''''''''
 
 The Insert operation will add a widget in the plugin slot. The contents required for an iFrame Plugin is the same as
 is demonstrated in the Default Contents section above.
@@ -220,7 +220,7 @@ is demonstrated in the Default Contents section above.
     }
 
 Modify
-``````
+''''''
 
 The Modify operation allows us to modify the contents of a widget, including its id, type, content, RenderWidget function,
 or its priority. The operation requires the id of the widget that will be modified and a function to make those changes.
@@ -248,7 +248,7 @@ or its priority. The operation requires the id of the widget that will be modifi
     }
 
 Wrap
-````
+''''
 
 Unlike Modify, the Wrap operation adds a React component around the widget, and a single widget can receive more than
 one wrap operation. Each wrapper function takes in a ``component`` and ``id`` prop.
@@ -276,7 +276,7 @@ one wrap operation. Each wrapper function takes in a ``component`` and ``id`` pr
     }
 
 Hide
-````
+''''
 
 The Hide operation will simply hide whatever content is desired. This is generally used for the default content.
 
@@ -304,7 +304,7 @@ Fallback Behavior
 -----------------
 
 Setting a Fallback component
-''''''''''''''''''''''''''''
+````````````````````````````
 The two main places to configure a fallback component for a given implementation are in the PluginSlot props and in the JS configuration. The JS configuration fallback will be prioritized over the PluginSlot props fallback.
 
 PluginSlot props
