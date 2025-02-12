@@ -5,7 +5,10 @@ import { directPluginConfigShape, slotOptionsShape } from './data/shapes';
 import { mergeRenderWidgetPropsWithPluginContent } from './data/utils';
 
 function PluginContainerDirect({
-  config, slotOptions, loadingFallback, ...props
+  config,
+  slotOptions = {},
+  loadingFallback = null,
+  ...props
 }) {
   const { RenderWidget, id } = config;
 
@@ -30,11 +33,6 @@ PluginContainerDirect.propTypes = {
   loadingFallback: PropTypes.node,
   /** Options passed to the PluginSlot */
   slotOptions: PropTypes.shape(slotOptionsShape),
-};
-
-PluginContainerDirect.defaultProps = {
-  loadingFallback: null,
-  slotOptions: {},
 };
 
 export default PluginContainerDirect;

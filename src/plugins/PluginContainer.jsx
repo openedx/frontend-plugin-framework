@@ -14,7 +14,10 @@ import {
 import { pluginConfigShape, slotOptionsShape } from './data/shapes';
 
 function PluginContainer({
-  config, slotOptions, slotErrorFallbackComponent, ...props
+  config = null,
+  slotOptions = {},
+  slotErrorFallbackComponent,
+  ...props
 }) {
   if (!config) {
     return null;
@@ -65,10 +68,4 @@ PluginContainer.propTypes = {
   slotOptions: PropTypes.shape(slotOptionsShape),
   /** Error fallback component for the PluginSlot */
   slotErrorFallbackComponent: PropTypes.node,
-};
-
-PluginContainer.defaultProps = {
-  config: null,
-  slotOptions: {},
-  slotErrorFallbackComponent: undefined,
 };

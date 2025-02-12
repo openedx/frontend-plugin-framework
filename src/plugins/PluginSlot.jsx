@@ -13,11 +13,11 @@ import { mergeRenderWidgetPropsWithPluginContent, organizePlugins, wrapComponent
 import { slotOptionsShape } from './data/shapes';
 
 const PluginSlot = forwardRef(({
-  as,
-  children,
+  as = React.Fragment,
+  children = null,
   id,
-  pluginProps,
-  slotOptions,
+  pluginProps = {},
+  slotOptions = {},
   slotErrorFallbackComponent,
   ...props
 }, ref) => {
@@ -129,12 +129,4 @@ PluginSlot.propTypes = {
   slotOptions: PropTypes.shape(slotOptionsShape),
   /** Error fallback component to use for each plugin */
   slotErrorFallbackComponent: PropTypes.node,
-};
-
-PluginSlot.defaultProps = {
-  as: React.Fragment,
-  children: null,
-  pluginProps: {},
-  slotOptions: {},
-  slotErrorFallbackComponent: undefined,
 };

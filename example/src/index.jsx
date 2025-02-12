@@ -1,8 +1,6 @@
 import 'core-js/stable';
-import 'regenerator-runtime/runtime';
 
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React, { StrictMode } from 'react';
 import { Routes, Route } from 'react-router-dom';
 
 import {
@@ -17,20 +15,29 @@ import { subscribe } from '@edx/frontend-platform/pubSub';
 
 import ExamplePage from './ExamplePage';
 import './index.scss';
+import { createRoot } from 'react-dom/client';
+
+const container = document.getElementById('root');
+const root = createRoot(container);
 
 subscribe(APP_READY, () => {
-  ReactDOM.render(
-    <AppProvider>
-      <Routes>
-        <Route path="/" element={<PageWrap><ExamplePage /></PageWrap>} />
-      </Routes>
-    </AppProvider>,
-    document.getElementById('root'),
+  root.render(
+    <StrictMode>
+      <AppProvider>
+        <Routes>
+          <Route path="/" element={<PageWrap><ExamplePage /></PageWrap>} />
+        </Routes>
+      </AppProvider>,
+    </StrictMode>,
   );
 });
 
 subscribe(APP_INIT_ERROR, (error) => {
-  ReactDOM.render(<ErrorPage message={error.message} />, document.getElementById('root'));
+  root.render(
+    <StrictMode>
+      <ErrorPage message={error.message} />
+    </StrictMode>,
+  );
 });
 
 initialize({

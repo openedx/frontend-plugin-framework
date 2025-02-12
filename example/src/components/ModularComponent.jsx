@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export default function ModularComponent({ content }) {
+export default function ModularComponent({ content = {} }) {
   return (
     <section className="bg-light p-3">
       <h4>{content.title}</h4>
@@ -20,8 +20,4 @@ ModularComponent.propTypes = {
     title: PropTypes.string,
     uniqueText: PropTypes.string,
   }),
-};
-
-ModularComponent.defaultProps = {
-  content: {},
 };
