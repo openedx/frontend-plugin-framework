@@ -12,6 +12,7 @@ metadata:
       icon: "Article"
   annotations:
     openedx.org/arch-interest-groups: ""
+    openedx.org/release: "master"
 spec:
   owner: group:committers-frontend
   type: "library"
