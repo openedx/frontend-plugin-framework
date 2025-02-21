@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.jsx",
   "scripts": {
-    "lint": "fedx-scripts eslint --ext .js --ext .jsx . --resolve-plugins-relative-to .",
-    "lint:fix": "fedx-scripts eslint --fix --ext .js --ext .jsx . --resolve-plugins-relative-to .",
+    "lint": "fedx-scripts eslint --ext .js --ext .jsx --ext .ts --ext .tsx . --resolve-plugins-relative-to .",
+    "lint:fix": "npm run lint -- --fix",
     "start": "fedx-scripts webpack-dev-server --progress"
   },
   "keywords": [],
@@ -15,13 +15,12 @@
     "classnames": "^2.5.1",
     "core-js": "^3.29.1",
     "prop-types": "^15.8.1",
-    "react": "^17.0.0",
-    "react-dom": "^17.0.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
     "react-router": "^6.22.3",
-    "react-router-dom": "^6.22.3",
-    "regenerator-runtime": "^0.14.1"
+    "react-router-dom": "^6.22.3"
   },
   "devDependencies": {
-    "@openedx/frontend-build": "^14.0.3"
+    "@openedx/frontend-build": "^14.3.1"
   }
 }

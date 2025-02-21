@@ -1,6 +1,4 @@
 import React, { forwardRef } from 'react';
-
-// eslint-disable-next-line import/no-extraneous-dependencies
 import classNames from 'classnames';
 import { Spinner } from '@openedx/paragon';
 import PropTypes from 'prop-types';
@@ -12,15 +10,15 @@ import PluginContainer from './PluginContainer';
 import { mergeRenderWidgetPropsWithPluginContent, organizePlugins, wrapComponent } from './data/utils';
 import { slotOptionsShape } from './data/shapes';
 
-const PluginSlot = forwardRef(({
-  as,
-  children,
+function BasePluginSlot({
+  as = React.Fragment,
+  children = null,
   id,
-  pluginProps,
-  slotOptions,
+  pluginProps = {},
+  slotOptions = {},
   slotErrorFallbackComponent,
   ...props
-}, ref) => {
+}, ref) {
   /** the plugins below are obtained by the id passed into PluginSlot by the Host MFE. See example/src/PluginsPage.jsx
   for an example of how PluginSlot is populated, and example/src/index.jsx for a dummy JS config that holds all plugins
   */
@@ -111,12 +109,9 @@ const PluginSlot = forwardRef(({
     },
     finalChildren,
   );
-});
-PluginSlot.displayName = 'PluginSlot';
+}
 
-export default PluginSlot;
-
-PluginSlot.propTypes = {
+BasePluginSlot.propTypes = {
   /** Element type for the PluginSlot wrapper component */
   as: PropTypes.elementType,
   /** Default children for the PluginSlot */
@@ -131,10 +126,7 @@ PluginSlot.propTypes = {
   slotErrorFallbackComponent: PropTypes.node,
 };
 
-PluginSlot.defaultProps = {
-  as: React.Fragment,
-  children: null,
-  pluginProps: {},
-  slotOptions: {},
-  slotErrorFallbackComponent: undefined,
-};
+const PluginSlot = forwardRef(BasePluginSlot);
+PluginSlot.displayName = 'PluginSlot';
+
+export default PluginSlot;

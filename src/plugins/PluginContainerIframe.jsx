@@ -2,7 +2,6 @@ import React, {
   useEffect, useState,
 } from 'react';
 import PropTypes from 'prop-types';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import classNames from 'classnames';
 
 import {
@@ -32,7 +31,10 @@ export const IFRAME_FEATURE_POLICY = (
 );
 
 function PluginContainerIframe({
-  config, loadingFallback, className, ...props
+  config,
+  loadingFallback = null,
+  className,
+  ...props
 }) {
   const { url, title } = config;
   const [mounted, setMounted] = useState(false);
@@ -89,9 +91,4 @@ PluginContainerIframe.propTypes = {
   loadingFallback: PropTypes.node,
   /** Classes to apply to the iframe */
   className: PropTypes.string,
-};
-
-PluginContainerIframe.defaultProps = {
-  loadingFallback: null,
-  className: undefined,
 };

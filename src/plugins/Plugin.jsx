@@ -26,7 +26,11 @@ function ErrorFallbackDefault() {
 }
 
 function Plugin({
-  children, className, style, ready, ErrorFallbackComponent,
+  children,
+  className,
+  style = {},
+  ready = true,
+  ErrorFallbackComponent = null,
 }) {
   const [dimensions, setDimensions] = useState({
     width: null,
@@ -89,11 +93,4 @@ Plugin.propTypes = {
   ready: PropTypes.bool,
   /** Styles to apply to the Plugin wrapper component */
   style: PropTypes.shape({}),
-};
-
-Plugin.defaultProps = {
-  className: undefined,
-  ErrorFallbackComponent: null,
-  style: {},
-  ready: true,
 };
