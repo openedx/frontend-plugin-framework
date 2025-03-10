@@ -44,10 +44,10 @@
   },
   "devDependencies": {
     "@edx/browserslist-config": "^1.1.1",
-    "@edx/frontend-platform": "^8.2.0",
+    "@edx/frontend-platform": "^8.3.0",
     "@edx/reactifex": "^2.1.1",
     "@openedx/frontend-build": "^14.3.1",
-    "@openedx/paragon": "^22.2.0",
+    "@openedx/paragon": "^23.3.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.1.4",
     "@testing-library/react": "^16.2.0",
@@ -63,7 +63,7 @@
   },
   "peerDependencies": {
     "@edx/frontend-platform": "^7.0.0 || ^8.0.0",
-    "@openedx/paragon": "^21.0.0 || ^22.0.0",
+    "@openedx/paragon": "^21.0.0 || ^22.0.0 || ^23.0.0",
     "prop-types": "^15.8.0",
     "react": "^17.0.0 || ^18.0.0",
     "react-dom": "^17.0.0 || ^18.0.0",
