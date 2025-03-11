@@ -125,12 +125,12 @@ file as well to define its plugin slots.
             {
               op: PLUGIN_OPERATIONS.Wrap,
               widgetId: 'default_contents',
-              wrapper: wrapWidget,
+              wrapper: wrapSidebar,
             },
             {
               op: PLUGIN_OPERATIONS.Modify,
               widgetId: 'social_media_link',
-              fn: modifyWidget,
+              fn: modifySidebar,
             },
           ]
         }
