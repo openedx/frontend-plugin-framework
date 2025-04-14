@@ -52,4 +52,58 @@ describe('usePluginSlots', () => {
       expect(slotConfig.plugins).toStrictEqual([]);
     });
   });
+
+  describe('when the plugin slot is defined via alias', () => {
+    it('returns keepDefault and plugin changes', () => {
+      getConfig.mockImplementation(() => (
+        {
+          pluginSlots: {
+            example_plugin_slot_alias: {
+              plugins: mockSlotChanges,
+              keepDefault: true,
+            },
+          },
+        }
+      ));
+
+      const slotConfig = usePluginSlot('example_plugin_slot', ['example_plugin_slot_alias']);
+      expect(slotConfig.keepDefault).toBe(true);
+      expect(slotConfig.plugins).toBe(mockSlotChanges);
+    });
+  });
+
+  describe('when no matching plugin slot is found', () => {
+    it('returns true for keepDefault and no plugin changes', () => {
+      getConfig.mockImplementation(() => (
+        {
+          pluginSlots: {
+            wrong_plugin_slot_alias: {
+              plugins: mockSlotChanges,
+              keepDefault: true,
+            },
+          },
+        }
+      ));
+
+      const slotConfig = usePluginSlot('example_plugin_slot', ['example_plugin_slot_alias']);
+      expect(slotConfig.keepDefault).toBe(true);
+      expect(slotConfig.plugins).toStrictEqual([]);
+    });
+  });
+
+  describe('when the defined plugin is null', () => {
+    it('returns true for keepDefault and no plugin changes', () => {
+      getConfig.mockImplementation(() => (
+        {
+          pluginSlots: {
+            example_plugin_slot_alias: null,
+          },
+        }
+      ));
+
+      const slotConfig = usePluginSlot('example_plugin_slot', ['example_plugin_slot_alias']);
+      expect(slotConfig.keepDefault).toBe(true);
+      expect(slotConfig.plugins).toStrictEqual([]);
+    });
+  });
 });
