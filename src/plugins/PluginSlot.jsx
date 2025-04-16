@@ -14,6 +14,7 @@ function BasePluginSlot({
   as = React.Fragment,
   children = null,
   id,
+  idAliases = [],
   pluginProps = {},
   slotOptions = {},
   slotErrorFallbackComponent,
@@ -23,7 +24,7 @@ function BasePluginSlot({
   for an example of how PluginSlot is populated, and example/src/index.jsx for a dummy JS config that holds all plugins
   */
 
-  const { keepDefault, plugins } = usePluginSlot(id);
+  const { keepDefault, plugins } = usePluginSlot(id, idAliases);
   const { formatMessage } = useIntl();
 
   const defaultContents = React.useMemo(() => {
@@ -118,6 +119,8 @@ BasePluginSlot.propTypes = {
   children: PropTypes.node,
   /** ID of the PluginSlot configuration */
   id: PropTypes.string.isRequired,
+  /** Aliases (additional IDs for the PluginSlot) */
+  idAliases: PropTypes.arrayOf(PropTypes.string),
   /** Props that are passed down to each Plugin in the Slot */
   pluginProps: PropTypes.shape(),
   /** Options passed to the PluginSlot */
