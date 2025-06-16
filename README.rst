@@ -163,7 +163,7 @@ the ``keepDefault`` boolean in the slot should be set to ``true``. For organizat
 (and therefore aren't defining a slot via JS config), ``keepDefault`` will default to ``true``, thus ensuring that the developer
 experience isn't affected; the only change to note is that the component is now wrapped in a Plugin Slot.
 
-If you need to use a plugin operation (e.g. Wrap, Hide, Modify) on default content, the ``widgetId`` you would use to refer to the content is ``defaults_contents``.
+If you need to use a plugin operation (e.g. Wrap, Hide, Modify) on default content, the ``widgetId`` you would use to refer to the content is ``default_contents``.
 
 Note: The default content will have a priority of 50, allowing for any plugins to appear before or after the default content.
 
@@ -271,7 +271,7 @@ one wrap operation. Each wrapper function takes in a ``component`` and ``id`` pr
 
     {
       op: PLUGIN_OPERATIONS.Wrap,
-      widgetId: 'default_content_in_slot',
+      widgetId: 'default_contents',
       wrapper: wrapWidget,
     }
 
