@@ -15,8 +15,8 @@
     "classnames": "^2.5.1",
     "core-js": "^3.29.1",
     "prop-types": "^15.8.1",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "react-router": "^6.22.3",
     "react-router-dom": "^6.22.3"
   },
