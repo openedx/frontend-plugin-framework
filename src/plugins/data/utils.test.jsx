@@ -22,10 +22,10 @@ const mockIsAdminWrapper = ({ widget }) => {
   return isAdmin ? widget : null;
 };
 
-const makeMockElementWrapper = (testId = 0) => function MockElementWrapper({ component }) {
+const makeMockElementWrapper = (testId = 0) => function MockElementWrapper({ component, pluginProps }) {
   return (
     <div data-testid={`wrapper${testId}`}>
-      This is a wrapper.
+      This is a wrapper with {pluginProps?.prop1}.
       {component}
     </div>
   );
@@ -181,7 +181,7 @@ describe('organizePlugins', () => {
 describe('wrapComponent', () => {
   describe('when provided with a single wrapper in an array', () => {
     it('should wrap the provided component', () => {
-      const wrappedComponent = wrapComponent(mockRenderWidget, [makeMockElementWrapper()]);
+      const wrappedComponent = wrapComponent(mockRenderWidget, [makeMockElementWrapper()], { prop1: 'prop1' });
 
       const { getByTestId } = render(wrappedComponent);
 
@@ -189,6 +189,7 @@ describe('wrapComponent', () => {
       const widget = getByTestId('widget');
 
       expect(wrapper).toContainElement(widget);
+      expect(wrapper).toHaveTextContent('This is a wrapper with prop1.');
     });
   });
   describe('when provided with multiple wrappers in an array', () => {

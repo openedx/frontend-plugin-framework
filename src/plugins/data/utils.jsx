@@ -82,13 +82,14 @@ export const organizePlugins = (defaultContents, plugins) => {
  *
  * @param {Function} renderComponent - Function that returns JSX (i.e. React Component)
  * @param {Array} wrappers - Array of components that each use a "component" prop to render the wrapped contents
+ * @params {object} pluginProps - Props defined in the PluginSlot
  * @returns {React.ReactElement} - The plugin component wrapped by any number of wrappers provided.
 */
-export const wrapComponent = (renderComponent, wrappers) => wrappers.reduce(
+export const wrapComponent = (renderComponent, wrappers, pluginProps) => wrappers.reduce(
   // Disabled lint because currently we don't have a unique identifier for this
   // The "component" and "wrapper" are both functions
   // eslint-disable-next-line react/no-array-index-key
-  (component, wrapper, idx) => React.createElement(wrapper, { component, key: idx }),
+  (component, wrapper, idx) => React.createElement(wrapper, { component, key: idx, pluginProps }),
   renderComponent(),
 );
 
