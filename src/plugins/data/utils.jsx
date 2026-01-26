@@ -82,7 +82,7 @@ export const organizePlugins = (defaultContents, plugins) => {
  *
  * @param {Function} renderComponent - Function that returns JSX (i.e. React Component)
  * @param {Array} wrappers - Array of components that each use a "component" prop to render the wrapped contents
- * @params {object} pluginProps - Props defined in the PluginSlot
+ * @param {object} pluginProps - Props defined in the PluginSlot
  * @returns {React.ReactElement} - The plugin component wrapped by any number of wrappers provided.
 */
 export const wrapComponent = (renderComponent, wrappers, pluginProps) => wrappers.reduce(

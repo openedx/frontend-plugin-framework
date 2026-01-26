@@ -273,9 +273,6 @@ one wrap operation. Each wrapper function takes in a ``component``, ``id`` and `
     {
       op: PLUGIN_OPERATIONS.Wrap,
       widgetId: 'default_contents',
-      pluginProps: {
-        prop1: 'prop1',
-      },
       wrapper: wrapWidget,
     }
 
