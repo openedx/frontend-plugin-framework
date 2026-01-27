@@ -3,7 +3,7 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import classNames from 'classnames';
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { logError } from '@edx/frontend-platform/logging';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
@@ -78,7 +78,7 @@ function DefaultContents({ className, onClick, ...rest }) {
   );
 }
 
-function PluginSlotWrapper({ slotOptions, children }) {
+function PluginSlotWrapper({ slotOptions, children, pluginProps }) {
   return (
     <IntlProvider locale="en">
       <PluginSlot
@@ -86,6 +86,7 @@ function PluginSlotWrapper({ slotOptions, children }) {
         data-testid="test-slot-id"
         as="div"
         slotOptions={slotOptions}
+        pluginProps={pluginProps}
       >
         {children}
       </PluginSlot>
@@ -182,9 +183,39 @@ describe('PluginSlot', () => {
         {
           op: PLUGIN_OPERATIONS.Wrap,
           widgetId: 'default_contents',
-          wrapper: ({ component }) => (
+          wrapper: ({ component, pluginProps }) => (
             <div data-testid="custom-wrapper">
               {component}
+              <div data-testid="custom-wrapper-props">
+                {pluginProps?.prop1 && `This is a wrapper with ${pluginProps?.prop1}.`}
+              </div>
+            </div>
+          ),
+        },
+      ],
+      keepDefault: true,
+    });
+
+    const { getByTestId } = render(<TestPluginSlot pluginProps={{ prop1: 'prop1' }} />);
+    const customWrapper = getByTestId('custom-wrapper');
+    const defaultContent = getByTestId('default_contents');
+    expect(customWrapper).toContainElement(defaultContent);
+    const pluginProps = within(customWrapper).getByTestId('custom-wrapper-props');
+    expect(pluginProps).toHaveTextContent('This is a wrapper with prop1.');
+  });
+
+  it('should wrap a Plugin when using the "wrap" operation without passing props', () => {
+    usePluginSlot.mockReturnValueOnce({
+      plugins: [
+        {
+          op: PLUGIN_OPERATIONS.Wrap,
+          widgetId: 'default_contents',
+          wrapper: ({ component, pluginProps }) => (
+            <div data-testid="custom-wrapper">
+              {component}
+              <div data-testid="custom-wrapper-no-props">
+                {`This is a wrapper without props: ${JSON.stringify(pluginProps)}`}
+              </div>
             </div>
           ),
         },
@@ -196,6 +227,8 @@ describe('PluginSlot', () => {
     const customWrapper = getByTestId('custom-wrapper');
     const defaultContent = getByTestId('default_contents');
     expect(customWrapper).toContainElement(defaultContent);
+    const pluginProps = within(customWrapper).getByTestId('custom-wrapper-no-props');
+    expect(pluginProps).toHaveTextContent('This is a wrapper without props: {}');
   });
 
   it('should not render a widget if the Hide operation is applied to it', () => {

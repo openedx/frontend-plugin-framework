@@ -251,15 +251,16 @@ Wrap
 ''''
 
 Unlike Modify, the Wrap operation adds a React component around the widget, and a single widget can receive more than
-one wrap operation. Each wrapper function takes in a ``component`` and ``id`` prop.
+one wrap operation. Each wrapper function takes in a ``component``, ``id`` and ``pluginProps`` prop.
 
   .. code-block::
 
-    const wrapWidget = ({ component, idx }) => (
+    const wrapWidget = ({ component, idx, pluginProps }) => (
       <div className="bg-warning" data-testid={`wrapper${idx + 1}`} key={idx}>
         <p>This is a wrapper component that is placed around the widget.</p>
         {component}
         <p>With this wrapper, you can add anything before or after the widget.</p>
+        <p>You can use the pluginProps to pass in any additional props to the wrapper: {pluginProps.prop1}</p>
       </div>
     );
 

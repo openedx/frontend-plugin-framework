@@ -93,6 +93,7 @@ function BasePluginSlot({
             wrapComponent(
               () => container,
               pluginConfig.wrappers,
+              pluginProps,
             ),
           );
         } else {
