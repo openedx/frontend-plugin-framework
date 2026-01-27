@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - master
+
+permissions:
+  id-token: write  # Required for OIDC
+  contents: write  # For Semantic Release tagging
+
 jobs:
   release:
     name: Release
@@ -31,7 +36,6 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }}
         fail_ci_if_error: false
     - name: Release
+      run: npx semantic-release@25
       env:
         GITHUB_TOKEN: ${{ secrets.OPENEDX_SEMANTIC_RELEASE_GITHUB_TOKEN }}
-        NPM_TOKEN: ${{ secrets.OPENEDX_SEMANTIC_RELEASE_NPM_TOKEN }}
-      run: npx semantic-release@22
