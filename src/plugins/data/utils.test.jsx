@@ -175,6 +175,79 @@ describe('organizePlugins', () => {
       expect(plugins[1].id).toBe('default_contents');
       expect(plugins[2].id).toBe('login');
     });
+
+    it('should not insert a plugin that is missing a required property', () => {
+      const plugins = organizePlugins(mockDefaultContent, [
+        {
+          op: PLUGIN_OPERATIONS.Insert,
+          widget: {
+            id: 'no_priority_plugin',
+            type: DIRECT_PLUGIN,
+            RenderWidget: mockRenderWidget,
+          },
+        },
+      ]);
+      expect(plugins.length).toEqual(1);
+      expect(plugins.find((w) => w.id === 'no_priority_plugin')).toBeUndefined();
+      expect(logError).toHaveBeenCalledWith('the insert operation config is invalid for widget id: no_priority_plugin');
+    });
+
+    it('should ignore operations targeting a plugin that failed validation', () => {
+      const plugins = organizePlugins(mockDefaultContent, [
+        {
+          op: PLUGIN_OPERATIONS.Insert,
+          widget: {
+            id: 'no_priority_plugin',
+            type: DIRECT_PLUGIN,
+            RenderWidget: mockRenderWidget,
+          },
+        },
+        {
+          op: PLUGIN_OPERATIONS.Modify,
+          widgetId: 'no_priority_plugin',
+          fn: mockModifyWidget,
+        },
+        {
+          op: PLUGIN_OPERATIONS.Wrap,
+          widgetId: 'no_priority_plugin',
+          wrapper: makeMockElementWrapper(),
+        },
+      ]);
+      expect(plugins.length).toEqual(1);
+      expect(plugins[0].id).toBe('default_contents');
+    });
+
+    it('should preserve the priority ordering of valid plugins when an insert is invalid', () => {
+      const plugins = organizePlugins(mockDefaultContent, [
+        {
+          op: PLUGIN_OPERATIONS.Insert,
+          widget: {
+            id: 'second_plugin',
+            priority: 30,
+            type: DIRECT_PLUGIN,
+            RenderWidget: mockRenderWidget,
+          },
+        },
+        {
+          op: PLUGIN_OPERATIONS.Insert,
+          widget: {
+            id: 'no_priority_plugin',
+            type: DIRECT_PLUGIN,
+            RenderWidget: mockRenderWidget,
+          },
+        },
+        {
+          op: PLUGIN_OPERATIONS.Insert,
+          widget: {
+            id: 'first_plugin',
+            priority: 10,
+            type: DIRECT_PLUGIN,
+            RenderWidget: mockRenderWidget,
+          },
+        },
+      ]);
+      expect(plugins.map((w) => w.id)).toEqual(['first_plugin', 'second_plugin', 'default_contents']);
+    });
   });
 });
 
@@ -329,35 +402,20 @@ describe('validatePlugin', () => {
         },
       };
 
-      try {
-        validatePlugin(insertBrokenDirectConfig);
-      } catch (error) {
-        expect(logError).toHaveBeenCalledWith('the insert configuration is invalid for widget id: MISSING ID');
-      }
+      expect(validatePlugin(insertBrokenDirectConfig)).toBe(false);
+      expect(logError).toHaveBeenCalledWith('the insert operation config is invalid for widget id: MISSING ID');
 
-      try {
-        validatePlugin(insertBrokenDirectConfig2);
-      } catch (error) {
-        expect(logError).toHaveBeenCalledWith('the insert configuration is invalid for widget id: new_plugin');
-      }
+      expect(validatePlugin(insertBrokenDirectConfig2)).toBe(false);
+      expect(logError).toHaveBeenCalledWith('the insert operation config is invalid for widget id: new_plugin');
 
-      try {
-        validatePlugin(insertBrokenDirectConfig3);
-      } catch (error) {
-        expect(logError).toHaveBeenCalledWith('insert operation config is missing widget object');
-      }
+      expect(validatePlugin(insertBrokenDirectConfig3)).toBe(false);
+      expect(logError).toHaveBeenCalledWith('insert operation config is missing widget object');
 
-      try {
-        validatePlugin(insertBrokenIFrameConfig);
-      } catch (error) {
-        expect(logError).toHaveBeenCalledWith('the insert configuration is invalid for widget id: new_iframe_plugin');
-      }
+      expect(validatePlugin(insertBrokenIFrameConfig)).toBe(false);
+      expect(logError).toHaveBeenCalledWith('the insert operation config is invalid for widget id: new_iframe_plugin');
 
-      try {
-        validatePlugin(insertBrokenIFrameConfig2);
-      } catch (error) {
-        expect(logError).toHaveBeenCalledWith('the insert configuration is invalid for widget id: new_iframe_plugin');
-      }
+      expect(validatePlugin(insertBrokenIFrameConfig2)).toBe(false);
+      expect(logError).toHaveBeenCalledWith('the insert operation config is invalid for widget id: new_iframe_plugin');
     });
   });
   describe('hide plugin configuration', () => {
@@ -373,11 +431,8 @@ describe('validatePlugin', () => {
         op: PLUGIN_OPERATIONS.Hide,
       };
 
-      try {
-        validatePlugin(invalidHideConfig);
-      } catch (error) {
-        expect(logError).toHaveBeenCalledWith('the hide operation config is invalid for widget id: MISSING ID');
-      }
+      expect(validatePlugin(invalidHideConfig)).toBe(false);
+      expect(logError).toHaveBeenCalledWith('the hide operation config is invalid for widget id: MISSING ID');
     });
   });
   describe('modify plugin configuration', () => {
@@ -399,16 +454,10 @@ describe('validatePlugin', () => {
         fn: mockModifyWidget,
       };
 
-      try {
-        validatePlugin(invalidModifyConfig1);
-      } catch (error) {
-        expect(logError).toHaveBeenCalledWith('the modify operation config is invalid for widget id: random_plugin');
-      }
-      try {
-        validatePlugin(invalidModifyConfig2);
-      } catch (error) {
-        expect(logError).toHaveBeenCalledWith('the modify operation config is invalid for widget id: MISSING ID');
-      }
+      expect(validatePlugin(invalidModifyConfig1)).toBe(false);
+      expect(logError).toHaveBeenCalledWith('the modify operation config is invalid for widget id: random_plugin');
+      expect(validatePlugin(invalidModifyConfig2)).toBe(false);
+      expect(logError).toHaveBeenCalledWith('the modify operation config is invalid for widget id: MISSING ID');
     });
   });
   describe('wrap plugin configuration', () => {
@@ -430,30 +479,21 @@ describe('validatePlugin', () => {
         wrapper: makeMockElementWrapper(),
       };
 
-      try {
-        validatePlugin(invalidWrapConfig1);
-      } catch (error) {
-        expect(logError).toHaveBeenCalledWith('the wrap operation config is invalid for widget id: random_plugin');
-      }
-      try {
-        validatePlugin(invalidWrapConfig2);
-      } catch (error) {
-        expect(logError).toHaveBeenCalledWith('the wrap operation config is invalid for widget id: MISSING ID');
-      }
+      expect(validatePlugin(invalidWrapConfig1)).toBe(false);
+      expect(logError).toHaveBeenCalledWith('the wrap operation config is invalid for widget id: random_plugin');
+      expect(validatePlugin(invalidWrapConfig2)).toBe(false);
+      expect(logError).toHaveBeenCalledWith('the wrap operation config is invalid for widget id: MISSING ID');
     });
   });
   describe('an invalid plugin configuration', () => {
-    it('should raise an error for an operation that does not exist', () => {
+    it.each([undefined, 'destroy'])('should return false and raise an error for operation "%s"', (op) => {
       const invalidPluginConfig = {
-        op: PLUGIN_OPERATIONS.Destroy,
+        op,
         widgetId: 'drafts',
       };
 
-      try {
-        validatePlugin(invalidPluginConfig);
-      } catch (error) {
-        expect(logError).toHaveBeenCalledWith('There is a config with an invalid PLUGIN_OPERATION. Check to make sure it is configured correctly.');
-      }
+      expect(validatePlugin(invalidPluginConfig)).toBe(false);
+      expect(logError).toHaveBeenCalledWith('There is a config with an invalid PLUGIN_OPERATION. Check to make sure it is configured correctly.');
     });
   });
 });
