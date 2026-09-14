@@ -14,29 +14,35 @@ const validateRequirements = (requiredTypes, widgetConfig) => Object.keys(requir
 
 /**
  * Called by organizePlugins to validate plugin configurations
- * @returns {Boolean} - boolean if all types are correct and present, else throws an error
+ * @returns {Boolean} - true if all types are correct and present, otherwise logs an error and returns false
  */
 export const validatePlugin = (pluginConfig) => {
-  let requiredTypes = {};
   const { op } = pluginConfig;
   let config = pluginConfig;
 
-  if (!op) { logError('There is a config with an invalid PLUGIN_OPERATION. Check to make sure it is configured correctly.'); }
+  if (!Object.values(PLUGIN_OPERATIONS).includes(op)) {
+    logError('There is a config with an invalid PLUGIN_OPERATION. Check to make sure it is configured correctly.');
+    return false;
+  }
+
+  let requiredTypes = requiredPluginTypes[op];
 
   if (op === PLUGIN_OPERATIONS.Insert) {
     config = config.widget;
-    if (!config) { logError('insert operation config is missing widget object'); }
+    if (!config) {
+      logError('insert operation config is missing widget object');
+      return false;
+    }
 
     requiredTypes = {
-      ...requiredPluginTypes[op].base,
-      ...requiredPluginTypes[op][config.type?.toLowerCase()],
+      ...requiredTypes.base,
+      ...requiredTypes[config.type?.toLowerCase()],
     };
-  } else {
-    requiredTypes = requiredPluginTypes[op];
   }
 
   if (!validateRequirements(requiredTypes, config)) {
     logError(`the ${op} operation config is invalid for widget id: ${config.widgetId || config.id || 'MISSING ID'}`);
+    return false;
   }
 
   return true;
@@ -52,7 +58,7 @@ export const validatePlugin = (pluginConfig) => {
 export const organizePlugins = (defaultContents, plugins) => {
   const newContents = [...defaultContents];
   plugins.forEach(change => {
-    validatePlugin(change);
+    if (!validatePlugin(change)) { return; }
     if (change.op === PLUGIN_OPERATIONS.Insert) {
       newContents.push(change.widget);
     } else if (change.op === PLUGIN_OPERATIONS.Hide) {
