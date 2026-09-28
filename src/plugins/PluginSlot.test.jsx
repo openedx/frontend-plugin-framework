@@ -266,6 +266,25 @@ describe('PluginSlot', () => {
     expect(logError).toHaveBeenCalledWith('the insert operation config is invalid for widget id: invalid_config');
   });
 
+  it('should render nothing for a well-formed config with an unrecognized type', () => {
+    usePluginSlot.mockReturnValueOnce({
+      plugins: [
+        {
+          op: PLUGIN_OPERATIONS.Insert,
+          widget: {
+            id: 'unrecognized_type_config',
+            priority: 10,
+            type: 'UNRECOGNIZED_TYPE',
+          },
+        },
+      ],
+      keepDefault: true,
+    });
+    const { queryByTestId } = render(<TestPluginSlot />);
+
+    expect(queryByTestId('unrecognized_type_config')).toBeNull();
+  });
+
   it('should handle multiple children', () => {
     const { queryAllByTestId } = render(<TestPluginSlot hasMultipleChildren />);
     const defaultContentsWidgets = queryAllByTestId('default_contents');
