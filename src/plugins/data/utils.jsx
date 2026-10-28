@@ -19,7 +19,7 @@ const validateRequirements = (requiredTypes, widgetConfig) => Object.keys(requir
  * @returns {Boolean} - true if all types are correct and present, otherwise logs an error and returns false
  */
 export const validatePlugin = (pluginConfig) => {
-  const { op } = pluginConfig;
+  const { op } = pluginConfig || {};
   let config = pluginConfig;
 
   if (!Object.values(PLUGIN_OPERATIONS).includes(op)) {
@@ -38,7 +38,7 @@ export const validatePlugin = (pluginConfig) => {
 
     requiredTypes = {
       ...requiredTypes.base,
-      ...requiredTypes[config.type?.toLowerCase()],
+      ...requiredTypes[config.type?.toLowerCase?.()],
     };
   }
 

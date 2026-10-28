@@ -416,6 +416,16 @@ describe('validatePlugin', () => {
           url: 'www.example_url.com',
         },
       };
+      // plugin type is not a string
+      const insertBrokenNonStringTypeConfig = {
+        op: PLUGIN_OPERATIONS.Insert,
+        widget: {
+          id: 'new_plugin',
+          priority: 10,
+          type: 5,
+          RenderWidget: mockRenderWidget,
+        },
+      };
 
       expect(validatePlugin(insertBrokenDirectConfig)).toBe(false);
       expect(logError).toHaveBeenCalledWith('the insert operation config is invalid for widget id: MISSING ID');
@@ -431,6 +441,9 @@ describe('validatePlugin', () => {
 
       expect(validatePlugin(insertBrokenIFrameConfig2)).toBe(false);
       expect(logError).toHaveBeenCalledWith('the insert operation config is invalid for widget id: new_iframe_plugin');
+
+      expect(validatePlugin(insertBrokenNonStringTypeConfig)).toBe(false);
+      expect(logError).toHaveBeenCalledWith('the insert operation config is invalid for widget id: new_plugin');
     });
   });
   describe('hide plugin configuration', () => {
@@ -508,6 +521,11 @@ describe('validatePlugin', () => {
       };
 
       expect(validatePlugin(invalidPluginConfig)).toBe(false);
+      expect(logError).toHaveBeenCalledWith('There is a config with an invalid PLUGIN_OPERATION. Check to make sure it is configured correctly.');
+    });
+
+    it.each([undefined, null])('should return false and raise an error for a "%s" plugin config', (pluginConfig) => {
+      expect(validatePlugin(pluginConfig)).toBe(false);
       expect(logError).toHaveBeenCalledWith('There is a config with an invalid PLUGIN_OPERATION. Check to make sure it is configured correctly.');
     });
   });
