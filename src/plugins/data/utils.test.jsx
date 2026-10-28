@@ -176,6 +176,21 @@ describe('organizePlugins', () => {
       expect(plugins[2].id).toBe('login');
     });
 
+    it('should insert a plugin with priority 0 first', () => {
+      const plugins = organizePlugins(mockDefaultContent, [
+        {
+          op: PLUGIN_OPERATIONS.Insert,
+          widget: {
+            id: 'zero_priority_plugin',
+            priority: 0,
+            type: DIRECT_PLUGIN,
+            RenderWidget: mockRenderWidget,
+          },
+        },
+      ]);
+      expect(plugins.map((w) => w.id)).toEqual(['zero_priority_plugin', 'default_contents']);
+    });
+
     it('should not insert a plugin that is missing a required property', () => {
       const plugins = organizePlugins(mockDefaultContent, [
         {

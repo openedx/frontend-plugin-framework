@@ -266,7 +266,7 @@ describe('PluginSlot', () => {
     expect(logError).toHaveBeenCalledWith('the insert operation config is invalid for widget id: invalid_config');
   });
 
-  it('should render nothing for a well-formed config with an unrecognized type', () => {
+  it('should log an error for a well-formed config with an unrecognized type', () => {
     usePluginSlot.mockReturnValueOnce({
       plugins: [
         {
@@ -280,9 +280,9 @@ describe('PluginSlot', () => {
       ],
       keepDefault: true,
     });
-    const { queryByTestId } = render(<TestPluginSlot />);
+    render(<TestPluginSlot />);
 
-    expect(queryByTestId('unrecognized_type_config')).toBeNull();
+    expect(logError).toHaveBeenCalledWith('the insert operation config has an unrecognized type for widget id: unrecognized_type_config');
   });
 
   it('should handle multiple children', () => {

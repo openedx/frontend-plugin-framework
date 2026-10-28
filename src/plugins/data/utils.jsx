@@ -1,7 +1,9 @@
 import React from 'react';
 import { getConfig } from '@edx/frontend-platform';
 import { logError } from '@edx/frontend-platform/logging';
-import { PLUGIN_OPERATIONS, requiredPluginTypes } from './constants';
+import {
+  DIRECT_PLUGIN, IFRAME_PLUGIN, PLUGIN_OPERATIONS, requiredPluginTypes,
+} from './constants';
 
 /**
  * Called by validatePlugin to compare plugin config to the required data and data types
@@ -9,7 +11,7 @@ import { PLUGIN_OPERATIONS, requiredPluginTypes } from './constants';
  */
 const validateRequirements = (requiredTypes, widgetConfig) => Object.keys(requiredTypes).every(
   // eslint-disable-next-line valid-typeof
-  (field) => (widgetConfig[field] && (typeof widgetConfig[field] === requiredTypes[field])),
+  (field) => typeof widgetConfig[field] === requiredTypes[field],
 );
 
 /**
@@ -42,6 +44,11 @@ export const validatePlugin = (pluginConfig) => {
 
   if (!validateRequirements(requiredTypes, config)) {
     logError(`the ${op} operation config is invalid for widget id: ${config.widgetId || config.id || 'MISSING ID'}`);
+    return false;
+  }
+
+  if (op === PLUGIN_OPERATIONS.Insert && ![DIRECT_PLUGIN, IFRAME_PLUGIN].includes(config.type)) {
+    logError(`the insert operation config has an unrecognized type for widget id: ${config.id}`);
     return false;
   }
 
