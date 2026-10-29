@@ -263,7 +263,7 @@ describe('PluginSlot', () => {
     });
     render(<TestPluginSlot />);
 
-    expect(logError).toHaveBeenCalledWith('the insert operation config is invalid for widget id: invalid_config');
+    expect(logError).toHaveBeenCalledWith('the insert operation config has an unrecognized type for widget id: invalid_config');
   });
 
   it('should handle multiple children', () => {

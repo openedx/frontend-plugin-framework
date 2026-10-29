@@ -1,7 +1,9 @@
 import React from 'react';
 import { getConfig } from '@edx/frontend-platform';
 import { logError } from '@edx/frontend-platform/logging';
-import { PLUGIN_OPERATIONS, requiredPluginTypes } from './constants';
+import {
+  DIRECT_PLUGIN, IFRAME_PLUGIN, PLUGIN_OPERATIONS, requiredPluginTypes,
+} from './constants';
 
 /**
  * Called by validatePlugin to compare plugin config to the required data and data types
@@ -9,34 +11,45 @@ import { PLUGIN_OPERATIONS, requiredPluginTypes } from './constants';
  */
 const validateRequirements = (requiredTypes, widgetConfig) => Object.keys(requiredTypes).every(
   // eslint-disable-next-line valid-typeof
-  (field) => (widgetConfig[field] && (typeof widgetConfig[field] === requiredTypes[field])),
+  (field) => typeof widgetConfig[field] === requiredTypes[field],
 );
 
 /**
  * Called by organizePlugins to validate plugin configurations
- * @returns {Boolean} - boolean if all types are correct and present, else throws an error
+ * @returns {Boolean} - true if all types are correct and present, otherwise logs an error and returns false
  */
 export const validatePlugin = (pluginConfig) => {
-  let requiredTypes = {};
-  const { op } = pluginConfig;
+  const { op } = pluginConfig || {};
   let config = pluginConfig;
 
-  if (!op) { logError('There is a config with an invalid PLUGIN_OPERATION. Check to make sure it is configured correctly.'); }
+  if (!Object.values(PLUGIN_OPERATIONS).includes(op)) {
+    logError('There is a config with an invalid PLUGIN_OPERATION. Check to make sure it is configured correctly.');
+    return false;
+  }
+
+  let requiredTypes = requiredPluginTypes[op];
 
   if (op === PLUGIN_OPERATIONS.Insert) {
     config = config.widget;
-    if (!config) { logError('insert operation config is missing widget object'); }
+    if (!config) {
+      logError('insert operation config is missing widget object');
+      return false;
+    }
+
+    if (![DIRECT_PLUGIN, IFRAME_PLUGIN].includes(config.type)) {
+      logError(`the insert operation config has an unrecognized type for widget id: ${config.id}`);
+      return false;
+    }
 
     requiredTypes = {
-      ...requiredPluginTypes[op].base,
-      ...requiredPluginTypes[op][config.type?.toLowerCase()],
+      ...requiredTypes.base,
+      ...requiredTypes[config.type.toLowerCase()],
     };
-  } else {
-    requiredTypes = requiredPluginTypes[op];
   }
 
   if (!validateRequirements(requiredTypes, config)) {
     logError(`the ${op} operation config is invalid for widget id: ${config.widgetId || config.id || 'MISSING ID'}`);
+    return false;
   }
 
   return true;
@@ -52,7 +65,7 @@ export const validatePlugin = (pluginConfig) => {
 export const organizePlugins = (defaultContents, plugins) => {
   const newContents = [...defaultContents];
   plugins.forEach(change => {
-    validatePlugin(change);
+    if (!validatePlugin(change)) { return; }
     if (change.op === PLUGIN_OPERATIONS.Insert) {
       newContents.push(change.widget);
     } else if (change.op === PLUGIN_OPERATIONS.Hide) {
