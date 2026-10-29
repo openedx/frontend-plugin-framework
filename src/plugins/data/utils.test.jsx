@@ -443,7 +443,7 @@ describe('validatePlugin', () => {
       expect(logError).toHaveBeenCalledWith('the insert operation config is invalid for widget id: new_iframe_plugin');
 
       expect(validatePlugin(insertBrokenNonStringTypeConfig)).toBe(false);
-      expect(logError).toHaveBeenCalledWith('the insert operation config is invalid for widget id: new_plugin');
+      expect(logError).toHaveBeenCalledWith('the insert operation config has an unrecognized type for widget id: new_plugin');
     });
   });
   describe('hide plugin configuration', () => {

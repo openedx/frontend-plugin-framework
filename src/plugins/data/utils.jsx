@@ -36,19 +36,19 @@ export const validatePlugin = (pluginConfig) => {
       return false;
     }
 
+    if (![DIRECT_PLUGIN, IFRAME_PLUGIN].includes(config.type)) {
+      logError(`the insert operation config has an unrecognized type for widget id: ${config.id}`);
+      return false;
+    }
+
     requiredTypes = {
       ...requiredTypes.base,
-      ...requiredTypes[config.type?.toLowerCase?.()],
+      ...requiredTypes[config.type.toLowerCase()],
     };
   }
 
   if (!validateRequirements(requiredTypes, config)) {
     logError(`the ${op} operation config is invalid for widget id: ${config.widgetId || config.id || 'MISSING ID'}`);
-    return false;
-  }
-
-  if (op === PLUGIN_OPERATIONS.Insert && ![DIRECT_PLUGIN, IFRAME_PLUGIN].includes(config.type)) {
-    logError(`the insert operation config has an unrecognized type for widget id: ${config.id}`);
     return false;
   }
 
