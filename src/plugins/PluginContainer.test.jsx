@@ -49,6 +49,13 @@ describe('PluginContainer', () => {
     expect(getByText('Direct plugin')).toBeInTheDocument();
   });
 
+  it('renders no plugin when passed an unrecognized type in the configuration', () => {
+    const { queryByText } = render(<PluginContainerWrapper type="unknown_plugin" />);
+
+    expect(queryByText('Iframe plugin')).not.toBeInTheDocument();
+    expect(queryByText('Direct plugin')).not.toBeInTheDocument();
+  });
+
   describe('ErrorBoundary', () => {
     beforeAll(() => {
       const ExplodingComponent = () => {
